@@ -5,6 +5,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <SOIL/SOIL.h>
 #include <GLFW/glfw3.h>
 
 #include "objects.hh"
@@ -21,10 +22,6 @@ const             GLuint WINSIZEH = 600; // Window size H
 
 GLFWwindow        *gwindow = nullptr;    // Context window
 scramble::program *program = nullptr;    // Shader program
-
-GLuint             vbo = 0;              // Vert buffer object
-GLuint             ebo = 0;              // Elmt buffer object
-GLuint             vao = 0;              // Vert array object
 
 /*
  * Callback: keypress function
@@ -96,12 +93,18 @@ void engage_prog()
 
         // Create the shader program
         program = new scramble::program(shaders);
+
+        // Erase already used shaders
+        glDeleteShader(shaders.back().get());
+        shaders.pop_back();
+        glDeleteShader(shaders.back().get());
+        shaders.pop_back();
 }
 
 /*
  * Render full scene
  */
-inline void render()
+inline void render(scramble::square& object)
 {
         // Set clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -110,19 +113,27 @@ inline void render()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Bind the program
-        glUseProgram(program->get());
+        program->toggle();
 
-        // Bind VAO
-        glBindVertexArray(vao);
+        // Enable alpha blending
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+
+        // Set the alpha fluctiation
+        GLfloat fluct = static_cast<GLfloat>(sin(glfwGetTime()) / 2) + 0.5f;
+        glUniform1f(program->uniform("fluct"), fluct);
+
+        // Bind object
+        object.bind(program);
 
         // Draw object
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        object.draw();
 
-        // Unbind VAO
-        glBindVertexArray(0);
+        // Unbind object
+        object.unbind();
 
         // Unbind program
-        glUseProgram(0);
+        program->toggle();
 }
 
 /*
@@ -156,8 +167,8 @@ int main(int argc, char *argv[])
                 return EXIT_FAILURE;
         }
 
-        // Load the damn triangle
-        scramble::load_square(vao, ebo, vbo);
+        // Load the damn square
+        scramble::square square;
 
         // Rendering loop (don't edit this)
         while (!glfwWindowShouldClose(gwindow)) {
@@ -166,16 +177,11 @@ int main(int argc, char *argv[])
                 glfwPollEvents();
 
                 // Render procedure
-                render();
+                render(square);
 
                 // Off-screen to on-screen
                 glfwSwapBuffers(gwindow);
         }
-
-        // Destroy vertex containers
-        glDeleteVertexArrays(1, &vao);
-        glDeleteBuffers(1, &ebo);
-        glDeleteBuffers(1, &vbo);
 
         // Destroy GLFW window
         glfwDestroyWindow(gwindow);

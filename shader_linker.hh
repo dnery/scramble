@@ -14,8 +14,6 @@ namespace scramble {
 
         struct program {
 
-                program();
-
                 program(const std::vector<scramble::shader>& shaders);
 
                 ~program();
@@ -25,6 +23,10 @@ namespace scramble {
                 program& operator=(program other) = delete;
 
                 GLuint get() const;
+
+                bool in_use() const;
+
+                void toggle() const;
 
                 GLint attrib(const GLchar *name) const;
 

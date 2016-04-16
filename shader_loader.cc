@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
 #include <GL/glew.h>
 
 #include "unscramble.hh"
@@ -54,7 +55,8 @@ scramble::shader_rep::~shader_rep()
  */
 scramble::shader::shader(std::string code, GLenum type) :
         rep(new shader_rep(code, type))
-{}
+{
+}
 
 /*
  * Non-trivial destructor.
@@ -135,7 +137,8 @@ scramble::shader scramble::shader_from_file(const std::string path, GLenum type)
         std::stringstream buffer;
         buffer << handle.rdbuf();
 
-        unsc_logmsg("shader sauce:\n%s\n", buffer.str().c_str());
+        unsc_logmsg("shader path: %s\n", path.c_str());
+        //unsc_logmsg("shader sauce:\n%s\n", buffer.str().c_str());
 
         return scramble::shader(buffer.str(), type);
 }

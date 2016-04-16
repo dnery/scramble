@@ -10,13 +10,6 @@
 #include "shader_linker.hh"
 
 /*
- * Default constructor
- */
-scramble::program::program() :
-        globject(0)
-{}
-
-/*
  * Compose error message to throw (helper function).
  */
 std::string linker_errmsg(GLuint globject)
@@ -78,6 +71,8 @@ scramble::program::program(const std::vector<scramble::shader>& shaders) :
  */
 scramble::program::~program()
 {
+        unsc_assert(globject != 0);
+
         glDeleteProgram(globject);
 }
 
@@ -87,6 +82,31 @@ scramble::program::~program()
 GLuint scramble::program::get() const
 {
         return globject;
+}
+
+/*
+ * Check if current proram is in use.
+ */
+bool scramble::program::in_use() const
+{
+        GLint current = 0; // current program in use by the API
+
+        unsc_assert(globject != 0);
+
+        glGetIntegerv(GL_CURRENT_PROGRAM, &current);
+
+        return current == static_cast<GLint>(globject);
+}
+
+/*
+ * Toggle usage for the current program.
+ */
+void scramble::program::toggle() const
+{
+        if (in_use())
+                glUseProgram(0);
+        else
+                glUseProgram(globject);
 }
 
 /*
