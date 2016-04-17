@@ -125,7 +125,7 @@ GLint scramble::program::uniform(const GLchar *name) const
 /*
  * Compose error message to throw (helper function).
  */
-std::string linker_errmsg(GLuint globject)
+std::string scramble::linker_errmsg(GLuint globject)
 {
         char        *log_str; // C style log info string
         GLint       log_len;  // Info log total length

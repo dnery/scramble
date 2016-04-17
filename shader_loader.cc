@@ -66,7 +66,6 @@ scramble::shader::~shader()
         if (rep != nullptr && --rep->refcount <= 0) {
 
                 delete rep;
-
                 rep = nullptr;
         }
 }
