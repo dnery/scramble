@@ -6,6 +6,7 @@
 #define SCRAMBLE_SHADER_PROGRAM_H
 
 #include <vector>
+
 #include <GL/glew.h>
 
 #include "shader_loader.hh"
@@ -35,6 +36,9 @@ namespace scramble {
         private:
                 GLuint globject; // GL program object itself
         };
+
+        // Compose linker error message
+        std::string linker_errmsg(GLuint globject);
 }
 
 

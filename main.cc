@@ -3,13 +3,17 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <GL/glew.h>
+// GL handling
+#include <GL/glew.h>                                        // GL Ext Wrangler
+#include <SOIL/SOIL.h>                                      // SO Image loader
+#include <GLFW/glfw3.h>                                     // Window & events
+
+// Matrix transforms
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <SOIL/SOIL.h>
-#include <GLFW/glfw3.h>
 
+// Project locals
 #include "objects.hh"
 #include "platform.hh"
 #include "unscramble.hh"
@@ -99,7 +103,7 @@ void engage_prog()
 /*
  * Render full scene
  */
-namespace { inline void render(scramble::square& object, glm::vec3 positions[])
+namespace { inline void render(scramble::object& object, glm::vec3 positions[])
 {
         // set clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -176,7 +180,7 @@ int main(int argc, char *argv[])
         }
 
         // Load the damn square
-        scramble::square square;
+        scramble::cube cube;
 
         glm::vec3 positions[] = {
                 glm::vec3( 0.0f,  0.0f,  0.0f),
@@ -209,7 +213,7 @@ int main(int argc, char *argv[])
                 glfwPollEvents();
 
                 // Render procedure
-                render(square, positions);
+                render(cube, positions);
 
                 // Off-screen to on-screen
                 glfwSwapBuffers(gwindow);

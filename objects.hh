@@ -6,21 +6,18 @@
 #define SCRAMBLE_OBJECT_HH
 
 #include <GL/glew.h>
+
 #include "shader_linker.hh"
 
 #define TESTDEF 300
 
 namespace scramble {
 
-        struct simple_object { // THIS IS AN INTERFACE!!!
+        struct object { // This is a proper interface!
 
-                simple_object(); // This is an exception
+                object(); // This is an exception, but useful in this case
 
-                virtual ~simple_object() {};
-
-                //simple_object(const simple_object& other) = delete;
-
-                //simple_object& operator=(simple_object other) = delete;
+                virtual ~object() {}; // This should to be this way generally
 
                 virtual void bind(scramble::program *program) const = 0;
 
@@ -29,12 +26,12 @@ namespace scramble {
                 virtual void unbind() const = 0;
 
         protected:
-                GLuint vbo;
-                GLuint ebo;
-                GLuint vao;
+                GLuint vbo; // Vertices buffer
+                GLuint ebo; // Elements buffer
+                GLuint vao; // Vertex attribute array
         };
 
-        struct triangle : simple_object {
+        struct cube : object {
 
                 virtual void bind(scramble::program *program) const override;
 
@@ -42,40 +39,20 @@ namespace scramble {
 
                 virtual void unbind() const override;
 
-                triangle();
+                cube();
 
-                ~triangle();
-
-        private:
-                const GLfloat vertices[24];
-                const GLuint  indices[3];
-
-                int           texw;
-                int           texh;
-                GLuint        texture;
-                unsigned char *texmap;
-        };
-
-        struct square : simple_object {
-
-                virtual void bind(scramble::program *program) const override;
-
-                virtual void draw() const override;
-
-                virtual void unbind() const override;
-
-                square();
-
-                ~square();
+                ~cube();
 
         private:
-                const GLfloat vertices[180];
+                const GLfloat vertices[180]; // All vertices
 
-                int           texw;
-                int           texh;
-                GLuint        texture1;
-                GLuint        texture2;
-                unsigned char *texmap;
+                int           texw;	     // Texture width
+                int           texh; 	     // Texture height
+
+                GLuint        texture1;      // Texture object 1
+                GLuint        texture2;      // Texture object 2
+
+                unsigned char *texmap;       // Texture resource (reusable)
         };
 }
 

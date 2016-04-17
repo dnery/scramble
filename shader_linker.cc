@@ -2,33 +2,14 @@
 // Created by danilo on 4/1/16.
 //
 
+#include <vector>
 #include <stdexcept>
+
 #include <GL/glew.h>
 
 #include "unscramble.hh"
 #include "shader_loader.hh"
 #include "shader_linker.hh"
-
-/*
- * Compose error message to throw (helper function).
- */
-std::string linker_errmsg(GLuint globject)
-{
-        char        *log_str; // C style log info string
-        GLint       log_len;  // Info log total length
-        std::string errmsg;   // Composed error msg
-
-        errmsg = std::string("Program linking failure: ");
-        glGetProgramiv(globject, GL_INFO_LOG_LENGTH, &log_len);
-
-        log_str = new char[log_len + 1];
-        glGetProgramInfoLog(globject, log_len, nullptr, log_str);
-
-        errmsg += log_str;
-        delete[] log_str;
-
-        return errmsg;
-}
 
 /*
  * Non-trivial constructor.
@@ -139,4 +120,25 @@ GLint scramble::program::uniform(const GLchar *name) const
         unsc_assert(index != -1);
 
         return index;
+}
+
+/*
+ * Compose error message to throw (helper function).
+ */
+std::string linker_errmsg(GLuint globject)
+{
+        char        *log_str; // C style log info string
+        GLint       log_len;  // Info log total length
+        std::string errmsg;   // Composed error msg
+
+        errmsg = std::string("Program linking failure: ");
+        glGetProgramiv(globject, GL_INFO_LOG_LENGTH, &log_len);
+
+        log_str = new char[log_len + 1];
+        glGetProgramInfoLog(globject, log_len, nullptr, log_str);
+
+        errmsg += log_str;
+        delete[] log_str;
+
+        return errmsg;
 }

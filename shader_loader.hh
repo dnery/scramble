@@ -6,6 +6,7 @@
 #define SCRAMBLE_SHADER_LOADER_H
 
 #include <string>
+
 #include <GL/glew.h>
 
 namespace scramble {

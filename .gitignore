@@ -5,6 +5,7 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 Debug/*
+demos/
 /build/
 .kdev4/
 scramble.kdev4
