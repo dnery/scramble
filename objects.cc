@@ -94,8 +94,8 @@ scramble::triangle::~triangle()
 {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        glDeleteVertexArrays(1, &vao);
         glDeleteTextures(1, &texture);
+        glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &ebo);
         glDeleteBuffers(1, &vbo);
 }
@@ -114,20 +114,52 @@ void scramble::triangle::draw() const
 void scramble::triangle::unbind() const
 {
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 scramble::square::square() : simple_object(),
         vertices{
-                // Verts            // Colors         // Tex-coords
-                -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bot-left
-                 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bot-right
-                 0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
-                -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // top-left
-        },
-        indices{
-                0, 1, 3,
-                1, 2, 3
+                // Verts              // Tex's
+                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+                 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
         },
         texw(0),
         texh(0),
@@ -143,12 +175,6 @@ scramble::square::square() : simple_object(),
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,
-                     GL_STATIC_DRAW);
-
-        // 3. Make & bind element buffer object
-        glGenBuffers(1, &ebo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
                      GL_STATIC_DRAW);
 
         // 4.1 Make & bind texture information
@@ -202,19 +228,14 @@ scramble::square::square() : simple_object(),
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // 5.1. Position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
                               reinterpret_cast<GLvoid *>(0));
         glEnableVertexAttribArray(0);
 
-        // 5.2. Color attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+        // 5.2. Texture coords
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
                               reinterpret_cast<GLvoid *>(3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(1);
-
-        // 5.3 Texture coords
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                              reinterpret_cast<GLvoid *>(6 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(2);
 
         // 6. Unbind vbo & vao (not the ebo!)
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -223,12 +244,9 @@ scramble::square::square() : simple_object(),
 
 scramble::square::~square()
 {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-        glDeleteVertexArrays(1, &vao);
         glDeleteTextures(1, &texture1);
         glDeleteTextures(1, &texture2);
-        glDeleteBuffers(1, &ebo);
+        glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vbo);
 }
 
@@ -247,11 +265,10 @@ void scramble::square::bind(scramble::program *program) const
 
 void scramble::square::draw() const
 {
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 void scramble::square::unbind() const
 {
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
 }

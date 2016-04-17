@@ -8,6 +8,8 @@
 #include <GL/glew.h>
 #include "shader_linker.hh"
 
+#define TESTDEF 300
+
 namespace scramble {
 
         struct simple_object { // THIS IS AN INTERFACE!!!
@@ -67,8 +69,7 @@ namespace scramble {
                 ~square();
 
         private:
-                const GLfloat vertices[32];
-                const GLuint  indices[6];
+                const GLfloat vertices[180];
 
                 int           texw;
                 int           texh;

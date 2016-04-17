@@ -5,6 +5,8 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <SOIL/SOIL.h>
 #include <GLFW/glfw3.h>
 
@@ -17,11 +19,11 @@
 /*
  * Globals and constants
  */
-const             GLuint WINSIZEW = 800; // Window size W
-const             GLuint WINSIZEH = 600; // Window size H
+const             GLuint WINSIZEW = 800;                    // Window size W
+const             GLuint WINSIZEH = 600;                    // Window size H
 
-GLFWwindow        *gwindow = nullptr;    // Context window
-scramble::program *program = nullptr;    // Shader program
+GLFWwindow        *gwindow = nullptr;                       // Context window
+scramble::program *program = nullptr;                       // Shader program
 
 /*
  * Callback: keypress function
@@ -29,7 +31,7 @@ scramble::program *program = nullptr;    // Shader program
 void callback_key(GLFWwindow *gwindow, int key, int scan, int action, int mode)
 {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-                glfwSetWindowShouldClose(gwindow, GL_TRUE);
+        glfwSetWindowShouldClose(gwindow, GL_TRUE);
 }
 
 /*
@@ -56,7 +58,7 @@ void engage_glfw()
 
         // Create GLFW context window
         gwindow = glfwCreateWindow(WINSIZEW, WINSIZEH, "Scramble",
-                                   nullptr, nullptr);
+                nullptr, nullptr);
 
         // Check return, set context
         unsc_assert(gwindow != nullptr);
@@ -76,9 +78,6 @@ void engage_glew()
         glewExperimental = GL_TRUE;
         unsc_assert(glewInit() == GLEW_OK);
         unsc_assert(GLEW_VERSION_3_3 != 0);
-
-        // Set viewport
-        glViewport(0, 0, WINSIZEW, WINSIZEH);
 }
 
 void engage_prog()
@@ -94,47 +93,56 @@ void engage_prog()
         // Create the shader program
         program = new scramble::program(shaders);
 
-        // Erase already used shaders
-        glDeleteShader(shaders.back().get());
-        shaders.pop_back();
-        glDeleteShader(shaders.back().get());
-        shaders.pop_back();
+        // Deletion is already taken care of!
 }
 
 /*
  * Render full scene
  */
-inline void render(scramble::square& object)
+namespace { inline void render(scramble::square& object, glm::vec3 positions[])
 {
-        // Set clear color
+        // set clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
         // Clear framebuffer
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
 
         // Bind the program
         program->toggle();
 
-        // Enable alpha blending
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-
-        // Set the alpha fluctiation
-        GLfloat fluct = static_cast<GLfloat>(sin(glfwGetTime()) / 2) + 0.5f;
-        glUniform1f(program->uniform("fluct"), fluct);
-
         // Bind object
         object.bind(program);
 
-        // Draw object
-        object.draw();
+        // Set transformations
+        //GLfloat fluct;
+        //fluct = static_cast<GLfloat>(sin(glfwGetTime()) / 2) + 0.5f;
+        //glUniform1f(program->uniform("fluct"), fluct);
+
+        glm::mat4 view;
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        glUniformMatrix4fv(program->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+
+        glm::mat4 proj;
+        proj = glm::perspective(glm::radians(45.0f), (float) WINSIZEW / (float) WINSIZEH, 0.1f, 100.0f);
+        glUniformMatrix4fv(program->uniform("proj"), 1, GL_FALSE, glm::value_ptr(proj));
+
+        for (GLuint i = 0; i < 10; i++) {
+
+                glm::mat4 model;
+                model = glm::translate(model, positions[i]);
+                model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(50.0f) + i, glm::vec3(1.0f, 1.0f, 0.0f));
+                glUniformMatrix4fv(program->uniform("model"), 1, GL_FALSE, glm::value_ptr(model));
+
+                // Draw object
+                object.draw();
+        }
 
         // Unbind object
         object.unbind();
 
         // Unbind program
         program->toggle();
-}
+} }
 
 /*
  * Main procedure
@@ -170,14 +178,38 @@ int main(int argc, char *argv[])
         // Load the damn square
         scramble::square square;
 
+        glm::vec3 positions[] = {
+                glm::vec3( 0.0f,  0.0f,  0.0f),
+                glm::vec3( 2.0f,  5.0f, -15.0f),
+                glm::vec3(-1.5f, -2.2f, -2.5f),
+                glm::vec3(-3.8f, -2.0f, -12.3f),
+                glm::vec3( 2.4f, -0.4f, -3.5f),
+                glm::vec3(-1.7f,  3.0f, -7.5f),
+                glm::vec3( 1.3f, -2.0f, -2.5f),
+                glm::vec3( 1.5f,  2.0f, -2.5f),
+                glm::vec3( 1.5f,  0.2f, -1.5f),
+                glm::vec3(-1.3f,  1.0f, -1.5f)
+        };
+
+        // GLsetup: viewport
+        glViewport(0, 0, WINSIZEW, WINSIZEH);
+
+        // GLsetup: depthtesting
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        // GLsetup: alphablending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         // Rendering loop (don't edit this)
-        while (!glfwWindowShouldClose(gwindow)) {
+        while (glfwWindowShouldClose(gwindow) == 0) {
 
                 // Process events
                 glfwPollEvents();
 
                 // Render procedure
-                render(square);
+                render(square, positions);
 
                 // Off-screen to on-screen
                 glfwSwapBuffers(gwindow);
