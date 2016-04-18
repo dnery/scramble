@@ -14,6 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // Project locals
+#include "viewer.hh"
 #include "objects.hh"
 #include "platform.hh"
 #include "unscramble.hh"
@@ -28,15 +29,13 @@ const             GLuint WINSIZEH = 600;                    // Window size H
 
 GLFWwindow        *gwindow = nullptr;                       // Context window
 scramble::program *program = nullptr;                       // Shader program
+scramble::viewer  viewer;                                   // Camera object
 
-/*
- * Callback: keypress function
- */
-void callback_key(GLFWwindow *gwindow, int key, int scan, int action, int mode)
-{
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(gwindow, GL_TRUE);
-}
+bool              mousein = true;                           // First mouse in
+GLfloat           pitch = 0.0f;                             // euler: pitch
+GLfloat           yaw = -90.0f;                             // euler: yaw
+GLfloat           lastxpos = WINSIZEW / 2.0f;               // last x look
+GLfloat           lastypos = WINSIZEH / 2.0f;               // last y look
 
 /*
  * Callback: on error function
@@ -44,6 +43,52 @@ void callback_key(GLFWwindow *gwindow, int key, int scan, int action, int mode)
 void callback_err(int code, const char *msg)
 {
         throw std::runtime_error(msg);
+}
+
+/*
+ * Callback: keypress function
+ */
+void callback_key(GLFWwindow *gwindow, int key, int scan, int action, int mode)
+{
+        if (action == GLFW_PRESS)
+                viewer.input_keys[key] = true;
+        else if (action == GLFW_RELEASE)
+                viewer.input_keys[key] = false;
+
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+                glfwSetWindowShouldClose(gwindow, GL_TRUE);
+}
+
+/*
+ * Callback: mouse-input function
+ */
+void callback_mouse(GLFWwindow *gwindow, double xpos, double ypos)
+{
+        if(mousein ==  true) {
+                lastxpos = xpos;
+                lastypos = ypos;
+                mousein = false;
+        }
+
+        GLfloat xoffset = xpos - lastxpos;
+        GLfloat yoffset = lastypos - ypos;
+        lastxpos = xpos;
+        lastypos = ypos;
+
+        GLfloat sensitivity = 0.05;
+        xoffset *= sensitivity;
+        yoffset *= sensitivity;
+
+        yaw += xoffset;
+        pitch += yoffset;
+        pitch = (pitch > 89.0f ? 89.0f : pitch);
+        pitch = (pitch < -89.0f ? -89.0f : pitch);
+
+        glm::vec3 front;
+        front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+        front.y = sin(glm::radians(pitch));
+        front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+        viewer.front = glm::normalize(front);
 }
 
 /*
@@ -68,9 +113,13 @@ void engage_glfw()
         unsc_assert(gwindow != nullptr);
         glfwMakeContextCurrent(gwindow);
 
+        // Set input modes
+        glfwSetInputMode(gwindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         // Set event callbacks
         glfwSetErrorCallback(callback_err);
         glfwSetKeyCallback(gwindow, callback_key);
+        glfwSetCursorPosCallback(gwindow, callback_mouse);
 }
 
 /*
@@ -122,14 +171,17 @@ namespace { inline void render(scramble::object& object, glm::vec3 positions[])
         //fluct = static_cast<GLfloat>(sin(glfwGetTime()) / 2) + 0.5f;
         //glUniform1f(program->uniform("fluct"), fluct);
 
+        // VIEW MATRIX
         glm::mat4 view;
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        view = glm::lookAt(viewer.position, viewer.position + viewer.front, viewer.up);
         glUniformMatrix4fv(program->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 
+        // PROJECTION MATRIX
         glm::mat4 proj;
-        proj = glm::perspective(glm::radians(45.0f), (float) WINSIZEW / (float) WINSIZEH, 0.1f, 100.0f);
+        proj = glm::perspective(glm::radians(45.0f), static_cast<float>(WINSIZEW) / static_cast<float>(WINSIZEH), 0.1f, 100.0f);
         glUniformMatrix4fv(program->uniform("proj"), 1, GL_FALSE, glm::value_ptr(proj));
 
+        // MODEL MATRIX
         for (GLuint i = 0; i < 10; i++) {
 
                 glm::mat4 model;
@@ -211,6 +263,10 @@ int main(int argc, char *argv[])
 
                 // Process events
                 glfwPollEvents();
+
+                // Process viewer
+                viewer.update();
+                viewer.move();
 
                 // Render procedure
                 render(cube, positions);
