@@ -14,7 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // Project locals
-#include "viewer.hh"
+#include "camera.hh"
 #include "objects.hh"
 #include "platform.hh"
 #include "unscramble.hh"
@@ -22,20 +22,44 @@
 #include "shader_linker.hh"
 
 /*
- * Globals and constants
+ * Window & program
  */
-const             GLuint WINSIZEW = 800;                    // Window size W
-const             GLuint WINSIZEH = 600;                    // Window size H
-
+const GLuint WINSIZEW = 800;                                // Window size W
+const GLuint WINSIZEH = 600;                                // Window size H
 GLFWwindow        *gwindow = nullptr;                       // Context window
 scramble::program *program = nullptr;                       // Shader program
-scramble::viewer  viewer;                                   // Camera object
 
-bool              mousein = true;                           // First mouse in
-GLfloat           pitch = 0.0f;                             // euler: pitch
-GLfloat           yaw = -90.0f;                             // euler: yaw
-GLfloat           lastxpos = WINSIZEW / 2.0f;               // last x look
-GLfloat           lastypos = WINSIZEH / 2.0f;               // last y look
+/*
+ * Camera related stuff
+ */
+scramble::camera camera;
+GLfloat          lastxpos = WINSIZEW / 2.0f;                // last x look
+GLfloat          lastypos = WINSIZEH / 2.0f;                // last y look
+
+/*
+ * Input & normalizations
+ */
+bool    keys_in[1024];                                      // GLFW key bitmap
+bool    mouse_in = true;                                    // First mouse input
+GLfloat delta_time = 0.0f;                                  // last frame time diff
+GLfloat last_frame = 0.0f;                                  // last frame timestamp
+
+/*
+ * Sample object & instances
+ */
+scramble::cube *cube;
+glm::vec3 reps[] = {
+        glm::vec3( 0.0f,  0.0f,    0.0f),
+        glm::vec3( 2.0f,  5.0f,  -15.0f),
+        glm::vec3(-1.5f, -2.2f,   -2.5f),
+        glm::vec3(-3.8f, -2.0f,  -12.3f),
+        glm::vec3( 2.4f, -0.4f,   -3.5f),
+        glm::vec3(-1.7f,  3.0f,   -7.5f),
+        glm::vec3( 1.3f, -2.0f,   -2.5f),
+        glm::vec3( 1.5f,  2.0f,   -2.5f),
+        glm::vec3( 1.5f,  0.2f,   -1.5f),
+        glm::vec3(-1.3f,  1.0f,   -1.5f)
+};
 
 /*
  * Callback: on error function
@@ -48,15 +72,19 @@ void callback_err(int code, const char *msg)
 /*
  * Callback: keypress function
  */
-void callback_key(GLFWwindow *gwindow, int key, int scan, int action, int mode)
+void callback_keys(GLFWwindow *gwindow, int key, int scan, int action, int mode)
 {
-        if (action == GLFW_PRESS)
-                viewer.input_keys[key] = true;
-        else if (action == GLFW_RELEASE)
-                viewer.input_keys[key] = false;
-
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
                 glfwSetWindowShouldClose(gwindow, GL_TRUE);
+
+        if (key >= 0 && key < 1024) {
+
+                if (action == GLFW_PRESS)
+                        keys_in[key] = true;
+
+                else if (action == GLFW_RELEASE)
+                        keys_in[key] = false;
+        }
 }
 
 /*
@@ -64,31 +92,24 @@ void callback_key(GLFWwindow *gwindow, int key, int scan, int action, int mode)
  */
 void callback_mouse(GLFWwindow *gwindow, double xpos, double ypos)
 {
-        if(mousein ==  true) {
+        if (mouse_in == true) {
                 lastxpos = xpos;
                 lastypos = ypos;
-                mousein = false;
+                mouse_in = false;
         }
 
-        GLfloat xoffset = xpos - lastxpos;
-        GLfloat yoffset = lastypos - ypos;
+        camera.mouse_look(xpos - lastxpos, lastypos - ypos);
+
         lastxpos = xpos;
         lastypos = ypos;
+}
 
-        GLfloat sensitivity = 0.05;
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
-
-        yaw += xoffset;
-        pitch += yoffset;
-        pitch = (pitch > 89.0f ? 89.0f : pitch);
-        pitch = (pitch < -89.0f ? -89.0f : pitch);
-
-        glm::vec3 front;
-        front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-        front.y = sin(glm::radians(pitch));
-        front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-        viewer.front = glm::normalize(front);
+/*
+ * Callback: mouse-scroll function
+ */
+void callback_scroll(GLFWwindow *gwindow, double xoffset, double yoffset)
+{
+        camera.mouse_scroll(yoffset);
 }
 
 /*
@@ -113,13 +134,14 @@ void engage_glfw()
         unsc_assert(gwindow != nullptr);
         glfwMakeContextCurrent(gwindow);
 
-        // Set input modes
-        glfwSetInputMode(gwindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
         // Set event callbacks
         glfwSetErrorCallback(callback_err);
-        glfwSetKeyCallback(gwindow, callback_key);
+        glfwSetKeyCallback(gwindow, callback_keys);
+        glfwSetScrollCallback(gwindow, callback_scroll);
         glfwSetCursorPosCallback(gwindow, callback_mouse);
+
+        // Set input modes
+        glfwSetInputMode(gwindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 /*
@@ -131,6 +153,17 @@ void engage_glew()
         glewExperimental = GL_TRUE;
         unsc_assert(glewInit() == GLEW_OK);
         unsc_assert(GLEW_VERSION_3_3 != 0);
+
+        // GLsetup: viewport
+        glViewport(0, 0, WINSIZEW, WINSIZEH);
+
+        // GLsetup: depthtesting
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        // GLsetup: alphablending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void engage_prog()
@@ -145,14 +178,32 @@ void engage_prog()
 
         // Create the shader program
         program = new scramble::program(shaders);
-
-        // Deletion is already taken care of!
 }
 
 /*
- * Render full scene
+ * Update state
  */
-namespace { inline void render(scramble::object& object, glm::vec3 positions[])
+inline void update()
+{
+        GLfloat curr_frame = glfwGetTime();                 // Frame timestamp
+
+        delta_time = curr_frame - last_frame;
+        last_frame = curr_frame;
+
+        if (keys_in[GLFW_KEY_A] == true)
+                camera.keyboard(scramble::movement::LEFT, delta_time);
+        if (keys_in[GLFW_KEY_D] == true)
+                camera.keyboard(scramble::movement::RIGHT, delta_time);
+        if (keys_in[GLFW_KEY_W] == true)
+                camera.keyboard(scramble::movement::FORWARD, delta_time);
+        if (keys_in[GLFW_KEY_S] == true)
+                camera.keyboard(scramble::movement::BACKWARD, delta_time);
+}
+
+/*
+ * Render state
+ */
+inline void render()
 {
         // set clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -163,53 +214,57 @@ namespace { inline void render(scramble::object& object, glm::vec3 positions[])
         // Bind the program
         program->toggle();
 
-        // Bind object
-        object.bind(program);
-
-        // Set transformations
-        //GLfloat fluct;
-        //fluct = static_cast<GLfloat>(sin(glfwGetTime()) / 2) + 0.5f;
-        //glUniform1f(program->uniform("fluct"), fluct);
+        // Bind cube
+        cube->bind(program);
 
         // VIEW MATRIX
         glm::mat4 view;
-        view = glm::lookAt(viewer.position, viewer.position + viewer.front, viewer.up);
+        view = camera.view_mat();
         glUniformMatrix4fv(program->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 
         // PROJECTION MATRIX
         glm::mat4 proj;
-        proj = glm::perspective(glm::radians(45.0f), static_cast<float>(WINSIZEW) / static_cast<float>(WINSIZEH), 0.1f, 100.0f);
+        proj = glm::perspective(camera.look_zoom, static_cast<float>(WINSIZEW) / static_cast<float>(WINSIZEH), 0.1f, 100.0f);
         glUniformMatrix4fv(program->uniform("proj"), 1, GL_FALSE, glm::value_ptr(proj));
 
         // MODEL MATRIX
         for (GLuint i = 0; i < 10; i++) {
 
                 glm::mat4 model;
-                model = glm::translate(model, positions[i]);
+                model = glm::translate(model, reps[i]);
                 model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(50.0f) + i, glm::vec3(1.0f, 1.0f, 0.0f));
                 glUniformMatrix4fv(program->uniform("model"), 1, GL_FALSE, glm::value_ptr(model));
 
-                // Draw object
-                object.draw();
+                // Draw cube
+                cube->draw();
         }
 
-        // Unbind object
-        object.unbind();
+        // Unbind cube
+        cube->unbind();
 
         // Unbind program
         program->toggle();
-} }
+}
 
 /*
  * Main procedure
  */
 int main(int argc, char *argv[])
 {
-        // Initialize GLFW
-        engage_glfw();
+        // Initialize program
+        try {
+                engage_glfw();
+                engage_glew();
+                engage_prog();
 
-        // Initialize Glew
-        engage_glew();
+        } catch (std::exception& e) {
+
+                std::cerr << "Error: " << e.what() << std::endl;
+                return EXIT_FAILURE;
+        }
+
+        // Sample object
+        cube = new scramble::cube();
 
         // Debug info
         std::cout << "OpenGL version: " <<
@@ -221,55 +276,17 @@ int main(int argc, char *argv[])
         std::cout << "Vendor: " <<
                 glGetString(GL_VENDOR) << std::endl;
 
-        // Initialize program
-        try {
-                engage_prog();
-
-        } catch (std::exception& e) {
-
-                std::cerr << "Error: " << e.what() << std::endl;
-                return EXIT_FAILURE;
-        }
-
-        // Load the damn square
-        scramble::cube cube;
-
-        glm::vec3 positions[] = {
-                glm::vec3( 0.0f,  0.0f,  0.0f),
-                glm::vec3( 2.0f,  5.0f, -15.0f),
-                glm::vec3(-1.5f, -2.2f, -2.5f),
-                glm::vec3(-3.8f, -2.0f, -12.3f),
-                glm::vec3( 2.4f, -0.4f, -3.5f),
-                glm::vec3(-1.7f,  3.0f, -7.5f),
-                glm::vec3( 1.3f, -2.0f, -2.5f),
-                glm::vec3( 1.5f,  2.0f, -2.5f),
-                glm::vec3( 1.5f,  0.2f, -1.5f),
-                glm::vec3(-1.3f,  1.0f, -1.5f)
-        };
-
-        // GLsetup: viewport
-        glViewport(0, 0, WINSIZEW, WINSIZEH);
-
-        // GLsetup: depthtesting
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-
-        // GLsetup: alphablending
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         // Rendering loop (don't edit this)
         while (glfwWindowShouldClose(gwindow) == 0) {
 
                 // Process events
                 glfwPollEvents();
 
-                // Process viewer
-                viewer.update();
-                viewer.move();
+                // Update procedure
+                update();
 
                 // Render procedure
-                render(cube, positions);
+                render();
 
                 // Off-screen to on-screen
                 glfwSwapBuffers(gwindow);
