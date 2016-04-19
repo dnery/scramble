@@ -16,12 +16,12 @@
 //   The aforementioned file is being modified and redistributed.
 //
 
+#include "platform.hh"                                      // Defining this
+
 #include <cmath>
 #include <string>
 #include <limits>
 #include <climits>
-
-#include "platform.hh"
 
 #if defined( __APPLE_CC__ ) || defined ( __APPLE__ )
 	#define PLATFORM_OSX

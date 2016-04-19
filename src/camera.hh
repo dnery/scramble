@@ -8,7 +8,6 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-//
 namespace scramble
 {
         extern const GLfloat PIT;                           // default pitch
@@ -42,7 +41,7 @@ namespace scramble
 
                 glm::mat4 view_mat();
 
-                void keyboard(GLuint direction, GLfloat delta_time);
+                void keypress(GLuint direction, GLfloat delta_time);
 
                 void mouse_look(GLfloat xoffset, GLfloat yoffset, GLboolean constrain = true);
 
@@ -50,6 +49,8 @@ namespace scramble
 
                 void update_vectors();
         };
+
+        extern camera camera;                               // external linkage
 }
 
 #endif                                                      //SCRAMBLE_CAMERA_H

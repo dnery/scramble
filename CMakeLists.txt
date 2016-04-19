@@ -4,13 +4,16 @@ project(scramble)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL -g -Wall")
 
 set(SOURCE_FILES
-        main.cc unscramble.hh
-        shader_loader.cc shader_loader.hh
-        shader_linker.cc shader_linker.hh
-        platform.cc platform.hh
-        objects.cc objects.hh
-        camera.cc camera.hh
-        viewer.cc viewer.hh
-        )
+        src/main.cc
+        src/ext/unscramble.hh
+        src/ext/platform.cc src/ext/platform.hh
+        src/listener.cc src/listener.hh
+        src/program.cc src/program.hh
+        src/shader.cc src/shader.hh
+        src/object.cc src/object.hh
+        src/window.cc src/window.hh
+        src/camera.cc src/camera.hh
+        src/engine.cc src/engine.hh
+)
 
 add_executable(scramble ${SOURCE_FILES})

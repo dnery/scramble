@@ -1,3 +1,4 @@
+// Self contained header file.
 //
 // Created by danilo on 4/1/16.
 //

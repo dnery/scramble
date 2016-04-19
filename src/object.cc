@@ -2,12 +2,10 @@
 // Created by danilo on 4/12/16.
 //
 
-#include <GL/glew.h>
-#include <SOIL/SOIL.h>
+#include "object.hh"                                        // Defines this
 
-#include "objects.hh"
-#include "platform.hh"
-#include "shader_linker.hh"
+#include <SOIL/SOIL.h>
+#include "ext/platform.hh"
 
 scramble::object::object() :
         vbo(0),

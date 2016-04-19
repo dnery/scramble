@@ -6,10 +6,7 @@
 #define SCRAMBLE_OBJECT_HH
 
 #include <GL/glew.h>
-
-#include "shader_linker.hh"
-
-#define TESTDEF 300
+#include "program.hh"
 
 namespace scramble {
 
@@ -56,4 +53,4 @@ namespace scramble {
         };
 }
 
-#endif //SCRAMBLE_OBJECT_HH
+#endif                                                       //SCRAMBLE_OBJECT_HH

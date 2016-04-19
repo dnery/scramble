@@ -2,15 +2,12 @@
 // Created by danilo on 3/31/16.
 //
 
-#include <string>
+#include "shader.hh"                                        // Defines this
+
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-
-#include <GL/glew.h>
-
-#include "unscramble.hh"
-#include "shader_loader.hh"
+#include "ext/unscramble.hh"
 
 /*
  * Non-trivial constructor.

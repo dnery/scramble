@@ -2,7 +2,7 @@
 // Created by danilo on 4/17/16.
 //
 
-#include "camera.hh"                                        // Defining this
+#include "camera.hh"                                        // Defines this
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -33,7 +33,7 @@ glm::mat4 scramble::camera::view_mat()
         return glm::lookAt(position, position + front, cam_up);
 }
 
-void scramble::camera::keyboard(GLuint direction, GLfloat delta_time)
+void scramble::camera::keypress(GLuint direction, GLfloat delta_time)
 {
         GLfloat final_speed = move_speed * delta_time;
 
@@ -68,7 +68,7 @@ void scramble::camera::mouse_look(GLfloat xoffset, GLfloat yoffset, GLboolean co
 
 void scramble::camera::mouse_scroll(GLfloat yoffset)
 {
-        look_zoom -= yoffset;
+        look_zoom -= yoffset * sensitivity;
         look_zoom = (look_zoom < 1.0f ? 1.0f : look_zoom);
         look_zoom = (look_zoom > 45.0f ? 45.0f : look_zoom);
 }
@@ -93,3 +93,5 @@ void scramble::camera::update_vectors()
          */
         cam_up = glm::normalize(glm::cross(right, front));
 }
+
+struct scramble::camera scramble::camera;

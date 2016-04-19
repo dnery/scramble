@@ -2,11 +2,10 @@
 // Created by danilo on 3/31/16.
 //
 
-#ifndef SCRAMBLE_SHADER_LOADER_H
-#define SCRAMBLE_SHADER_LOADER_H
+#ifndef SCRAMBLE_SHADER_H
+#define SCRAMBLE_SHADER_H
 
 #include <string>
-
 #include <GL/glew.h>
 
 namespace scramble {
@@ -49,4 +48,4 @@ namespace scramble {
         shader shader_from_file(const std::string path, GLenum type);
 }
 
-#endif //SCRAMBLE_SHADER_LOADER_H
+#endif                                                      //SCRAMBLE_SHADER_H
