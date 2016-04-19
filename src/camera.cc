@@ -68,9 +68,9 @@ void scramble::camera::mouse_look(GLfloat xoffset, GLfloat yoffset, GLboolean co
 
 void scramble::camera::mouse_scroll(GLfloat yoffset)
 {
-        look_zoom -= yoffset * sensitivity;
+        look_zoom -= (yoffset * sensitivity);
         look_zoom = (look_zoom < 1.0f ? 1.0f : look_zoom);
-        look_zoom = (look_zoom > 45.0f ? 45.0f : look_zoom);
+        look_zoom = (look_zoom > 90.0f ? 90.0f : look_zoom);
 }
 
 void scramble::camera::update_vectors()

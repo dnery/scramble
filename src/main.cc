@@ -1,10 +1,18 @@
+#include <iostream>
+#include <stdexcept>
 #include "engine.hh"
 
 int main(int argc, char *argv[])
 {
-        scramble::engine engine;
+        try {
+                scramble::engine engine;
 
-        engine.engage();
+                engine.engage();
+
+        } catch (std::runtime_error& e) {
+
+                std::cout << "Error: " << e.what() << std::endl;
+        }
 
         return EXIT_SUCCESS;
 }
