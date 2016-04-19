@@ -1,10 +1,12 @@
 #version 330 core
 
 in vec2 vs_texcoord;
+in vec3 vs_worldpos;
+in vec3 vs_normal;
 
 out vec4 fs_pixcolor;
 
-uniform float fluct;
+uniform vec3 caster;
 uniform sampler2D fs_texture1;
 uniform sampler2D fs_texture2;
 

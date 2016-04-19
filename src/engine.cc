@@ -114,6 +114,10 @@ void scramble::engine::render()
         program->toggle();
         cube->bind(program);
 
+        // LIGHT CASTER
+        //glm::vec3 caster(0.0f, 5.0f, 0.0f);
+        //program->setUniform("caster", caster);
+
         // VIEW MATRIX
         glm::mat4 view;
         view = scramble::camera.view_mat();

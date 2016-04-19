@@ -41,7 +41,7 @@ namespace scramble {
                 ~cube();
 
         private:
-                const GLfloat vertices[180]; // All vertices
+                const GLfloat vertices[288]; // All vertices
 
                 int           texw;	     // Texture width
                 int           texh; 	     // Texture height
