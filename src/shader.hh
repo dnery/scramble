@@ -1,6 +1,6 @@
-//
-// Created by danilo on 3/31/16.
-//
+/*
+ * Created by danilo on 3/31/16.
+ */
 
 #ifndef SCRAMBLE_SHADER_H
 #define SCRAMBLE_SHADER_H
@@ -10,42 +10,52 @@
 
 namespace scramble {
 
-        struct shader_rep {
+	struct shader_rep {
 
-                friend struct shader;   // shader object access facade
+		shader_rep(std::string code, GLenum type);
 
-                shader_rep(std::string code, GLenum type);
+		~shader_rep();
 
-                ~shader_rep();
+		friend struct shader; // shader object access facade
 
-        private:
-                GLuint        globject; // GL shader object itself
-                int           refcount; // reference count
-        };
+	private:
+		GLuint globject;      // GL shader object itself
+		int refcount;         // reference count
+	};
 
-        struct shader {
+	struct shader {
 
-                shader(std::string code, GLenum type);
+		shader(std::string code, GLenum type);
 
-                ~shader();
+		~shader();
 
-                shader(const shader& other);
+		/*
+		 * Shader is ref-counted; can be copy constructed
+		 */
+		shader(const shader& other);
 
-                shader& operator=(shader other);
+		/*
+		 * Shader is ref-counted; can be copy assigned
+		 */
+		shader& operator=(shader other);
 
-                GLuint get() const;
+		GLuint get() const;
 
-                friend void swap(shader& a, shader& b);
+		friend void swap(shader& a, shader& b);
 
-        private:
-                shader_rep *rep; // pointer to ref-counted shader
-        };
+	private:
+		shader_rep *rep; // pointer to ref-counted shader
+	};
 
-        // Compose compiler error message
-        std::string compiler_errmsg(GLuint globject);
+	/*
+	 * Compose compiler error message
+	 */
+	std::string compiler_errmsg(GLuint globject);
 
-        // Instantiate shader from source file
-        shader shader_from_file(const std::string path, GLenum type);
+	/*
+	 * Instantiate shader from source file
+	 */
+	shader shader_from_file(const std::string path, GLenum type);
 }
 
-#endif                                                      //SCRAMBLE_SHADER_H
+#endif /* SCRAMBLE_SHADER_H */

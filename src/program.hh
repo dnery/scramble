@@ -1,6 +1,6 @@
-//
-// Created by danilo on 4/1/16.
-//
+/*
+ * Created by danilo on 4/1/16.
+ */
 
 #ifndef SCRAMBLE_PROGRAM_H
 #define SCRAMBLE_PROGRAM_H
@@ -14,25 +14,25 @@
 
 namespace scramble {
 
-        struct program {
+	struct program {
 
-                program(const std::vector<scramble::shader>& shaders);
+		program(const std::vector<scramble::shader>& shaders);
 
-                ~program();
+		~program();
 
-                program(const program& other) = delete;
+		program(const program& other) = delete;
 
-                program& operator=(program other) = delete;
+		program& operator=(program other) = delete;
 
-                GLuint get() const;
+		GLuint get() const;
 
-                bool in_use() const;
+		bool in_use() const;
 
-                void toggle() const;
+		void toggle() const;
 
-                GLint attrib(const GLchar *name) const;
+		GLint attrib(const GLchar *name) const;
 
-                GLint uniform(const GLchar *name) const;
+		GLint uniform(const GLchar *name) const;
 
 # define _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE) \
                 void setAttrib(const GLchar* attribName, OGL_TYPE v0); \
@@ -55,28 +55,48 @@ namespace scramble {
                 void setUniform3v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
                 void setUniform4v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
 
-                _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLfloat)
-                _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLdouble)
-                _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLint)
-                _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLuint)
 
-                void setUniformMatrix2(const GLchar* uniformName, const GLfloat* v, GLsizei count=1, GLboolean transpose=GL_FALSE);
-                void setUniformMatrix3(const GLchar* uniformName, const GLfloat* v, GLsizei count=1, GLboolean transpose=GL_FALSE);
-                void setUniformMatrix4(const GLchar* uniformName, const GLfloat* v, GLsizei count=1, GLboolean transpose=GL_FALSE);
+		_TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLfloat)
 
-                void setUniform(const GLchar* uniformName, const glm::mat2& m, GLboolean transpose=GL_FALSE);
-                void setUniform(const GLchar* uniformName, const glm::mat3& m, GLboolean transpose=GL_FALSE);
-                void setUniform(const GLchar* uniformName, const glm::mat4& m, GLboolean transpose=GL_FALSE);
+		_TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLdouble)
 
-                void setUniform(const GLchar* uniformName, const glm::vec3& v);
-                void setUniform(const GLchar* uniformName, const glm::vec4& v);
+		_TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLint)
 
-        private:
-                GLuint globject; // GL program object itself
-        };
+		_TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLuint)
 
-        // Compose linker error message
-        std::string linker_errmsg(GLuint globject);
+		void setUniformMatrix2(const GLchar *uniformName,
+		                       const GLfloat *v, GLsizei count = 1,
+		                       GLboolean transpose = GL_FALSE);
+
+		void setUniformMatrix3(const GLchar *uniformName,
+		                       const GLfloat *v, GLsizei count = 1,
+		                       GLboolean transpose = GL_FALSE);
+
+		void setUniformMatrix4(const GLchar *uniformName,
+		                       const GLfloat *v, GLsizei count = 1,
+		                       GLboolean transpose = GL_FALSE);
+
+		void setUniform(const GLchar *uniformName, const glm::mat2& m,
+		                GLboolean transpose = GL_FALSE);
+
+		void setUniform(const GLchar *uniformName, const glm::mat3& m,
+		                GLboolean transpose = GL_FALSE);
+
+		void setUniform(const GLchar *uniformName, const glm::mat4& m,
+		                GLboolean transpose = GL_FALSE);
+
+		void setUniform(const GLchar *uniformName, const glm::vec3& v);
+
+		void setUniform(const GLchar *uniformName, const glm::vec4& v);
+
+	private:
+		GLuint globject; // GL program object itself
+	};
+
+	/*
+	 *  Compose linker error message
+	 */
+	std::string linker_errmsg(GLuint globject);
 }
 
-#endif                                                      //SCRAMBLE_PROGRAM_H
+#endif /* SCRAMBLE_PROGRAM_H */

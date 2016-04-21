@@ -114,5 +114,5 @@ static std::string process_path() {
 }
 
 std::string resource_path(std::string file_name) {
-	return process_path() + "../assets/" + file_name;
+	return process_path() + "../../assets/" + file_name;
 }

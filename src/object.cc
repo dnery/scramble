@@ -1,8 +1,8 @@
-//
-// Created by danilo on 4/12/16.
-//
+/*
+ * Created by danilo on 4/12/16.
+ */
 
-#include "object.hh"                                        // Defines this
+#include "object.hh"
 
 #include <SOIL/SOIL.h>
 #include "ext/platform.hh"
@@ -16,8 +16,10 @@ scramble::object::object() :
 
 scramble::cube::cube() : object(),
         vertices{
-                // Verts              // Tex's    // Normals
                 -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  0.0f, -1.0f,
+/*               ^~~~~~~~~~~~~~~~~~^  ^~~~~~~~~~~~~~~~^  ^~~~~~~~~~~^
+ *               positions            texcoords          normals
+ */
                  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  0.0f, -1.0f,
                  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f,
                  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f,

@@ -1,6 +1,6 @@
-//
-// Created by danilo on 4/17/16.
-//
+/*
+ * Created by danilo on 4/17/16.
+ */
 
 #ifndef SCRAMBLE_ENGINE_H
 #define SCRAMBLE_ENGINE_H
@@ -12,29 +12,29 @@
 
 namespace scramble {
 
-        struct engine {
+	struct engine {
 
-                engine();
+		engine();
 
-                ~engine();
+		~engine();
 
-                engine(const engine& other) = delete;
+		engine(const engine& other) = delete;
 
-                engine& operator=(engine other) = delete;
+		engine& operator=(engine other) = delete;
 
-                void engage();
+		void engage();
 
-                void update();
+		void update();
 
-                void render();
+		void render();
 
-        private:
-                scramble::window  window;                   // GL context
+	private:
+		scramble::window window;    // GL context
 
-                glm::vec3         reps[20];                 // draw n-times
-                scramble::program *program;                 // sample shaderprog
-                scramble::object  *cube;                    // sample object
-        };
+		glm::vec3 reps[20];         // draw n-times
+		scramble::program *program; // sample shader program
+		scramble::object *cube;     // sample container object
+	};
 }
 
-#endif                                                      //SCRAMBLE_ENGINE_H
+#endif /* SCRAMBLE_ENGINE_H */

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stdexcept>
 #include "engine.hh"
 
 int main(int argc, char *argv[])

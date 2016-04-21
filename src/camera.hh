@@ -1,6 +1,6 @@
-//
-// Created by danilo on 4/17/16.
-//
+/*
+ * Created by danilo on 4/17/16.
+ */
 
 #ifndef SCRAMBLE_CAMERA_H
 #define SCRAMBLE_CAMERA_H
@@ -8,49 +8,50 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-namespace scramble
-{
-        extern const GLfloat PIT;                           // default pitch
-        extern const GLfloat YAW;                           // default yaw
-        extern const GLfloat ZOOM;                          // default zoom
-        extern const GLfloat SPEED;                         // default speed
-        extern const GLfloat SENSITIVITY;                   // default sensitivity
+namespace scramble {
 
-        enum movement {
-                LEFT     = 1,                               // move flag: left
-                RIGHT    = 2,                               // move flag: right
-                FORWARD  = 4,                               // move flag: forward
-                BACKWARD = 8                                // move flag: backward
-        };
+	extern const GLfloat PIT;         // default pitch
+	extern const GLfloat YAW;         // default yaw
+	extern const GLfloat ZOOM;        // default zoom
+	extern const GLfloat SPEED;       // default speed
+	extern const GLfloat SENSITIVITY; // default sensitivity
 
-        struct camera {
+	enum movement {
+		LEFT = 1,                 // move flag: left
+		RIGHT = 2,                // move flag: right
+		FORWARD = 4,              // move flag: forward
+		BACKWARD = 8              // move flag: backward
+	};
 
-                glm::vec3 position;                         // position vector
-                glm::vec3 front;                            // front-pointing vector
-                glm::vec3 right;                            // right-pointing vector
-                glm::vec3 cam_up;                           // camera up vector
-                glm::vec3 world_up;                         // world up vector
+	struct camera {
 
-                GLfloat look_pit;                           // look pitch rotation
-                GLfloat look_yaw;                           // look yaw rotation
-                GLfloat look_zoom;                          // look zoom factor
-                GLfloat move_speed;                         // movement speed
-                GLfloat sensitivity;                        // look sensitivity
+		glm::vec3 position;       // position vector
+		glm::vec3 front;          // front-pointing vector
+		glm::vec3 right;          // right-pointing vector
+		glm::vec3 cam_up;         // camera up vector
+		glm::vec3 world_up;       // world up vector
 
-                camera();
+		GLfloat look_pit;         // look pitch rotation
+		GLfloat look_yaw;         // look yaw rotation
+		GLfloat look_zoom;        // look zoom factor
+		GLfloat move_speed;       // movement speed
+		GLfloat sensitivity;      // look sensitivity
 
-                glm::mat4 view_mat();
+		camera();
 
-                void keypress(GLuint direction, GLfloat delta_time);
+		glm::mat4 view_mat();
 
-                void mouse_look(GLfloat xoffset, GLfloat yoffset, GLboolean constrain = true);
+		void keypress(GLuint direction, GLfloat delta_time);
 
-                void mouse_scroll(GLfloat yoffset);
+		void mouse_look(GLfloat xoffset, GLfloat yoffset,
+		                GLboolean constrain = GL_TRUE);
 
-                void update_vectors();
-        };
+		void mouse_scroll(GLfloat yoffset);
 
-        extern camera camera;                               // external linkage
+		void update_vectors();
+	};
+
+	extern camera camera; // external linkage for the camera object
 }
 
-#endif                                                      //SCRAMBLE_CAMERA_H
+#endif /* SCRAMBLE_CAMERA_H */

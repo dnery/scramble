@@ -1,42 +1,41 @@
-//
-// Created by danilo on 3/31/16.
-//
+/*
+ * Created by danilo on 3/31/16.
+ */
 
-#include "shader.hh"                                        // Defines this
+#include "shader.hh"
 
 #include <fstream>
 #include <sstream>
-#include <stdexcept>
 #include "ext/unscramble.hh"
 
 /*
  * Non-trivial constructor.
  */
 scramble::shader_rep::shader_rep(std::string code, GLenum type) :
-        globject(glCreateShader(type)),
-        refcount(1)
+	globject(glCreateShader(type)),
+	refcount(1)
 {
-        const char  *c_code = code.c_str(); // c-style string for shader code
-        GLint       status;                 // captures shader compile status
-        std::string errmsg;                 // holds possible compile errmsg
+	const char *c_code = code.c_str(); // c-style string for shader code
+	GLint status;                      // captures shader compile status
+	std::string errmsg;                // holds possible compile errmsg
 
-        // check objects
-        unsc_assert(globject != 0);
+	// check objects
+	unsc_assert(globject != 0);
 
-        // source and compile shader code
-        glShaderSource(globject, 1, &c_code, nullptr);
-        glCompileShader(globject);
+	// source and compile shader code
+	glShaderSource(globject, 1, &c_code, nullptr);
+	glCompileShader(globject);
 
-        // check for compile errors
-        glGetShaderiv(globject, GL_COMPILE_STATUS, &status);
+	// check for compile errors
+	glGetShaderiv(globject, GL_COMPILE_STATUS, &status);
 
-        // throw if any exist
-        if (status == GL_FALSE) {
+	// throw if any exist
+	if (status == GL_FALSE) {
 
-                errmsg = compiler_errmsg(globject);
-                glDeleteShader(globject);
-                throw std::runtime_error(errmsg);
-        }
+		errmsg = compiler_errmsg(globject);
+		glDeleteShader(globject);
+		throw std::runtime_error(errmsg);
+	}
 }
 
 /*
@@ -44,14 +43,14 @@ scramble::shader_rep::shader_rep(std::string code, GLenum type) :
  */
 scramble::shader_rep::~shader_rep()
 {
-        glDeleteShader(globject);
+	glDeleteShader(globject);
 }
 
 /*
  * Non-trivial constructor.
  */
 scramble::shader::shader(std::string code, GLenum type) :
-        rep(new shader_rep(code, type))
+	rep(new shader_rep(code, type))
 {
 }
 
@@ -60,11 +59,11 @@ scramble::shader::shader(std::string code, GLenum type) :
  */
 scramble::shader::~shader()
 {
-        if (rep != nullptr && --rep->refcount <= 0) {
+	if (rep != nullptr && --rep->refcount <= 0) {
 
-                delete rep;
-                rep = nullptr;
-        }
+		delete rep;
+		rep = nullptr;
+	}
 }
 
 /*
@@ -72,16 +71,16 @@ scramble::shader::~shader()
  */
 void scramble::swap(scramble::shader& a, scramble::shader& b)
 {
-        std::swap(a.rep, b.rep);
+	std::swap(a.rep, b.rep);
 }
 
 /*
  * "Copy-and-swap" copy constructor.
  */
 scramble::shader::shader(const shader& other) :
-        rep(other.rep)
+	rep(other.rep)
 {
-        rep->refcount++;
+	rep->refcount++;
 }
 
 /*
@@ -89,8 +88,8 @@ scramble::shader::shader(const shader& other) :
  */
 scramble::shader& scramble::shader::operator=(shader other)
 {
-        swap(*this, other);
-        return *this;
+	swap(*this, other);
+	return *this;
 }
 
 /*
@@ -98,7 +97,7 @@ scramble::shader& scramble::shader::operator=(shader other)
  */
 GLuint scramble::shader::get() const
 {
-        return rep->globject;
+	return rep->globject;
 }
 
 /*
@@ -106,20 +105,20 @@ GLuint scramble::shader::get() const
  */
 std::string scramble::compiler_errmsg(GLuint globject)
 {
-        char        *log_str; // C style log info string
-        GLint       log_len;  // Info log total length
-        std::string errmsg;   // Composed error msg
+	char *log_str;      // C style log info string
+	GLint log_len;      // Info log total length
+	std::string errmsg; // Composed error msg
 
-        errmsg = std::string("Shader compile failure: ");
-        glGetShaderiv(globject, GL_INFO_LOG_LENGTH, &log_len);
+	errmsg = std::string("Shader compile failure: ");
+	glGetShaderiv(globject, GL_INFO_LOG_LENGTH, &log_len);
 
-        log_str = new char[log_len + 1];
-        glGetShaderInfoLog(globject, log_len, nullptr, log_str);
+	log_str = new char[log_len + 1];
+	glGetShaderInfoLog(globject, log_len, nullptr, log_str);
 
-        errmsg += log_str;
-        delete[] log_str;
+	errmsg += log_str;
+	delete[] log_str;
 
-        return errmsg;
+	return errmsg;
 }
 
 /*
@@ -127,14 +126,14 @@ std::string scramble::compiler_errmsg(GLuint globject)
  */
 scramble::shader scramble::shader_from_file(const std::string path, GLenum type)
 {
-        std::ifstream handle(path, std::ios::in | std::ios::binary);
-        unsc_assert(handle.is_open());
+	std::ifstream handle(path, std::ios::in | std::ios::binary);
+	unsc_assert(handle.is_open());
 
-        std::stringstream buffer;
-        buffer << handle.rdbuf();
+	std::stringstream buffer;
+	buffer << handle.rdbuf();
 
-        unsc_logmsg("shader path: %s\n", path.c_str());
-        //unsc_logmsg("shader sauce:\n%s\n", buffer.str().c_str());
+	unsc_logmsg("shader path: %s\n", path.c_str());
+	//unsc_logmsg("shader sauce:\n%s\n", buffer.str().c_str());
 
-        return scramble::shader(buffer.str(), type);
+	return scramble::shader(buffer.str(), type);
 }
