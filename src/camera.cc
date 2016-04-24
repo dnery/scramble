@@ -102,4 +102,3 @@ void scramble::camera::update_vectors()
 	cam_up = glm::normalize(glm::cross(right, front));
 }
 
-//struct scramble::camera scramble::camera; // Camera is globally available
