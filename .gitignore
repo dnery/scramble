@@ -7,5 +7,6 @@ install_manifest.txt
 Debug/*
 /build
 /demo
+.idea/
 .kdev4/
 scramble.kdev4
