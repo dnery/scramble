@@ -13,7 +13,7 @@ as the first milestone is complete.
 - [x] Basic shader load+link modular framework
 - [x] Basic texture mapping
 - [ ] Proper 3D environment
-- [ ] Basic single-point lighting
+- [x] Basic lighting (Phong model)
 - [ ] Fully de-coupled mesh loading
 
 ## Dependencies

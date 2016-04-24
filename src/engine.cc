@@ -9,7 +9,7 @@
 #include "ext/platform.hh"
 #include "listener.hh"
 #include "locator.tt"
-#include "sdebug.hh"
+#include "debug.hh"
 #include "camera.hh"
 
 /*
@@ -46,8 +46,8 @@ scramble::engine::engine() :
 	 * GL capabilities setup
 	 */
 	glewExperimental = GL_TRUE;
-	unsc_assert(glewInit() == GLEW_OK);
-	unsc_assert(GLEW_VERSION_3_3 != 0);
+	check(glewInit() == GLEW_OK);
+	check(GLEW_VERSION_3_3 != 0);
 
 	glViewport(0, 0, scramble::WIN_WIDTH, scramble::WIN_HEIGHT);
 

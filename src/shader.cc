@@ -6,7 +6,7 @@
 
 #include <fstream>
 #include <sstream>
-#include "sdebug.hh"
+#include "debug.hh"
 
 /*
  * Non-trivial constructor.
@@ -20,7 +20,7 @@ scramble::shader_rep::shader_rep(std::string code, GLenum type) :
 	std::string errmsg;                // holds possible compile errmsg
 
 	// check objects
-	unsc_assert(globject != 0);
+	check(globject != 0);
 
 	// source and compile shader code
 	glShaderSource(globject, 1, &c_code, nullptr);
@@ -127,12 +127,12 @@ std::string scramble::compiler_errmsg(GLuint globject)
 scramble::shader scramble::shader_from_file(const std::string path, GLenum type)
 {
 	std::ifstream handle(path, std::ios::in | std::ios::binary);
-	unsc_assert(handle.is_open());
+	check(handle.is_open());
 
 	std::stringstream buffer;
 	buffer << handle.rdbuf();
 
-	unsc_logmsg("shader path: %s\n", path.c_str());
+	put("shader path: %s\n", path.c_str());
 	//unsc_logmsg("shader sauce:\n%s\n", buffer.str().c_str());
 
 	return scramble::shader(buffer.str(), type);

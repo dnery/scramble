@@ -5,7 +5,7 @@
 #include "program.hh"
 
 #include <stdexcept>
-#include "sdebug.hh"
+#include "debug.hh"
 
 /*
  * Non-trivial constructor.
@@ -17,8 +17,8 @@ scramble::program::program(const std::vector<scramble::shader>& shaders) :
 	std::string errmsg; // holds possible link errmsg
 
 	// check objects
-	unsc_assert(globject != 0);
-	unsc_assert(shaders.size() > 0);
+	check(globject != 0);
+	check(shaders.size() > 0);
 
 	// attach shaders
 	for (unsigned i = 0; i < shaders.size(); i++)
@@ -48,7 +48,7 @@ scramble::program::program(const std::vector<scramble::shader>& shaders) :
  */
 scramble::program::~program()
 {
-	unsc_assert(globject != 0);
+	check(globject != 0);
 
 	glDeleteProgram(globject);
 }
@@ -68,7 +68,7 @@ bool scramble::program::in_use() const
 {
 	GLint current = 0; // current program in use by the API
 
-	unsc_assert(globject != 0);
+	check(globject != 0);
 
 	glGetIntegerv(GL_CURRENT_PROGRAM, &current);
 
@@ -93,11 +93,11 @@ GLint scramble::program::attrib(const GLchar *name) const
 {
 	GLint index; // holds attribute index
 
-	unsc_assert(name != nullptr);
+	check(name != nullptr);
 
 	index = glGetAttribLocation(globject, name);
 
-	unsc_assert(index != -1);
+	check(index != -1);
 
 	return index;
 }
@@ -109,11 +109,11 @@ GLint scramble::program::uniform(const GLchar *name) const
 {
 	GLint index; // holds uniform index
 
-	unsc_assert(name != nullptr);
+	check(name != nullptr);
 
 	index = glGetUniformLocation(globject, name);
 
-	unsc_assert(index != -1);
+	check(index != -1);
 
 	return index;
 }
@@ -191,42 +191,42 @@ ATTRIB_N_UNIFORM_SETTERS(GLuint, I, ui);
 void scramble::program::setUniformMatrix2(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
-	unsc_assert(in_use());
+	check(in_use());
 	glUniformMatrix2fv(uniform(name), count, transpose, v);
 }
 
 void scramble::program::setUniformMatrix3(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
-	unsc_assert(in_use());
+	check(in_use());
 	glUniformMatrix3fv(uniform(name), count, transpose, v);
 }
 
 void scramble::program::setUniformMatrix4(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
-	unsc_assert(in_use());
+	check(in_use());
 	glUniformMatrix4fv(uniform(name), count, transpose, v);
 }
 
 void scramble::program::setUniform(const GLchar *name, const glm::mat2& m,
                                    GLboolean transpose)
 {
-	unsc_assert(in_use());
+	check(in_use());
 	glUniformMatrix2fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
 void scramble::program::setUniform(const GLchar *name, const glm::mat3& m,
                                    GLboolean transpose)
 {
-	unsc_assert(in_use());
+	check(in_use());
 	glUniformMatrix3fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
 void scramble::program::setUniform(const GLchar *name, const glm::mat4& m,
                                    GLboolean transpose)
 {
-	unsc_assert(in_use());
+	check(in_use());
 	glUniformMatrix4fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 

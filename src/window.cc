@@ -5,7 +5,7 @@
 #include "window.hh"
 
 #include <iostream>
-#include "sdebug.hh"
+#include "debug.hh"
 
 // FIXME This needs work!
 
@@ -37,7 +37,7 @@ scramble::window::window(GLuint width, GLuint height, std::string title) :
 	                          nullptr, nullptr);
 
 	// Check return, set context
-	unsc_assert(handle != nullptr);
+	check(handle != nullptr);
 	glfwMakeContextCurrent(handle);
 
 	// Set input modes

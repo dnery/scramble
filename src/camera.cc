@@ -18,7 +18,7 @@ scramble::camera::camera() :
 	 */
 	position(glm::vec3(0.0f, 0.0f, 3.0f)),
 	front(glm::vec3(0.0f, 0.0f, -1.0f)),
-	right(glm::vec3(0.0f, 0.0f, 0.0f)),
+	right(glm::vec3(1.0f, 0.0f, 0.0f)),
 	cam_up(glm::vec3(0.0f, 1.0f, 0.0f)),
 	world_up(glm::vec3(0.0f, 1.0f, 0.0f)),
 	/*

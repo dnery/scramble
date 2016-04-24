@@ -93,9 +93,10 @@ void scramble::callback_keyboard(GLFWwindow *gwindow, int key, int scan,
 	/*
 	 * FIXME If an odd input triggers known behaviour, the problem is here!
 	 */
-	key = abs(key % 1024);
 
-	if (action == GLFW_PRESS)
+	if (key < 0 || key > 1023)
+		return;
+	else if (action == GLFW_PRESS)
 		keymap[key] = true;
 	else if (action == GLFW_RELEASE)
 		keymap[key] = false;
