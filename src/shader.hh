@@ -19,7 +19,7 @@ namespace scramble {
 		friend struct shader; // shader object access facade
 
 	private:
-		GLuint globject;      // GL shader object itself
+		GLuint globject;      // GL shader resource
 		int refcount;         // reference count
 	};
 

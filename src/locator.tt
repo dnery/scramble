@@ -1,0 +1,40 @@
+/*
+ * Created by danilo on 4/22/16.
+ *
+ * The file locator.hh is managed by the scramble project.
+ *
+ * Copyright (c) 2016 danilo. All rights reserved.
+ */
+
+#ifndef SCRAMBLE_LOCATOR_HH
+#define SCRAMBLE_LOCATOR_HH
+
+#include <memory>
+
+namespace scramble {
+
+	template<typename T>
+	struct locator {
+
+		static void provide(T *newService)
+		{
+			service.reset(newService);
+		}
+
+		static T *current()
+		{
+			return service.get();
+		}
+
+	private:
+		static std::unique_ptr<T> service;
+	};
+
+	/*
+	 * Static templated data member has to be defined out of line
+	 */
+	template<typename T>
+	std::unique_ptr<T> locator<T>::service = nullptr;
+}
+
+#endif /* SCRAMBLE_LOCATOR_HH */

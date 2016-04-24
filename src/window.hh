@@ -9,11 +9,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+// FIXME This needs work!
+
 namespace scramble {
 
-	extern GLuint WIN_WIDTH;
-	extern GLuint WIN_HEIGHT;
-	extern GLfloat ASPECT_RATIO;
+	extern GLuint WIN_WIDTH;     // Default global width
+	extern GLuint WIN_HEIGHT;    // Default global height
+	extern GLfloat ASPECT_RATIO; // Default global aspect-ratio
 
 	struct window {
 
@@ -32,10 +34,10 @@ namespace scramble {
 		void debug_info() const;
 
 	private:
-		std::string title;
-		GLuint width;
-		GLuint height;
-		GLFWwindow *handle;
+		std::string title;  // Window title (Scramble)
+		GLuint width;       // Window width
+		GLuint height;      // Window height
+		GLFWwindow *handle; // Window resource
 	};
 }
 

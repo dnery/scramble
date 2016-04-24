@@ -5,7 +5,7 @@
 #include "program.hh"
 
 #include <stdexcept>
-#include "ext/unscramble.hh"
+#include "sdebug.hh"
 
 /*
  * Non-trivial constructor.

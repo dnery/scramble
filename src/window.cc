@@ -5,7 +5,9 @@
 #include "window.hh"
 
 #include <iostream>
-#include "ext/unscramble.hh"
+#include "sdebug.hh"
+
+// FIXME This needs work!
 
 // Global default width
 GLuint  scramble::WIN_WIDTH = 1024;

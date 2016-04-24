@@ -29,11 +29,13 @@ namespace scramble {
 		void render();
 
 	private:
-		scramble::window window;    // GL context
+		scramble::window window;           // GL context
 
-		glm::vec3 reps[20];         // draw n-times
-		scramble::program *program; // sample shader program
-		scramble::object *cube;     // sample container object
+		glm::vec3 reps[20];                // draw n-times
+		scramble::program *object_program; // object shader program
+		scramble::program *caster_program; // caster shader program
+		scramble::object *cube;            // sample cube object
+		scramble::object *lamp;            // light caster object
 	};
 }
 

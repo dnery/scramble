@@ -7,9 +7,12 @@
 #include <stdexcept>
 #include "camera.hh"
 #include "window.hh"
+#include "locator.tt"
 
-GLfloat scramble::lastxpos = scramble::WIN_WIDTH / 2.0f;  // last x look
-GLfloat scramble::lastypos = scramble::WIN_HEIGHT / 2.0f; // last y look
+using camService = scramble::locator<scramble::camera>;
+
+GLfloat scramble::lastxpos = WIN_WIDTH / 2.0f;  // last x look
+GLfloat scramble::lastypos = WIN_HEIGHT / 2.0f; // last y look
 
 bool scramble::keymap[1024];                              // GLFW key bitmap
 bool scramble::mouse_enter = true;                        // First mouse input
@@ -34,16 +37,13 @@ void scramble::refresh_delta()
 void scramble::refresh_keyput()
 {
 	if (keymap[GLFW_KEY_A])
-		scramble::camera.keypress(scramble::movement::LEFT, delta_time);
+		camService::current()->keypress(scramble::movement::LEFT, delta_time);
 	if (keymap[GLFW_KEY_D])
-		scramble::camera
-			.keypress(scramble::movement::RIGHT, delta_time);
+		camService::current()->keypress(scramble::movement::RIGHT, delta_time);
 	if (keymap[GLFW_KEY_W])
-		scramble::camera
-			.keypress(scramble::movement::FORWARD, delta_time);
+		camService::current()->keypress(scramble::movement::FORWARD, delta_time);
 	if (keymap[GLFW_KEY_S])
-		scramble::camera
-			.keypress(scramble::movement::BACKWARD, delta_time);
+		camService::current()->keypress(scramble::movement::BACKWARD, delta_time);
 }
 
 /*
@@ -65,8 +65,8 @@ void scramble::callback_mouse(GLFWwindow *gwindow, double xpos, double ypos)
 		mouse_enter = false;
 	}
 
-	scramble::camera.mouse_look(static_cast<GLfloat>(xpos - lastxpos),
-	                            static_cast<GLfloat>(lastypos - ypos));
+	camService::current()->mouse_look(static_cast<GLfloat>(xpos - lastxpos),
+	                                  static_cast<GLfloat>(lastypos - ypos));
 
 	lastxpos = static_cast<GLfloat>(xpos);
 	lastypos = static_cast<GLfloat>(ypos);
@@ -78,7 +78,7 @@ void scramble::callback_mouse(GLFWwindow *gwindow, double xpos, double ypos)
 void scramble::callback_scroll(GLFWwindow *gwindow, double xoffset,
                                double yoffset)
 {
-	scramble::camera.mouse_scroll(static_cast<GLfloat>(yoffset));
+	camService::current()->mouse_scroll(static_cast<GLfloat>(yoffset));
 }
 
 /*

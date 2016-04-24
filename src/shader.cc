@@ -6,7 +6,7 @@
 
 #include <fstream>
 #include <sstream>
-#include "ext/unscramble.hh"
+#include "sdebug.hh"
 
 /*
  * Non-trivial constructor.

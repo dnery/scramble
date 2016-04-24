@@ -19,7 +19,6 @@
 #include "platform.hh"                                      // Defining this
 
 #include <cmath>
-#include <string>
 #include <limits>
 #include <climits>
 
@@ -65,7 +64,7 @@ static std::string process_path() {
 #elif defined( PLATFORM_LINUX )
 	char exe_file[PATH_MAX + 1];
 	int size;
-	size = readlink("/proc/self/exe", exe_file, PATH_MAX);
+	size = (int) readlink("/proc/self/exe", exe_file, PATH_MAX);
 	if (size < 0) {
 		return "./";
 	} else {
@@ -114,5 +113,5 @@ static std::string process_path() {
 }
 
 std::string resource_path(std::string file_name) {
-	return process_path() + "../../assets/" + file_name;
+	return process_path() + "../assets/" + file_name;
 }

@@ -51,7 +51,7 @@ namespace scramble {
 		void update_vectors();
 	};
 
-	extern camera camera; // external linkage for the camera object
+	//extern camera camera; // external linkage for the camera object
 }
 
 #endif /* SCRAMBLE_CAMERA_H */

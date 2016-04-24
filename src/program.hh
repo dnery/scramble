@@ -90,7 +90,7 @@ namespace scramble {
 		void setUniform(const GLchar *uniformName, const glm::vec4& v);
 
 	private:
-		GLuint globject; // GL program object itself
+		GLuint globject; // GL program resource
 	};
 
 	/*

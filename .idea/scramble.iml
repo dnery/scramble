@@ -2,20 +2,20 @@
 <module type="CPP_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src/shader.cc" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ext/platform.cc" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ext/platform.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/window.cc" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/engine.hh" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/shader.cc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/object.cc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shader.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/camera.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/camera.cc" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/engine.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/program.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/engine.cc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/window.hh" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ext/platform.cc" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ext/platform.hh" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ext/unscramble.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/object.hh" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/sdebug.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/program.cc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/listener.cc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main.cc" isTestSource="false" />
