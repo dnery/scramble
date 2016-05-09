@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.3)
 
 project(scramble)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL -Wall")
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -ftrapv -fsanitize=address -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -ftrapv -fsanitize=address")
+
+set(CMAKE_CXX_FLAGS_RELEASE "-02 -march=native")
 
 set(SOURCE_FILES
         src/main.cc
