@@ -5,9 +5,16 @@
 #ifndef SCRAMBLE_PROGRAM_H
 #define SCRAMBLE_PROGRAM_H
 
+#ifdef CLANG_COMPLETE_ONLY
+	#define GL_GLEXT_PROTOTYPES
+	#include <GL/gl.h>
+	#include <GL/glext.h>
+#else
+	#include <GL/glew.h>
+#endif
+
 #include <vector>
 #include <string>
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "shader.hh"
@@ -99,4 +106,4 @@ namespace scramble {
 	std::string linker_errmsg(GLuint globject);
 }
 
-#endif /* SCRAMBLE_PROGRAM_H */
+#endif // SCRAMBLE_PROGRAM_H

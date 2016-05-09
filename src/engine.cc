@@ -2,15 +2,15 @@
  * Created by danilo on 4/17/16.
  */
 
-#include "engine.hh"
-
 #include <iostream>
+#include <stdexcept>
 #include <glm/gtc/matrix_transform.hpp>
-#include "ext/platform.hh"
-#include "listener.hh"
-#include "locator.tt"
 #include "debug.hh"
 #include "camera.hh"
+#include "engine.hh"
+#include "locator.tt"
+#include "listener.hh"
+#include "ext/platform.hh"
 
 /*
  * Abbreviations
@@ -42,61 +42,97 @@ scramble::engine::engine() :
 		glm::vec3(5.3f, -1.0f, -1.5f)
 	}
 {
-	/*
-	 * GL capabilities setup
-	 */
+	// GL/GLEW capabilities setup
 	glewExperimental = GL_TRUE;
 	check(glewInit() == GLEW_OK);
 	check(GLEW_VERSION_3_3 != 0);
 
+	// Handle viewport dimensions
 	glViewport(0, 0, scramble::WIN_WIDTH, scramble::WIN_HEIGHT);
 
+	// Z-buffer depth query
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	// TODO Backface Culling!
+	// Backface poly culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+	// Alpha channel blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	/*
-	 * Callback functions
-	 */
+	// Callback functions
 	glfwSetErrorCallback(scramble::callback_err);
 	glfwSetKeyCallback(window._handle(), scramble::callback_keyboard);
 	glfwSetScrollCallback(window._handle(), scramble::callback_scroll);
 	glfwSetCursorPosCallback(window._handle(), scramble::callback_mouse);
 
-	/*
-	 * Print debug info
-	 */
+	// Print debug info
 	window.debug_info();
 
 	/*
-	 * Provide resources
+	 * Provide global services.
+	 *
+	 * Any global objects will be provided through the service-locator
+	 * pattern. The bottom line is: It brings (even though marginally)
+	 * some method to the madness of globals. Read more on the design
+	 * pattern here:
+	 *
+	 * 	http://bit.ly/1q9BMUN
+	 *
+	 * This is also pertinent to the local implementation:
+	 * 
+	 * 	http://bit.ly/1Now6kY
+	 *
+	 * Looking at the local implementation, it might be imediatelly strange.
+	 * That is due to the fact that it is templated, and any service will be
+	 * imediatelly available upon a provide() call just like the ones below.
 	 */
 	camService::provide(new scramble::camera());
 
 	/*
-	 * Create samples
+	 * Create hard-coded samples.
+	 *
+	 * This will catch a throw by the shader compiler object or the
+	 * shader linker object, append a specific message and re-throw.
+	 *
+	 * It's worth reminding that throwing an exception is the _only_
+	 * way to exit a failed constructor elegantly.
 	 */
-	std::vector<scramble::shader> object_shaders;
-	object_shaders.push_back(scramble::shader_from_file(
-		resource_path("vert_simple.glsl"), GL_VERTEX_SHADER));
-	object_shaders.push_back(scramble::shader_from_file(
-		resource_path("frag_simple.glsl"), GL_FRAGMENT_SHADER));
+	try {
+		std::vector<scramble::shader> object_shaders;
+		object_shaders.push_back(scramble::shader_from_file(
+					resource_path("vert_simple.glsl"),
+					GL_VERTEX_SHADER)
+				);
+		object_shaders.push_back(scramble::shader_from_file(
+					resource_path("frag_simple.glsl"),
+					GL_FRAGMENT_SHADER)
+				);
 
-	std::vector<scramble::shader> caster_shaders;
-	caster_shaders.push_back(scramble::shader_from_file(
-		resource_path("vert_caster.glsl"), GL_VERTEX_SHADER));
-	caster_shaders.push_back(scramble::shader_from_file(
-		resource_path("frag_caster.glsl"), GL_FRAGMENT_SHADER));
+		std::vector<scramble::shader> caster_shaders;
+		caster_shaders.push_back(scramble::shader_from_file(
+					resource_path("vert_caster.glsl"),
+					GL_VERTEX_SHADER)
+				);
+		caster_shaders.push_back(scramble::shader_from_file(
+					resource_path("frag_caster.glsl"),
+					GL_FRAGMENT_SHADER)
+				);
 
-	object_program = new scramble::program(object_shaders);
-	caster_program = new scramble::program(caster_shaders);
+		object_program = new scramble::program(object_shaders);
+		caster_program = new scramble::program(caster_shaders);
 
+	} catch (std::runtime_error &e) {
+
+		throw std::runtime_error(
+				std::string("Shader compilation/linkage: ") +
+				e.what()
+				);
+	}
+
+	// Objects do not depend on shaders for creation, only drawing
 	cube = new scramble::cube;
 	lamp = new scramble::cube;
 }
@@ -142,8 +178,8 @@ void scramble::engine::render()
 	// Projection matrix is the same for all objects
 	glm::mat4 proj;
 	proj = glm::perspective(camService::current()->look_zoom,
-	                        scramble::ASPECT_RATIO,
-	                        0.1f, 1000.0f);
+			scramble::ASPECT_RATIO,
+			0.1f, 1000.0f);
 
 	// View matrix is the same for all objects
 	glm::mat4 view;
@@ -190,7 +226,7 @@ void scramble::engine::render()
 
 		model = glm::translate(glm::mat4(), reps[i]);
 		model = glm::rotate(model, (GLfloat) (glfwGetTime() * 0.9f + i),
-		                    glm::vec3(1.0f, 1.0f, 0.0f));
+				glm::vec3(1.0f, 1.0f, 0.0f));
 		object_program->setUniform("model", model);
 
 		normat = glm::transpose(glm::inverse(model));

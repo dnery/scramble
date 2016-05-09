@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	} catch (std::runtime_error& e) {
 
 		std::cout << "Error: " << e.what() << std::endl;
+		exit(EXIT_FAILURE);
 	}
 
 	return EXIT_SUCCESS;

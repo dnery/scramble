@@ -2,23 +2,25 @@
  * Created by danilo on 4/17/16.
  */
 
-#include "listener.hh"
-
 #include <stdexcept>
 #include "camera.hh"
 #include "window.hh"
 #include "locator.tt"
+#include "listener.hh"
 
+/*
+ * Abbreviations
+ */
 using camService = scramble::locator<scramble::camera>;
 
-GLfloat scramble::lastxpos = WIN_WIDTH / 2.0f;  // last x look
-GLfloat scramble::lastypos = WIN_HEIGHT / 2.0f; // last y look
+GLfloat scramble::lastxpos = WIN_WIDTH / 2.0f;  // last x look direction
+GLfloat scramble::lastypos = WIN_HEIGHT / 2.0f; // last y look direction
 
-bool scramble::keymap[1024];                              // GLFW key bitmap
-bool scramble::mouse_enter = true;                        // First mouse input
+bool scramble::keymap[1024];                    // Active key bitmap
+bool scramble::mouse_enter = true;              // First occurrence on viewport
 
-GLfloat scramble::delta_time = 0.0f;                      // last timestamp diff
-GLfloat scramble::last_frame = 0.0f;                      // last frame timestamp
+GLfloat scramble::last_frame = 0.0f;            // last frame timestamp
+GLfloat scramble::delta_time = 0.0f;            // time since last frame
 
 /*
  * Refresh delta step
@@ -37,13 +39,17 @@ void scramble::refresh_delta()
 void scramble::refresh_keyput()
 {
 	if (keymap[GLFW_KEY_A])
-		camService::current()->keypress(scramble::movement::LEFT, delta_time);
+		camService::current()->keypress(scramble::movement::LEFT,
+				delta_time);
 	if (keymap[GLFW_KEY_D])
-		camService::current()->keypress(scramble::movement::RIGHT, delta_time);
+		camService::current()->keypress(scramble::movement::RIGHT,
+				delta_time);
 	if (keymap[GLFW_KEY_W])
-		camService::current()->keypress(scramble::movement::FORWARD, delta_time);
+		camService::current()->keypress(scramble::movement::FORWARD,
+				delta_time);
 	if (keymap[GLFW_KEY_S])
-		camService::current()->keypress(scramble::movement::BACKWARD, delta_time);
+		camService::current()->keypress(scramble::movement::BACKWARD,
+				delta_time);
 }
 
 /*

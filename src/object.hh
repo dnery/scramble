@@ -5,7 +5,14 @@
 #ifndef SCRAMBLE_OBJECT_HH
 #define SCRAMBLE_OBJECT_HH
 
-#include <GL/glew.h>
+#ifdef CLANG_COMPLETE_ONLY
+	#define GL_GLEXT_PROTOTYPES
+	#include <GL/gl.h>
+	#include <GL/glext.h>
+#else
+	#include <GL/glew.h>
+#endif
+
 #include "program.hh"
 
 namespace scramble {
@@ -64,4 +71,4 @@ namespace scramble {
 	};
 }
 
-#endif /* SCRAMBLE_OBJECT_HH */
+#endif // SCRAMBLE_OBJECT_H

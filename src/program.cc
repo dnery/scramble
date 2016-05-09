@@ -2,10 +2,9 @@
  * Created by danilo on 4/1/16.
  */
 
-#include "program.hh"
-
 #include <stdexcept>
 #include "debug.hh"
+#include "program.hh"
 
 /*
  * Non-trivial constructor.
@@ -140,7 +139,7 @@ std::string scramble::linker_errmsg(GLuint globject)
 }
 
 /*
- * Thank you Tom!!!
+ * Thank you Tom! Fuckin' thank you, man!
  */
 #define ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE, TYPE_PREFIX, TYPE_SUFFIX) \
 \

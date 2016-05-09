@@ -2,9 +2,8 @@
  * Created by danilo on 4/12/16.
  */
 
-#include "object.hh"
-
 #include <SOIL/SOIL.h>
+#include "object.hh"
 #include "ext/platform.hh"
 
 scramble::object::object() :
@@ -158,13 +157,23 @@ scramble::cube::~cube()
 
 void scramble::cube::bind(scramble::program *program) const
 {
+	/*
+	 * Without this check, instantiating a non-textured cube would not be
+	 * possible using the current framework.
+	 */
 	if (glGetUniformLocation(program->get(), "fs_texture1") != -1) {
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glUniform1i(program->uniform("fs_texture1"), 0);
 	}
 
+	/*
+	 * Without this check, instantiating a non-textured cube would not be
+	 * possible using the current framework.
+	 */
 	if (glGetUniformLocation(program->get(), "fs_texture2") != -1) {
+
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(program->uniform("fs_texture2"), 1);

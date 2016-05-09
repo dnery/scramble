@@ -1,11 +1,14 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.3)
+
 project(scramble)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL -g -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL")
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -ftrapv -fsanitize=address -Wall")
 
 set(SOURCE_FILES
         src/main.cc
-    src/debug.hh
+    	src/debug.hh
         src/ext/platform.cc src/ext/platform.hh
         src/listener.cc src/listener.hh
         src/program.cc src/program.hh

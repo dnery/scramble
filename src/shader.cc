@@ -2,11 +2,10 @@
  * Created by danilo on 3/31/16.
  */
 
-#include "shader.hh"
-
 #include <fstream>
 #include <sstream>
 #include "debug.hh"
+#include "shader.hh"
 
 /*
  * Non-trivial constructor.
@@ -124,7 +123,7 @@ std::string scramble::compiler_errmsg(GLuint globject)
 /*
  * Instantiate shader from source file.
  */
-scramble::shader scramble::shader_from_file(const std::string path, GLenum type)
+scramble::shader scramble::shader_from_file(const std::string&& path, GLenum type)
 {
 	std::ifstream handle(path, std::ios::in | std::ios::binary);
 	check(handle.is_open());

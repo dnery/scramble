@@ -29,14 +29,18 @@ namespace scramble {
 		void render();
 
 	private:
-		scramble::window window;           // GL context
-
-		glm::vec3 reps[20];                // draw n-times
-		scramble::program *object_program; // object shader program
-		scramble::program *caster_program; // caster shader program
-		scramble::object *cube;            // sample cube object
-		scramble::object *lamp;            // light caster object
+		/*
+		 * FIXME Every member data here is hard-coded.
+		 *
+		 * Get rid of this as soon as possible!
+		 */
+		scramble::window window;           // GL context window
+		glm::vec3 reps[20];                // Draw cube n-times
+		scramble::program *object_program; // Object shader program
+		scramble::program *caster_program; // Caster shader program
+		scramble::object *cube;            // Sample cube object
+		scramble::object *lamp;            // Light caster object
 	};
 }
 
-#endif /* SCRAMBLE_ENGINE_H */
+#endif // SCRAMBLE_ENGINE_H

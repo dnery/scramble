@@ -5,7 +5,14 @@
 #ifndef SCRAMBLE_LISTENER_H
 #define SCRAMBLE_LISTENER_H
 
-#include <GL/glew.h>
+#ifdef CLANG_COMPLETE_ONLY
+	#define GL_GLEXT_PROTOTYPES
+	#include <GL/gl.h>
+	#include <GL/glext.h>
+#else
+	#include <GL/glew.h>
+#endif
+
 #include <GLFW/glfw3.h>
 
 namespace scramble
@@ -13,20 +20,20 @@ namespace scramble
         /*
          * Camera related look positions
          */
-        extern GLfloat lastxpos;   // last x look
-        extern GLfloat lastypos;   // last y look
+        extern GLfloat lastxpos;   // last x look direction
+        extern GLfloat lastypos;   // last y look direction
 
         /*
          * Input workarounds
          */
-        extern bool mouse_enter;   // First mouse input
-        extern bool keymap[1024];  // GLFW key bitmap
+        extern bool keymap[1024];  // Active key bitmap
+        extern bool mouse_enter;   // First occurrence on viewport
 
         /*
          * Delta step
          */
-        extern GLfloat delta_time; // last timestamp diff
         extern GLfloat last_frame; // last frame timestamp
+        extern GLfloat delta_time; // time since last frame
 
         void refresh_delta();
 
@@ -41,4 +48,4 @@ namespace scramble
         void callback_keyboard(GLFWwindow *gwindow, int key, int scan, int action, int mode);
 }
 
-#endif /* SCRAMBLE_LISTENER_H */
+#endif // SCRAMBLE_LISTENER_H

@@ -5,11 +5,20 @@
 #ifndef SCRAMBLE_WINDOW_H
 #define SCRAMBLE_WINDOW_H
 
+#ifdef CLANG_COMPLETE_ONLY
+	#define GL_GLEXT_PROTOTYPES
+	#include <GL/gl.h>
+	#include <GL/glext.h>
+#else
+	#include <GL/glew.h>
+#endif
+
 #include <string>
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-// FIXME This needs work!
+/*
+ * TODO Not completely sure this class is necessary...
+ */
 
 namespace scramble {
 
@@ -41,4 +50,4 @@ namespace scramble {
 	};
 }
 
-#endif /* SCRAMBLE_WINDOW_H */
+#endif // SCRAMBLE_WINDOW_H

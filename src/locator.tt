@@ -33,4 +33,4 @@ namespace scramble {
 	std::unique_ptr<T> locator<T>::service = nullptr;
 }
 
-#endif /* SCRAMBLE_LOCATOR_HH */
+#endif // SCRAMBLE_LOCATOR_H

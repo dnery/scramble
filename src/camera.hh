@@ -5,7 +5,14 @@
 #ifndef SCRAMBLE_CAMERA_H
 #define SCRAMBLE_CAMERA_H
 
-#include <GL/glew.h>
+#ifdef CLANG_COMPLETE_ONLY
+	#define GL_GLEXT_PROTOTYPES
+	#include <GL/gl.h>
+	#include <GL/glext.h>
+#else
+	#include <GL/glew.h>
+#endif
+
 #include <glm/glm.hpp>
 
 namespace scramble {
@@ -39,8 +46,6 @@ namespace scramble {
 
 		camera();
 
-		glm::mat4 view_mat();
-
 		void keypress(GLuint direction, GLfloat delta_time);
 
 		void mouse_look(GLfloat xoffset, GLfloat yoffset,
@@ -49,7 +54,9 @@ namespace scramble {
 		void mouse_scroll(GLfloat yoffset);
 
 		void update_vectors();
+
+		glm::mat4 view_mat();
 	};
 }
 
-#endif /* SCRAMBLE_CAMERA_H */
+#endif // SCRAMBLE_CAMERA_H

@@ -2,9 +2,8 @@
  * Created by danilo on 4/17/16.
  */
 
-#include "camera.hh"
-
 #include <glm/gtc/matrix_transform.hpp>
+#include "camera.hh"
 
 const GLfloat scramble::PIT = 0.0f;         // default pitch
 const GLfloat scramble::YAW = -90.0f;       // default yaw
@@ -32,14 +31,32 @@ scramble::camera::camera() :
 {
 }
 
-glm::mat4 scramble::camera::view_mat()
-{
-	return glm::lookAt(position, position + front, cam_up);
-}
-
 void scramble::camera::keypress(GLuint direction, GLfloat delta_time)
 {
 	GLfloat final_speed = move_speed * delta_time;
+
+	/*
+	 * Name deduction in nested name specifier is a very particular
+	 * C++11 extension, and clang_check might flag the following
+	 * conditional statements even with -std=c++11 switch set.
+	 *
+	 * Surroungind the code with the following clang pragmas will
+	 * silence static analyzer:
+	 *
+	 * 	#pragma clang diagnostic push
+	 * 	#pragma clang diagnostic ignored "-Wc++11-extensions"
+	 * 	...
+	 * 	#pragma clang diagnostic pop
+	 *
+	 * The correct thing to do, if the need arises, though, is to
+	 * swap the standard, wherever necessary (including, possibly,
+	 * the .syntastic_clang_check_config file), from -std=c++11
+	 * to -std=c++1y (what in c++11 is an extension, in c++1y
+	 * is provided as standard, and so forth).
+	 *
+	 * This will almost certainly be necessary if decltype(auto) or
+	 * default initializers for aggregates are used, for example.
+	 */
 
 	if (direction == movement::LEFT)
 		position -= right * final_speed;
@@ -84,11 +101,9 @@ void scramble::camera::update_vectors()
 	/*
 	 * Re-calculate front vector FIXME I don't get this!
 	 */
-	front.x = static_cast<float>(cos(glm::radians(look_yaw)) *
-	                             cos(glm::radians(look_pit)));
-	front.y = static_cast<float>(sin(glm::radians(look_pit)));
-	front.z = static_cast<float>(sin(glm::radians(look_yaw)) *
-	                             cos(glm::radians(look_pit)));
+	front.x = (cos(glm::radians(look_yaw)) * cos(glm::radians(look_pit)));
+	front.y = (sin(glm::radians(look_pit)));
+	front.z = (sin(glm::radians(look_yaw)) * cos(glm::radians(look_pit)));
 	front = glm::normalize(front);
 
 	/*
@@ -102,3 +117,7 @@ void scramble::camera::update_vectors()
 	cam_up = glm::normalize(glm::cross(right, front));
 }
 
+glm::mat4 scramble::camera::view_mat()
+{
+	return glm::lookAt(position, position + front, cam_up);
+}

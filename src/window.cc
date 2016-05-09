@@ -2,12 +2,13 @@
  * Created by danilo on 4/17/16.
  */
 
-#include "window.hh"
-
 #include <iostream>
 #include "debug.hh"
+#include "window.hh"
 
-// FIXME This needs work!
+/*
+ * TODO Not completely sure this class is necessary...
+ */
 
 // Global default width
 GLuint  scramble::WIN_WIDTH = 1024;
