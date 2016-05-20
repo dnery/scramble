@@ -79,7 +79,13 @@ scramble::cube::cube() :
 
 	// 4.1 Make & bind texture information
 	glGenTextures(1, &texture1);
+	texmap = SOIL_load_image(resource_path("framedcrate_diffuse1.png").c_str(),
+	                         &texw, &texh, 0, SOIL_LOAD_RGB);
 	glBindTexture(GL_TEXTURE_2D, texture1);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texw, texh, 0,
+	             GL_RGB, GL_UNSIGNED_BYTE, texmap);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(texmap);
 
 	// 4.1.1 Set texture wrapping options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -91,20 +97,18 @@ scramble::cube::cube() :
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 	                GL_LINEAR);
 
-	// 4.1.3 Load in texture data
-	texmap = SOIL_load_image(resource_path("boxxy.jpg").c_str(),
-	                         &texw, &texh, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texw, texh, 0,
-	             GL_RGB, GL_UNSIGNED_BYTE, texmap);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// 4.1.4 Free texture data
-	SOIL_free_image_data(texmap);
+	// 4.1.4 Unbind texture identifier
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// 4.2 Make & bind texture information
 	glGenTextures(1, &texture2);
+	texmap = SOIL_load_image(resource_path("framedcrate_diffuse2.jpg").c_str(),
+	                         &texw, &texh, 0, SOIL_LOAD_RGB);
 	glBindTexture(GL_TEXTURE_2D, texture2);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texw, texh, 0,
+	             GL_RGB, GL_UNSIGNED_BYTE, texmap);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(texmap);
 
 	// 4.2.1 Set texture wrapping options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -116,15 +120,30 @@ scramble::cube::cube() :
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 	                GL_LINEAR);
 
-	// 4.2.3 Load in texture data
-	texmap = SOIL_load_image(resource_path("pentagram.jpg").c_str(),
+	// 4.2.4 Unbind texture identifier
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// 4.2 Make & bind texture information
+	glGenTextures(1, &specular);
+	texmap = SOIL_load_image(resource_path("framedcrate_specular.png").c_str(),
 	                         &texw, &texh, 0, SOIL_LOAD_RGB);
+	glBindTexture(GL_TEXTURE_2D, specular);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texw, texh, 0,
 	             GL_RGB, GL_UNSIGNED_BYTE, texmap);
 	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// 4.2.4 Free texture data
 	SOIL_free_image_data(texmap);
+
+	// 4.2.1 Set texture wrapping options
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// 4.2.2 Set texture filter options
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+	                GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+	                GL_LINEAR);
+
+	// 4.2.4 Unbind texture identifier
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// 5.1. Position attribute
@@ -142,7 +161,7 @@ scramble::cube::cube() :
 	                      reinterpret_cast<GLvoid *>(5 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
-	// 6. Unbind vbo & vao (not the ebo!)
+	// 6. Unbind vbo & vao
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
@@ -151,6 +170,7 @@ scramble::cube::~cube()
 {
 	glDeleteTextures(1, &texture1);
 	glDeleteTextures(1, &texture2);
+	glDeleteTextures(1, &specular);
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 }
@@ -161,22 +181,25 @@ void scramble::cube::bind(scramble::program *program) const
 	 * Without this check, instantiating a non-textured cube would not be
 	 * possible using the current framework.
 	 */
-	if (glGetUniformLocation(program->get(), "fs_texture1") != -1) {
+	if (glGetUniformLocation(program->get(), "material.diffuse1") != -1) {
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
-		glUniform1i(program->uniform("fs_texture1"), 0);
+		glUniform1i(program->uniform("material.diffuse1"), 0);
 	}
 
-	/*
-	 * Without this check, instantiating a non-textured cube would not be
-	 * possible using the current framework.
-	 */
-	if (glGetUniformLocation(program->get(), "fs_texture2") != -1) {
+	if (glGetUniformLocation(program->get(), "material.diffuse2") != -1) {
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
-		glUniform1i(program->uniform("fs_texture2"), 1);
+		glUniform1i(program->uniform("material.diffuse2"), 1);
+	}
+
+	if (glGetUniformLocation(program->get(), "material.specular") != -1) {
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, specular);
+		glUniform1i(program->uniform("material.specular"), 2);
 	}
 
 	glBindVertexArray(vao);

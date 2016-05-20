@@ -85,7 +85,7 @@ scramble::engine::engine() :
 	 * 
 	 * 	http://bit.ly/1Now6kY
 	 *
-	 * Looking at the local implementation, it might be imediatelly strange.
+	 * Looking at the local implementation, it might be immediately strange.
 	 * That is due to the fact that it is templated, and any service will be
 	 * imediatelly available upon a provide() call just like the ones below.
 	 */
@@ -103,21 +103,21 @@ scramble::engine::engine() :
 	try {
 		std::vector<scramble::shader> object_shaders;
 		object_shaders.push_back(scramble::shader_from_file(
-					resource_path("vert_simple.glsl"),
+					resource_path("glsl/vert_simple.glsl"),
 					GL_VERTEX_SHADER)
 				);
 		object_shaders.push_back(scramble::shader_from_file(
-					resource_path("frag_simple.glsl"),
+					resource_path("glsl/frag_simple.glsl"),
 					GL_FRAGMENT_SHADER)
 				);
 
 		std::vector<scramble::shader> caster_shaders;
 		caster_shaders.push_back(scramble::shader_from_file(
-					resource_path("vert_caster.glsl"),
+					resource_path("glsl/vert_caster.glsl"),
 					GL_VERTEX_SHADER)
 				);
 		caster_shaders.push_back(scramble::shader_from_file(
-					resource_path("frag_caster.glsl"),
+					resource_path("glsl/frag_caster.glsl"),
 					GL_FRAGMENT_SHADER)
 				);
 
@@ -149,7 +149,13 @@ void scramble::engine::engage()
 {
 	while (glfwWindowShouldClose(window._handle()) == 0) {
 
-		// Process events
+		/*
+		 * Process user input events.
+		 *
+		 * Initially, the callbacks set on the constructor are called.
+		 * Those are all implemented as free functions also in the
+		 * 'scramble' namespace, specifically in the listener.cc unit.
+		 */
 		glfwPollEvents();
 
 		// Update procedure
@@ -175,13 +181,14 @@ void scramble::engine::render()
 	glClearColor(0.25f, 0.03f, 0.08f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Projection matrix is the same for all objects
+	// PREAMBLE
+	// Static proj matrix
 	glm::mat4 proj;
 	proj = glm::perspective(camService::current()->look_zoom,
 			scramble::ASPECT_RATIO,
 			0.1f, 1000.0f);
 
-	// View matrix is the same for all objects
+	// Static view matrix
 	glm::mat4 view;
 	view = camService::current()->view_mat();
 
@@ -191,23 +198,17 @@ void scramble::engine::render()
 	// TODO Normal matrix changes!
 	glm::mat4 normat;
 
-	// Phong shading elements
-	glm::vec3 caster_pos(0.0f, 5.0f, 0.0f);
-	glm::vec3 caster_color(1.0f, 0.6f, 0.8f);
-
 	// LIGHT CASTER
 	caster_program->toggle();
 	lamp->bind(caster_program);
 
 	caster_program->setUniform("proj", proj);
 	caster_program->setUniform("view", view);
-	caster_program->setUniform("caster_color", caster_color);
-
-	model = glm::translate(glm::mat4(), caster_pos);
+	model = glm::translate(glm::mat4(), glm::vec3(0.0f, 5.0f, 0.0f));
 	caster_program->setUniform("model", model);
+	caster_program->setUniform("color", glm::vec3(1.0f, 0.6f, 0.8f));
 
-	lamp->draw(); // :D
-
+	lamp->draw();
 	lamp->unbind();
 	caster_program->toggle();
 
@@ -215,24 +216,32 @@ void scramble::engine::render()
 	object_program->toggle();
 	cube->bind(object_program);
 
+	// Set object material properties
+	object_program->setUniform("material.shininess", 64.0f);
+
+	// Set light caster properties
+	object_program->setUniform("caster.ambient", glm::vec3(0.15f));
+	object_program->setUniform("caster.diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+	object_program->setUniform("caster.specular", glm::vec3(1.0f));
+	object_program->setUniform("caster.position", glm::vec3(0.0f, 5.0f, 0.0f));
+
+	// Set viewer properties
 	object_program->setUniform("proj", proj);
 	object_program->setUniform("view", view);
 	object_program->setUniform("viewer_pos", camService::current()->position);
-	object_program->setUniform("caster_pos", caster_pos);
-	object_program->setUniform("caster_color", caster_color);
 
 	// Draw several instances
 	for (GLuint i = 0; i < 20; i++) {
 
 		model = glm::translate(glm::mat4(), reps[i]);
-		model = glm::rotate(model, (GLfloat) (glfwGetTime() * 0.9f + i),
-				glm::vec3(1.0f, 1.0f, 0.0f));
+		//model = glm::rotate(model, (GLfloat) (glfwGetTime() * 0.9f + i),
+		//		glm::vec3(1.0f, 1.0f, 0.0f));
 		object_program->setUniform("model", model);
 
 		normat = glm::transpose(glm::inverse(model));
 		object_program->setUniform("normat", normat);
 
-		cube->draw(); // :D
+		cube->draw();
 	}
 
 	cube->unbind();

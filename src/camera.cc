@@ -40,7 +40,7 @@ void scramble::camera::keypress(GLuint direction, GLfloat delta_time)
 	 * C++11 extension, and clang_check might flag the following
 	 * conditional statements even with -std=c++11 switch set.
 	 *
-	 * Surroungind the code with the following clang pragmas will
+	 * Surrounding the code with the following clang pragmas will
 	 * silence static analyzer:
 	 *
 	 * 	#pragma clang diagnostic push

@@ -66,6 +66,7 @@ namespace scramble {
 
 		GLuint texture1;             // Texture object 1
 		GLuint texture2;             // Texture object 2
+		GLuint specular; 	     // Specular map texture
 
 		unsigned char *texmap;       // Texture resource (reusable)
 	};
