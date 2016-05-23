@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-02 -march=native")
 
 set(SOURCE_FILES
         src/main.cc
-    	src/debug.hh
+        src/debug.hh
         src/ext/platform.cc src/ext/platform.hh
         src/listener.cc src/listener.hh
         src/program.cc src/program.hh

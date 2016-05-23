@@ -12,35 +12,35 @@
 
 namespace scramble {
 
-	struct engine {
+        struct engine {
 
-		engine();
+                engine();
 
-		~engine();
+                ~engine();
 
-		engine(const engine& other) = delete;
+                engine(const engine& other) = delete;
 
-		engine& operator=(engine other) = delete;
+                engine& operator=(engine other) = delete;
 
-		void engage();
+                void engage();
 
-		void update();
+                void update();
 
-		void render();
+                void render();
 
-	private:
-		/*
-		 * FIXME Every member data here is hard-coded.
-		 *
-		 * Get rid of this as soon as possible!
-		 */
-		scramble::window window;           // GL context window
-		glm::vec3 reps[20];                // Draw cube n-times
-		scramble::program *object_program; // Object shader program
-		scramble::program *caster_program; // Caster shader program
-		scramble::object *cube;            // Sample cube object
-		scramble::object *lamp;            // Light caster object
-	};
+        private:
+                /*
+                 * FIXME Every member data here is hard-coded.
+                 *
+                 * Get rid of this as soon as possible!
+                 */
+                scramble::window window;           // GL context window
+                glm::vec3 reps[20];                // Draw cube n-times
+                scramble::program *object_program; // Object shader program
+                scramble::program *caster_program; // Caster shader program
+                scramble::object *cube;            // Sample cube object
+                scramble::object *lamp;            // Light caster object
+        };
 }
 
 #endif // SCRAMBLE_ENGINE_H

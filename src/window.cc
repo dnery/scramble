@@ -19,61 +19,61 @@ GLfloat scramble::ASPECT_RATIO = static_cast<GLfloat>(scramble::WIN_WIDTH) /
                                  static_cast<GLfloat>(scramble::WIN_HEIGHT);
 
 scramble::window::window(GLuint width, GLuint height, std::string title) :
-	title(title),
-	width(width),
-	height(height),
-	handle(nullptr)
+        title(title),
+        width(width),
+        height(height),
+        handle(nullptr)
 {
-	glfwInit();
+        glfwInit();
 
-	// Core profile critical
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        // Core profile critical
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	// Create GLFW context window
-	handle = glfwCreateWindow(width, height, title.c_str(),
-	                          nullptr, nullptr);
+        // Create GLFW context window
+        handle = glfwCreateWindow(width, height, title.c_str(),
+                                  nullptr, nullptr);
 
-	// Check return, set context
-	check(handle != nullptr);
-	glfwMakeContextCurrent(handle);
+        // Check return, set context
+        check(handle != nullptr);
+        glfwMakeContextCurrent(handle);
 
-	// Set input modes
-	glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // Set input modes
+        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 scramble::window::~window()
 {
-	glfwDestroyWindow(handle);
-	glfwTerminate();
+        glfwDestroyWindow(handle);
+        glfwTerminate();
 }
 
 GLuint scramble::window::_width() const
 {
-	return width;
+        return width;
 }
 
 GLuint scramble::window::_height() const
 {
-	return height;
+        return height;
 }
 
 GLFWwindow *scramble::window::_handle() const
 {
-	return handle;
+        return handle;
 }
 
 void scramble::window::debug_info() const
 {
-	std::cout << "OpenGL version: " <<
-	glGetString(GL_VERSION) << std::endl;
-	std::cout << "GLSL version: " <<
-	glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-	std::cout << "Renderer: " <<
-	glGetString(GL_RENDERER) << std::endl;
-	std::cout << "Vendor: " <<
-	glGetString(GL_VENDOR) << std::endl;
+        std::cout << "OpenGL version: " <<
+        glGetString(GL_VERSION) << std::endl;
+        std::cout << "GLSL version: " <<
+        glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+        std::cout << "Renderer: " <<
+        glGetString(GL_RENDERER) << std::endl;
+        std::cout << "Vendor: " <<
+        glGetString(GL_VENDOR) << std::endl;
 }

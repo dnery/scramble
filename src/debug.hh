@@ -1,5 +1,5 @@
 /*
- * Created by danilo on 4/1/16. 
+ * Created by danilo on 4/1/16.
  */
 
 #ifndef SCRAMBLE_DEBUG_H
@@ -21,8 +21,8 @@
 } while (0) \
 
 #define check(exp) do { if (!(exp)) { \
-	err("%s: %d: %s\n", __FILE__, __LINE__, strerror(errno)); \
-	exit(errno); \
+        err("%s: %d: %s\n", __FILE__, __LINE__, strerror(errno)); \
+        exit(errno); \
 } } while (0) \
 
 #else
@@ -35,4 +35,4 @@
 
 #endif
 
-#endif /* SCRAMBLE_DEBUG_H */
+#endif // SCRAMBLE_DEBUG_H

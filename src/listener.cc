@@ -27,10 +27,10 @@ GLfloat scramble::delta_time = 0.0f;            // time since last frame
  */
 void scramble::refresh_delta()
 {
-	GLfloat curr_frame = static_cast<GLfloat>(glfwGetTime());
+        GLfloat curr_frame = static_cast<GLfloat>(glfwGetTime());
 
-	delta_time = curr_frame - last_frame;
-	last_frame = curr_frame;
+        delta_time = curr_frame - last_frame;
+        last_frame = curr_frame;
 }
 
 /*
@@ -38,18 +38,18 @@ void scramble::refresh_delta()
  */
 void scramble::refresh_keyput()
 {
-	if (keymap[GLFW_KEY_A])
-		camService::current()->keypress(scramble::movement::LEFT,
-				delta_time);
-	if (keymap[GLFW_KEY_D])
-		camService::current()->keypress(scramble::movement::RIGHT,
-				delta_time);
-	if (keymap[GLFW_KEY_W])
-		camService::current()->keypress(scramble::movement::FORWARD,
-				delta_time);
-	if (keymap[GLFW_KEY_S])
-		camService::current()->keypress(scramble::movement::BACKWARD,
-				delta_time);
+        if (keymap[GLFW_KEY_A])
+                camService::current()->keypress(scramble::movement::LEFT,
+                                delta_time);
+        if (keymap[GLFW_KEY_D])
+                camService::current()->keypress(scramble::movement::RIGHT,
+                                delta_time);
+        if (keymap[GLFW_KEY_W])
+                camService::current()->keypress(scramble::movement::FORWARD,
+                                delta_time);
+        if (keymap[GLFW_KEY_S])
+                camService::current()->keypress(scramble::movement::BACKWARD,
+                                delta_time);
 }
 
 /*
@@ -57,7 +57,7 @@ void scramble::refresh_keyput()
  */
 void scramble::callback_err(int code, const char *msg)
 {
-	throw std::runtime_error(msg);
+        throw std::runtime_error(msg);
 }
 
 /*
@@ -65,17 +65,17 @@ void scramble::callback_err(int code, const char *msg)
  */
 void scramble::callback_mouse(GLFWwindow *gwindow, double xpos, double ypos)
 {
-	if (mouse_enter) {
-		lastxpos = static_cast<GLfloat>(xpos);
-		lastypos = static_cast<GLfloat>(ypos);
-		mouse_enter = false;
-	}
+        if (mouse_enter) {
+                lastxpos = static_cast<GLfloat>(xpos);
+                lastypos = static_cast<GLfloat>(ypos);
+                mouse_enter = false;
+        }
 
-	camService::current()->mouse_look(static_cast<GLfloat>(xpos - lastxpos),
-	                                  static_cast<GLfloat>(lastypos - ypos));
+        camService::current()->mouse_look(static_cast<GLfloat>(xpos - lastxpos),
+                                          static_cast<GLfloat>(lastypos - ypos));
 
-	lastxpos = static_cast<GLfloat>(xpos);
-	lastypos = static_cast<GLfloat>(ypos);
+        lastxpos = static_cast<GLfloat>(xpos);
+        lastypos = static_cast<GLfloat>(ypos);
 }
 
 /*
@@ -84,7 +84,7 @@ void scramble::callback_mouse(GLFWwindow *gwindow, double xpos, double ypos)
 void scramble::callback_scroll(GLFWwindow *gwindow, double xoffset,
                                double yoffset)
 {
-	camService::current()->mouse_scroll(static_cast<GLfloat>(yoffset));
+        camService::current()->mouse_scroll(static_cast<GLfloat>(yoffset));
 }
 
 /*
@@ -93,17 +93,17 @@ void scramble::callback_scroll(GLFWwindow *gwindow, double xoffset,
 void scramble::callback_keyboard(GLFWwindow *gwindow, int key, int scan,
                                  int action, int mode)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(gwindow, GL_TRUE);
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+                glfwSetWindowShouldClose(gwindow, GL_TRUE);
 
-	/*
-	 * FIXME If an odd input triggers known behaviour, the problem is here!
-	 */
+        /*
+         * FIXME If an odd input triggers known behaviour, the problem is here!
+         */
 
-	if (key < 0 || key > 1023)
-		return;
-	else if (action == GLFW_PRESS)
-		keymap[key] = true;
-	else if (action == GLFW_RELEASE)
-		keymap[key] = false;
+        if (key < 0 || key > 1023)
+                return;
+        else if (action == GLFW_PRESS)
+                keymap[key] = true;
+        else if (action == GLFW_RELEASE)
+                keymap[key] = false;
 }
