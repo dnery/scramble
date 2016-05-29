@@ -17,30 +17,7 @@
  */
 using camService = scramble::locator<scramble::camera>;
 
-scramble::engine::engine() :
-        window(),
-        reps{
-                glm::vec3(0.0f, 0.0f, 0.0f),
-                glm::vec3(2.0f, 5.0f, -15.0f),
-                glm::vec3(-1.5f, -2.2f, -2.5f),
-                glm::vec3(-3.8f, -2.0f, -12.3f),
-                glm::vec3(2.4f, -0.4f, -3.5f),
-                glm::vec3(-1.7f, 3.0f, -7.5f),
-                glm::vec3(1.3f, -2.0f, -2.5f),
-                glm::vec3(1.5f, 2.0f, -2.5f),
-                glm::vec3(1.5f, 0.2f, -1.5f),
-                glm::vec3(-1.3f, 1.0f, -1.5f),
-                glm::vec3(-2.0f, -5.0f, 15.0f),
-                glm::vec3(1.5f, 2.2f, 2.5f),
-                glm::vec3(3.8f, 2.0f, 12.3f),
-                glm::vec3(-2.4f, 0.4f, 3.5f),
-                glm::vec3(1.7f, -3.0f, 7.5f),
-                glm::vec3(-1.3f, 2.0f, 2.5f),
-                glm::vec3(-1.5f, -2.0f, 2.5f),
-                glm::vec3(-1.5f, -0.2f, 1.5f),
-                glm::vec3(1.3f, -4.0f, 1.5f),
-                glm::vec3(5.3f, -1.0f, -1.5f)
-        }
+scramble::engine::engine() : window()
 {
         // GL/GLEW capabilities setup
         glewExperimental = GL_TRUE;
@@ -198,52 +175,119 @@ void scramble::engine::render()
         // TODO Normal matrix changes!
         glm::mat4 normat;
 
-        // LIGHT CASTER
+        // CASTER SHADER
         caster_program->toggle();
         lamp->bind(caster_program);
 
+        // Set static properties
         caster_program->setUniform("proj", proj);
         caster_program->setUniform("view", view);
-        model = glm::translate(glm::mat4(), glm::vec3(0.0f, 5.0f, 0.0f));
-        caster_program->setUniform("model", model);
         caster_program->setUniform("color", glm::vec3(1.0f, 0.6f, 0.8f));
 
-        lamp->draw();
+        // Define draw positions
+        glm::vec3 caster_positions[] = {
+                glm::vec3(0.0f, 5.0f, 0.0f),
+                glm::vec3(4.0f, 2.0f, -4.0f),
+                glm::vec3(-6.0f, -1.0f, 6.0f)
+        };
+
+        // Draw all instances
+        for (GLuint i = 0; i < 3; i++) {
+
+                // Model matrix
+                model = glm::translate(glm::mat4(), caster_positions[i]);
+                caster_program->setUniform("model", model);
+
+                // Draw :D
+                lamp->draw();
+        }
+
+        // Done
         lamp->unbind();
         caster_program->toggle();
 
-        // OBJECT
+        // OBJECT SHADER
         object_program->toggle();
         cube->bind(object_program);
 
-        // Set object material properties
+        // Set static properties
+                // Set object material properties
         object_program->setUniform("material.shininess", 64.0f);
 
-        // Set light caster properties
-        object_program->setUniform("caster.ambient", glm::vec3(0.15f));
-        object_program->setUniform("caster.diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
-        object_program->setUniform("caster.specular", glm::vec3(1.0f));
-        object_program->setUniform("caster.position", glm::vec3(0.0f, 5.0f, 0.0f));
+                // Light caster 1 properties
+        object_program->setUniform("pointlights[0].position", caster_positions[0]);
+        object_program->setUniform("pointlights[0].ambient", glm::vec3(0.15f));
+        object_program->setUniform("pointlights[0].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+        object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
+        object_program->setUniform("pointlights[0].constant", 1.0f);
+        object_program->setUniform("pointlights[0].linear", 0.07f);
+        object_program->setUniform("pointlights[0].quad", 0.017f);
 
-        // Set viewer properties
+                // Light caster 2 properties
+        object_program->setUniform("pointlights[1].position", caster_positions[1]);
+        object_program->setUniform("pointlights[1].ambient", glm::vec3(0.15f));
+        object_program->setUniform("pointlights[1].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+        object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
+        object_program->setUniform("pointlights[1].constant", 1.0f);
+        object_program->setUniform("pointlights[1].linear", 0.07f);
+        object_program->setUniform("pointlights[1].quad", 0.017f);
+
+                // Light caster 3 properties
+        object_program->setUniform("pointlights[2].position", caster_positions[2]);
+        object_program->setUniform("pointlights[2].ambient", glm::vec3(0.15f));
+        object_program->setUniform("pointlights[2].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+        object_program->setUniform("pointlights[2].specular", glm::vec3(1.0f));
+        object_program->setUniform("pointlights[2].constant", 1.0f);
+        object_program->setUniform("pointlights[2].linear", 0.07f);
+        object_program->setUniform("pointlights[2].quad", 0.017f);
+
+                // Viewer properties
         object_program->setUniform("proj", proj);
         object_program->setUniform("view", view);
         object_program->setUniform("viewer_pos", camService::current()->position);
 
-        // Draw several instances
+        // Define draw positions
+        glm::vec3 object_positions[] = {
+                glm::vec3(0.0f, 0.0f, 0.0f),
+                glm::vec3(2.0f, 5.0f, -15.0f),
+                glm::vec3(-1.5f, -2.2f, -2.5f),
+                glm::vec3(-3.8f, -2.0f, -12.3f),
+                glm::vec3(2.4f, -0.4f, -3.5f),
+                glm::vec3(-1.7f, 3.0f, -7.5f),
+                glm::vec3(1.3f, -2.0f, -2.5f),
+                glm::vec3(1.5f, 2.0f, -2.5f),
+                glm::vec3(1.5f, 0.2f, -1.5f),
+                glm::vec3(-1.3f, 1.0f, -1.5f),
+                glm::vec3(-2.0f, -5.0f, 15.0f),
+                glm::vec3(1.5f, 2.2f, 2.5f),
+                glm::vec3(3.8f, 2.0f, 12.3f),
+                glm::vec3(-2.4f, 0.4f, 3.5f),
+                glm::vec3(1.7f, -3.0f, 7.5f),
+                glm::vec3(-1.3f, 2.0f, 2.5f),
+                glm::vec3(-1.5f, -2.0f, 2.5f),
+                glm::vec3(-1.5f, -0.2f, 1.5f),
+                glm::vec3(1.3f, -4.0f, 1.5f),
+                glm::vec3(5.3f, -1.0f, -1.5f)
+        };
+
+        // Draw all instances
         for (GLuint i = 0; i < 20; i++) {
 
-                model = glm::translate(glm::mat4(), reps[i]);
+                // Model matrix
+                model = glm::translate(glm::mat4(), object_positions[i]);
                 //model = glm::rotate(model, (GLfloat) (glfwGetTime() * 0.9f + i),
                 //              glm::vec3(1.0f, 1.0f, 0.0f));
                 object_program->setUniform("model", model);
 
+                // Normal matrix
                 normat = glm::transpose(glm::inverse(model));
                 object_program->setUniform("normat", normat);
 
+                // Draw :D
                 cube->draw();
         }
 
+        // Done
         cube->unbind();
         object_program->toggle();
 }

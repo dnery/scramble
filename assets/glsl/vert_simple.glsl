@@ -16,11 +16,11 @@ uniform mat4 proj;
 
 void main()
 {
-	gl_Position = proj * view * model * vec4(position, 1.0f);
+        gl_Position = proj * view * model * vec4(position, 1.0f);
 
-	vs_texcoord = vec2(texcoord.x, 1.0f - texcoord.y);
+        vs_texcoord = vec2(texcoord.x, 1.0f - texcoord.y);
 
-	vs_worldpos = vec3(model * vec4(position, 1.0f));
+        vs_worldpos = vec3(model * vec4(position, 1.0f));
 
-	vs_normal = normalize(mat3(normat) * normal);
+        vs_normal = normalize(mat3(normat) * normal);
 }
