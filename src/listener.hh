@@ -28,6 +28,7 @@ namespace scramble
          */
         extern bool keymap[1024];  // Active key bitmap
         extern bool mouse_enter;   // First occurrence on viewport
+        extern bool flashlight;    // Flashlight status
 
         /*
          * Delta step

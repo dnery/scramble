@@ -18,6 +18,7 @@ GLfloat scramble::lastypos = WIN_HEIGHT / 2.0f; // last y look direction
 
 bool scramble::keymap[1024];                    // Active key bitmap
 bool scramble::mouse_enter = true;              // First occurrence on viewport
+bool scramble::flashlight = false;              // Flashlight status
 
 GLfloat scramble::last_frame = 0.0f;            // last frame timestamp
 GLfloat scramble::delta_time = 0.0f;            // time since last frame
@@ -93,13 +94,19 @@ void scramble::callback_scroll(GLFWwindow *gwindow, double xoffset,
 void scramble::callback_keyboard(GLFWwindow *gwindow, int key, int scan,
                                  int action, int mode)
 {
+        // Check for application exit event (escape)
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
                 glfwSetWindowShouldClose(gwindow, GL_TRUE);
 
-        /*
-         * FIXME If an odd input triggers known behaviour, the problem is here!
-         */
+        // Flashlight toggle has to be sluggish
+        if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+                if (flashlight)
+                        flashlight = false;
+                else
+                        flashlight = true;
+        }
 
+        // Smooth input triggers
         if (key < 0 || key > 1023)
                 return;
         else if (action == GLFW_PRESS)

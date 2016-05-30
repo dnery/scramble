@@ -186,9 +186,9 @@ void scramble::engine::render()
 
         // Define draw positions
         glm::vec3 caster_positions[] = {
-                glm::vec3(0.0f, 5.0f, 0.0f),
-                glm::vec3(4.0f, 2.0f, -4.0f),
-                glm::vec3(-6.0f, -1.0f, 6.0f)
+                glm::vec3(0.0f, 3.3f, 0.0f),
+                glm::vec3(3.0f, 2.0f, -8.5f),
+                glm::vec3(-4.0f, -2.5f, 7.0f)
         };
 
         // Draw all instances
@@ -214,32 +214,48 @@ void scramble::engine::render()
                 // Set object material properties
         object_program->setUniform("material.shininess", 64.0f);
 
+                // Flashlight properties
+        object_program->setUniform("spotlights[0].position", camService::current()->position);
+        object_program->setUniform("spotlights[0].direction", camService::current()->front);
+        object_program->setUniform("spotlights[0].mincutoff", glm::cos(glm::radians(12.5f)));
+        object_program->setUniform("spotlights[0].maxcutoff", glm::cos(glm::radians(17.5f)));
+
+        if (flashlight) {
+                object_program->setUniform("spotlights[0].ambient", glm::vec3(0.1f));
+                object_program->setUniform("spotlights[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+                object_program->setUniform("spotlights[0].specular", glm::vec3(1.0f));
+        } else {
+                object_program->setUniform("spotlights[0].ambient", glm::vec3(0.0f));
+                object_program->setUniform("spotlights[0].diffuse", glm::vec3(0.0f));
+                object_program->setUniform("spotlights[0].specular", glm::vec3(0.0f));
+        }
+
                 // Light caster 1 properties
         object_program->setUniform("pointlights[0].position", caster_positions[0]);
-        object_program->setUniform("pointlights[0].ambient", glm::vec3(0.15f));
+        object_program->setUniform("pointlights[0].ambient", glm::vec3(0.1f));
         object_program->setUniform("pointlights[0].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
         object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
         object_program->setUniform("pointlights[0].constant", 1.0f);
-        object_program->setUniform("pointlights[0].linear", 0.07f);
-        object_program->setUniform("pointlights[0].quad", 0.017f);
+        object_program->setUniform("pointlights[0].linear", 0.14f);
+        object_program->setUniform("pointlights[0].quad", 0.07f);
 
                 // Light caster 2 properties
         object_program->setUniform("pointlights[1].position", caster_positions[1]);
-        object_program->setUniform("pointlights[1].ambient", glm::vec3(0.15f));
+        object_program->setUniform("pointlights[1].ambient", glm::vec3(0.1f));
         object_program->setUniform("pointlights[1].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
         object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
         object_program->setUniform("pointlights[1].constant", 1.0f);
-        object_program->setUniform("pointlights[1].linear", 0.07f);
-        object_program->setUniform("pointlights[1].quad", 0.017f);
+        object_program->setUniform("pointlights[1].linear", 0.14f);
+        object_program->setUniform("pointlights[1].quad", 0.07f);
 
                 // Light caster 3 properties
         object_program->setUniform("pointlights[2].position", caster_positions[2]);
-        object_program->setUniform("pointlights[2].ambient", glm::vec3(0.15f));
+        object_program->setUniform("pointlights[2].ambient", glm::vec3(0.1f));
         object_program->setUniform("pointlights[2].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
         object_program->setUniform("pointlights[2].specular", glm::vec3(1.0f));
         object_program->setUniform("pointlights[2].constant", 1.0f);
-        object_program->setUniform("pointlights[2].linear", 0.07f);
-        object_program->setUniform("pointlights[2].quad", 0.017f);
+        object_program->setUniform("pointlights[2].linear", 0.14f);
+        object_program->setUniform("pointlights[2].quad", 0.07f);
 
                 // Viewer properties
         object_program->setUniform("proj", proj);
