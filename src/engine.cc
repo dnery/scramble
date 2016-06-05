@@ -211,6 +211,7 @@ void scramble::engine::render()
         cube->bind(object_program);
 
         // Set static properties
+
                 // Set object material properties
         object_program->setUniform("material.shininess", 64.0f);
 

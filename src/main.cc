@@ -4,16 +4,16 @@
 
 int main(int argc, char *argv[])
 {
-	try {
-		scramble::engine engine;
+        try {
+                scramble::engine engine;
 
-		engine.engage();
+                engine.engage();
 
-	} catch (std::runtime_error& e) {
+        } catch (std::runtime_error& e) {
 
-		std::cout << "Error: " << e.what() << std::endl;
-		exit(EXIT_FAILURE);
-	}
+                std::cout << "Error: " << e.what() << std::endl;
+                exit(EXIT_FAILURE);
+        }
 
-	return EXIT_SUCCESS;
+        return EXIT_SUCCESS;
 }
