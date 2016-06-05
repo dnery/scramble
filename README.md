@@ -16,6 +16,9 @@ as the first milestone is complete.
 - [x] Basic lighting (Phong model)
 - [ ] Fully de-coupled mesh loading
 
+## General Design
+[![general-design][http://i.imgur.com/Ap756tj.png]](http://i.imgur.com/Ap756tj.png)
+
 ## Dependencies
 * clang/LLVM compiler suite, Cmake for building
 * OpenGL >= 3.3 definition (prototypes provided by GLEW)
