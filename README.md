@@ -17,7 +17,7 @@ as the first milestone is complete.
 - [ ] Fully de-coupled mesh loading
 
 ## General Design
-![Alt text][http://i.imgur.com/Ap756tj.png]
+![Alt text](http://i.imgur.com/Ap756tj.png "General Design")
 
 ## Dependencies
 * clang/LLVM compiler suite, Cmake for building
