@@ -26,11 +26,15 @@ window_manager::window_manager(int width, int height,
         // Set cursor input mode
         glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-        // Set window element & callbacks
+        // Set window element callbacks
         glfwSetWindowUserPointer(m_window, this);
         glfwSetWindowSizeCallback(m_window, callback_window_resize);
         glfwSetWindowRefreshCallback(m_window, callback_window_refresh);
-        //glfwSetWindowUserPointer(m_window, m_window);
+
+        // Set device input handling callbacks
+        glfwSetKeyCallback(m_window, callback_keypress);
+        glfwSetScrollCallback(m_window, callback_scroll);
+        glfwSetCursorPosCallback(m_window, callback_cursor_move);
 
         // Swap Interval != 0 might avoid tearing
         glfwSwapInterval(1);

@@ -20,7 +20,7 @@ class window_manager {
         /*
          * GLFW callback upon window being resized
          */
-        static void callback_window_resize(GLFWwindow *window, int w, int h)
+        inline static void callback_window_resize(GLFWwindow *window, int w, int h)
         {
                 window_manager *wm = static_cast<window_manager *>
                         (glfwGetWindowUserPointer(window));
@@ -31,12 +31,45 @@ class window_manager {
         /*
          * GLFW callback upon window needing to be re-drawn
          */
-        static void callback_window_refresh(GLFWwindow *window)
+        inline static void callback_window_refresh(GLFWwindow *window)
         {
                 window_manager *wm = static_cast<window_manager *>
                         (glfwGetWindowUserPointer(window));
 
                 wm->m_scene->display();
+        }
+
+        /*
+         * GLFW input callback redirection functions: cursor move
+         */
+        inline static void callback_cursor_move(GLFWwindow *window, double x, double y)
+        {
+                window_manager *wm = static_cast<window_manager *>
+                        (glfwGetWindowUserPointer(window));
+
+                wm->m_scene->handle_cursor_move(window, x, y);
+        }
+
+        /*
+         * GLFW input callback redirection functions: keypress
+         */
+        inline static void callback_keypress(GLFWwindow *window, int k, int s, int a, int m)
+        {
+                window_manager *wm = static_cast<window_manager *>
+                        (glfwGetWindowUserPointer(window));
+
+                wm->m_scene->handle_keypress(window, k, a, m);
+        }
+
+        /*
+         * GLFW input callback redirection functions: scroll
+         */
+        inline static void callback_scroll(GLFWwindow *window, double x, double y)
+        {
+                window_manager *wm = static_cast<window_manager *>
+                        (glfwGetWindowUserPointer(window));
+
+                wm->m_scene->handle_scroll(window, x, y);
         }
 
 public: /* ================================================================== */

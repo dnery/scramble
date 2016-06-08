@@ -34,6 +34,21 @@ struct scene_type {
          * Drop all resources
          */
         virtual void drop() = 0;
+
+        /*
+         * Event handler: cursor move
+         */
+        virtual void handle_cursor_move(GLFWwindow *window, GLdouble xoffset, GLdouble yoffset) = 0;
+
+        /*
+         * Event handler: keypress
+         */
+        virtual void handle_keypress(GLFWwindow *window, GLint key, GLint action, GLint mode) = 0;
+
+        /*
+         * Event handler: scroll
+         */
+        virtual void handle_scroll(GLFWwindow *window, GLdouble xoffset, GLdouble yoffset) = 0;
 };
 
 #endif /* ifndef SCRAMBLE_SCENE_TYPE_H */

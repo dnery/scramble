@@ -36,9 +36,8 @@ void scene::init(GLFWwindow *window)
         m_vp_aspect_ratio = static_cast<GLdouble>(w) /
                             static_cast<GLdouble>(h);
 
-        // Set input callbacks
-        m_mouse.set_callbacks(window);
-        m_keyboard.set_callbacks(window);
+        // Set up mouse input stuff
+        m_mouse.m_first_enter_viewport = GL_TRUE;
 
         // Set the clear color
         glClearColor(0.25f, 0.03f, 0.08f, 1.0f);
@@ -99,24 +98,16 @@ void scene::update(GLdouble millis)
         m_delta = millis - m_prev_frame;
         m_prev_frame = millis;
 
-        // Propagate mouse input
-        if (m_mouse.m_state_altered) {
-
-                m_camera.look(m_mouse.xdelta(), m_mouse.ydelta());
-                m_camera.zoom(m_mouse.sdelta());
-
-                m_mouse.m_state_altered = GL_FALSE;
-        }
-
-        // Propagate keyboard input
+        // Propagate smooth keyboard input
         using movetype = camera::movement;
-        if (m_keyboard.keymap()[GLFW_KEY_A])
+
+        if (m_keyboard.m_keymap[GLFW_KEY_A])
                 m_camera.move(movetype::LEFT, m_delta);
-        if (m_keyboard.keymap()[GLFW_KEY_D])
+        if (m_keyboard.m_keymap[GLFW_KEY_D])
                 m_camera.move(movetype::RIGHT, m_delta);
-        if (m_keyboard.keymap()[GLFW_KEY_W])
+        if (m_keyboard.m_keymap[GLFW_KEY_W])
                 m_camera.move(movetype::FORWARD, m_delta);
-        if (m_keyboard.keymap()[GLFW_KEY_S])
+        if (m_keyboard.m_keymap[GLFW_KEY_S])
                 m_camera.move(movetype::BACKWARD, m_delta);
 }
 
@@ -175,7 +166,7 @@ void scene::display()
         m_object_program->setUniform("spotlights[0].mincutoff", glm::cos(glm::radians(12.5f)));
         m_object_program->setUniform("spotlights[0].maxcutoff", glm::cos(glm::radians(17.5f)));
 
-        if (m_keyboard.flashlight_active()) {
+        if (m_keyboard.m_flashlight_active) {
                 m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.1f));
                 m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
                 m_object_program->setUniform("spotlights[0].specular", glm::vec3(1.0f));
@@ -269,4 +260,48 @@ void scene::drop()
         delete m_caster_program;
         delete m_object;
         delete m_caster;
+}
+
+void scene::handle_cursor_move(GLFWwindow *window, GLdouble xoffset, GLdouble yoffset)
+{
+        if (m_mouse.m_first_enter_viewport) {
+                m_mouse.m_prev_xpos = static_cast<GLdouble>(xoffset);
+                m_mouse.m_prev_ypos = static_cast<GLdouble>(yoffset);
+                m_mouse.m_first_enter_viewport = GL_FALSE;
+        }
+
+        // New camera state
+        m_camera.look(xoffset - m_mouse.m_prev_xpos,    // X delta
+                      m_mouse.m_prev_ypos - yoffset);   // Y delta
+
+        m_mouse.m_prev_xpos = static_cast<GLdouble>(xoffset);
+        m_mouse.m_prev_ypos = static_cast<GLdouble>(yoffset);
+}
+
+void scene::handle_keypress(GLFWwindow *window, GLint key, GLint action, GLint mode)
+{
+        // Check for application exit event (escape)
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+                glfwSetWindowShouldClose(window, GL_TRUE);
+
+        // Flashlight toggle has to be sluggish
+        if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+                if (!m_keyboard.m_flashlight_active)
+                        m_keyboard.m_flashlight_active = GL_TRUE;
+                else
+                        m_keyboard.m_flashlight_active = GL_FALSE;
+        }
+
+        // Smooth input triggers
+        if (key < 0 || key > 1023)
+                return;
+        else if (action == GLFW_PRESS)
+                m_keyboard.m_keymap[key] = GL_TRUE;
+        else if (action == GLFW_RELEASE)
+                m_keyboard.m_keymap[key] = GL_FALSE;
+}
+
+void scene::handle_scroll(GLFWwindow *window, GLdouble xoffset, GLdouble yoffset)
+{
+        m_camera.zoom(yoffset);
 }
