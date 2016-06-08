@@ -23,4 +23,4 @@
 
 std::string resource_path(std::string file_name);
 
-#endif /* SCRAMBLE_PLATFORM_H */
+#endif /* ifndef SCRAMBLE_PLATFORM_H */

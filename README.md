@@ -17,7 +17,11 @@ as the first milestone is complete.
 - [ ] Fully de-coupled mesh loading
 
 ## General Design
-![General Design](http://i.imgur.com/Ap756tj.png "General Design")
+![General Design](http://i.imgur.com/Zq7KT2G.png "General Design")
+- Greens are fully functional and belong to the framework
+- Blues are fully functional and belong to the user
+- Yellows are yet incomplete
+- Reds are unimplemented
 
 ## Dependencies
 * clang/LLVM compiler suite, Cmake for building

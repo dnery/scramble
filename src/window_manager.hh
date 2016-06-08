@@ -2,19 +2,13 @@
 #define SCRAMBLE_WINDOW_MANAGER_H
 
 #include "scene_type.hh"
-#include <string>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 class window_manager {
 
-        /* Window */
         int m_width;                    // Managed window width
         int m_height;                   // Managed window height
-        std::string m_title;            // Managed window title
+        const char *m_title;            // Managed window title
         GLFWwindow *m_window;           // Wrapped window object
-
-        /* Scene */
         scene_type *m_scene;            // Render target Scene
 
         /*
@@ -72,12 +66,11 @@ class window_manager {
                 wm->m_scene->handle_scroll(window, x, y);
         }
 
-public: /* ================================================================== */
-
+public:
         /*
          * CTOR & DTOR
          */
-        window_manager(int width, int height, std::string title, scene_type *scene);
+        window_manager(int width, int height, const char * title, scene_type *scene);
 
         ~window_manager();
 

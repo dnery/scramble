@@ -2,20 +2,18 @@
 #define SCRAMBLE_PROGRAM_H
 
 #include "shader.hh"
-#include <vector>
-#include <string>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <vector>
+#include <string>
 
 class program {
 
         GLuint globject; // GL program resource
 
-public: /* ================================================================== */
-
+public:
         /*
-         * CTOR, DTOR, Copy Semantics
+         * CTOR & DTOR
          */
         explicit program(const std::vector<shader>& shaders);
         ~program();
@@ -23,21 +21,28 @@ public: /* ================================================================== */
         /*
          * Getters & Setters
          */
-        const GLuint& get() const;
+        const GLuint& get() const
+        {
+                return globject;
+        }
 
         /*
          * Methods
          */
         bool in_use() const;
         void toggle() const;
-
         GLint attrib(const GLchar *name) const;
         GLint uniform(const GLchar *name) const;
 
-        std::string linker_errmsg(GLuint globject);
+        /*
+         * Error check
+         */
+        std::string error(GLuint globject);
 
-/* ========================================================================== */
-        #define _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE) \
+        /*
+         * Write signatures as macros
+         */
+#define _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE) \
         void setAttrib(const GLchar* attribName, OGL_TYPE v0); \
         void setAttrib(const GLchar* attribName, OGL_TYPE v0, OGL_TYPE v1); \
         void setAttrib(const GLchar* attribName, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2); \
@@ -58,37 +63,33 @@ public: /* ================================================================== */
         void setUniform3v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
         void setUniform4v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
 
+        /*
+         * Generate previously proposed declarations
+         */
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLfloat)
-
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLdouble)
-
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLint)
-
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLuint)
 
+        /*
+         * Uniforms & Attribs should be set through these
+         */
         void setUniformMatrix2(const GLchar *uniformName,
                         const GLfloat *v, GLsizei count = 1,
                         GLboolean transpose = GL_FALSE);
-
         void setUniformMatrix3(const GLchar *uniformName,
                         const GLfloat *v, GLsizei count = 1,
                         GLboolean transpose = GL_FALSE);
-
         void setUniformMatrix4(const GLchar *uniformName,
                         const GLfloat *v, GLsizei count = 1,
                         GLboolean transpose = GL_FALSE);
-
         void setUniform(const GLchar *uniformName, const glm::mat2& m,
                         GLboolean transpose = GL_FALSE);
-
         void setUniform(const GLchar *uniformName, const glm::mat3& m,
                         GLboolean transpose = GL_FALSE);
-
         void setUniform(const GLchar *uniformName, const glm::mat4& m,
                         GLboolean transpose = GL_FALSE);
-
         void setUniform(const GLchar *uniformName, const glm::vec3& v);
-
         void setUniform(const GLchar *uniformName, const glm::vec4& v);
 };
 

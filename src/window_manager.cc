@@ -1,9 +1,9 @@
 #include "window_manager.hh"
-#include <iostream>
+
 #include "debug.hh"
 
 window_manager::window_manager(int width, int height,
-                std::string title, scene_type *scene) :
+                const char *title, scene_type *scene) :
         m_width(width), m_height(height),
         m_title(title), m_window(nullptr),
         m_scene(scene)
@@ -16,8 +16,8 @@ window_manager::window_manager(int width, int height,
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-        m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(),
-                        nullptr, nullptr);
+        // Build window
+        m_window = glfwCreateWindow(m_width, m_height, m_title, nullptr, nullptr);
 
         // Check, set context
         check(m_window != nullptr);
@@ -48,14 +48,10 @@ window_manager::window_manager(int width, int height,
         glViewport(0, 0, m_width, m_height);
 
         // Output debug info
-        std::cout << "OpenGL version: " <<
-        glGetString(GL_VERSION) << std::endl;
-        std::cout << "GLSL version: " <<
-        glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-        std::cout << "Renderer: " <<
-        glGetString(GL_RENDERER) << std::endl;
-        std::cout << "Vendor: " <<
-        glGetString(GL_VENDOR) << std::endl;
+        info("OpenGL version: %s\n", glGetString(GL_VERSION));
+        info("GLSL version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+        info("Renderere: %s\n", glGetString(GL_RENDERER));
+        info("Vendor: %s\n", glGetString(GL_VENDOR));
 }
 
 window_manager::~window_manager()

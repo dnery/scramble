@@ -1,6 +1,8 @@
 #include "program.hh"
-#include "debug.hh"
+
+#include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
+#include "debug.hh"
 
 program::program(const std::vector<shader>& shaders) :
         globject(glCreateProgram())
@@ -29,7 +31,7 @@ program::program(const std::vector<shader>& shaders) :
         // throw if any exist
         if (status == GL_FALSE) {
 
-                errmsg = linker_errmsg(globject);
+                errmsg = error(globject);
                 glDeleteProgram(globject);
                 throw std::runtime_error(errmsg);
         }
@@ -40,14 +42,6 @@ program::~program()
         check(globject != 0);
 
         glDeleteProgram(globject);
-}
-
-/*
- * Retrieve the managed resource.
- */
-const GLuint& program::get() const
-{
-        return globject;
 }
 
 /*
@@ -110,7 +104,7 @@ GLint program::uniform(const GLchar *name) const
 /*
  * Compose error message to throw (helper function).
  */
-std::string program::linker_errmsg(GLuint globject)
+std::string program::error(GLuint globject)
 {
         char *log_str;      // C style log info string
         GLint log_len;      // Info log total length
@@ -129,7 +123,7 @@ std::string program::linker_errmsg(GLuint globject)
 }
 
 /*
- * Thank you Tom! Fuckin' thank you, man!
+ * Write signatures as macros
  */
 #define ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE, TYPE_PREFIX, TYPE_SUFFIX) \
 \
@@ -169,14 +163,17 @@ void program::setUniform3v(const GLchar* name, const OGL_TYPE* v, GLsizei count)
 void program::setUniform4v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
         { assert(in_use()); glUniform4 ## TYPE_SUFFIX ## v (uniform(name), count, v); }
 
+/*
+ * Generate previously proposed declarations
+ */
 ATTRIB_N_UNIFORM_SETTERS(GLfloat, , f);
-
 ATTRIB_N_UNIFORM_SETTERS(GLdouble, , d);
-
 ATTRIB_N_UNIFORM_SETTERS(GLint, I, i);
-
 ATTRIB_N_UNIFORM_SETTERS(GLuint, I, ui);
 
+/*
+ * Uniforms & Attribs should be set through these
+ */
 void program::setUniformMatrix2(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {

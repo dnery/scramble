@@ -26,8 +26,7 @@ class camera {
 
         void update();
 
-public: /* ================================================================== */
-
+public:
         enum movement {
                 LEFT = 1,                       // Move type: left
                 RIGHT = 2,                      // Move type: right

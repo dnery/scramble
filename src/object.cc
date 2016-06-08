@@ -1,5 +1,6 @@
-#include "ext/platform.hh"
 #include "object.hh"
+
+#include "ext/platform.hh"
 #include <SOIL/SOIL.h>
 
 cube::cube() : object_type(),

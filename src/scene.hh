@@ -47,8 +47,7 @@ class scene : public scene_type {
         program *m_object_program;      // Solid object shader program
         program *m_caster_program;      // Light caster shader program
 
-public: /* ================================================================== */
-
+public:
         scene();
 
         /* Display */

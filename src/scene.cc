@@ -1,8 +1,9 @@
-#include "ext/platform.hh"
 #include "scene.hh"
-#include "debug.hh"
-#include <stdexcept>
+
+#include "ext/platform.hh"
 #include <glm/gtc/matrix_transform.hpp>
+#include <stdexcept>
+#include "debug.hh"
 
 scene::scene() :
         /*

@@ -2,7 +2,6 @@
 #define SCRAMBLE_OBJECT_TYPE_H
 
 #include "program.hh"
-#include <GL/glew.h>
 
 struct object_type {
 

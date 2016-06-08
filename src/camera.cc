@@ -1,4 +1,5 @@
 #include "camera.hh"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 const GLdouble FOV = 45.0f;              // default fov

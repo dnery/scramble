@@ -1,8 +1,8 @@
 #ifndef SCRAMBLE_SHADER_H
 #define SCRAMBLE_SHADER_H
 
-#include <string>
 #include <GL/glew.h>
+#include <string>
 
 /*
  * Reference counting can be a little more complex to implement corectly
@@ -13,33 +13,31 @@
  * The implementation used here follows a well known and tested pattern,
  * all while respecting proper (can this be said?) encapsulation.
  */
-class shader_rep {
+class shared_shader {
 
         GLuint globject;        // GL shader resource
-        int refcount;           // reference count
+        GLuint refcount;        // reference count
 
-public: /* ================================================================== */
-
-        friend class shader;   // shader object access facade
+public:
+        friend class shader;    // shader object access facade
 
         /*
          * CTOR & DTOR
          */
-        shader_rep(std::string code, GLenum type);
-        ~shader_rep();
+        shared_shader(std::string code, GLenum type);
+        ~shared_shader();
 
         /*
-         * Methods
+         * Error check
          */
-        std::string compiler_errmsg(GLuint globject);
+        std::string error(GLuint globject);
 };
 
 class shader {
 
-        shader_rep *rep;        // pointer to ref-counted shader
+        shared_shader *rep;        // pointer to ref-counted shader
 
-public: /* ================================================================== */
-
+public:
         shader(std::string code, GLenum type);
         ~shader();
 
@@ -59,9 +57,12 @@ public: /* ================================================================== */
         friend void swap(shader& a, shader& b);
 
         /*
-         * Getters & Setters
+         * Single Getter
          */
-        const GLuint& get() const;
+        const GLuint& get() const
+        {
+                return rep->globject;
+        }
 };
 
 /*

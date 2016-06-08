@@ -1,9 +1,13 @@
 #include "shader.hh"
-#include <fstream>
-#include "debug.hh"
-#include <sstream>
 
-shader_rep::shader_rep(std::string code, GLenum type) :
+#include <fstream>
+#include <sstream>
+#include "debug.hh"
+
+/*
+ * Shared shader object
+ */
+shared_shader::shared_shader(std::string code, GLenum type) :
         globject(glCreateShader(type)),
         refcount(1)
 {
@@ -24,19 +28,40 @@ shader_rep::shader_rep(std::string code, GLenum type) :
         // throw if any exist
         if (status == GL_FALSE) {
 
-                errmsg = compiler_errmsg(globject);
+                errmsg = error(globject);
                 glDeleteShader(globject);
                 throw std::runtime_error(errmsg);
         }
 }
 
-shader_rep::~shader_rep()
+shared_shader::~shared_shader()
 {
         glDeleteShader(globject);
 }
 
+std::string shared_shader::error(GLuint globject)
+{
+        char *log_str;          // C style log info string
+        GLint log_len;          // Info log total length
+        std::string errmsg;     // Composed error msg
+
+        errmsg = std::string("Shader compile failure: ");
+        glGetShaderiv(globject, GL_INFO_LOG_LENGTH, &log_len);
+
+        log_str = new char[log_len + 1];
+        glGetShaderInfoLog(globject, log_len, nullptr, log_str);
+
+        errmsg += log_str;
+        delete[] log_str;
+
+        return errmsg;
+}
+
+/*
+ * Shader object interface
+ */
 shader::shader(std::string code, GLenum type) :
-        rep(new shader_rep(code, type))
+        rep(new shared_shader(code, type))
 {
 }
 
@@ -71,35 +96,6 @@ shader& shader::operator=(shader other)
 {
         swap(*this, other);
         return *this;
-}
-
-/*
- * Retrieve the managed resource.
- */
-const GLuint& shader::get() const
-{
-        return rep->globject;
-}
-
-/*
- * Compose error message to throw (helper function).
- */
-std::string shader_rep::compiler_errmsg(GLuint globject)
-{
-        char *log_str;          // C style log info string
-        GLint log_len;          // Info log total length
-        std::string errmsg;     // Composed error msg
-
-        errmsg = std::string("Shader compile failure: ");
-        glGetShaderiv(globject, GL_INFO_LOG_LENGTH, &log_len);
-
-        log_str = new char[log_len + 1];
-        glGetShaderInfoLog(globject, log_len, nullptr, log_str);
-
-        errmsg += log_str;
-        delete[] log_str;
-
-        return errmsg;
 }
 
 /*

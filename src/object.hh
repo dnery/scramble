@@ -2,8 +2,6 @@
 #define SCRAMBLE_OBJECT_H
 
 #include "object_type.hh"
-#include "program.hh"
-#include <GL/glew.h>
 
 class cube : public object_type {
 
@@ -18,17 +16,16 @@ class cube : public object_type {
 
         unsigned char *texmap;          // Texture resource (reusable)
 
-public: /* ================================================================== */
-
+public:
         cube();
 
         ~cube();
 
-        virtual void bind(program *program) const;
+        virtual void bind(program *program) const override;
 
-        virtual void unbind() const;
+        virtual void unbind() const override;
 
-        virtual void draw() const;
+        virtual void draw() const override;
 };
 
 #endif /* ifndef SCRAMBLE_OBJECT_H */
