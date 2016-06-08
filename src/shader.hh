@@ -1,84 +1,79 @@
-/*
- * Created by danilo on 3/31/16.
- */
-
 #ifndef SCRAMBLE_SHADER_H
 #define SCRAMBLE_SHADER_H
 
-#ifdef CLANG_COMPLETE_ONLY
-        #define GL_GLEXT_PROTOTYPES
-        #include <GL/gl.h>
-        #include <GL/glext.h>
-#else
-        #include <GL/glew.h>
-#endif
-
 #include <string>
+#include <GL/glew.h>
 
-namespace scramble {
+/*
+ * Reference counting can be a little more complex to implement corectly
+ * in C++. Read more into the counted body idiom here:
+ *
+ *      http://bit.ly/1TOLp5U
+ *
+ * The implementation used here follows a well known and tested pattern,
+ * all while respecting proper (can this be said?) encapsulation.
+ */
+class shader_rep {
+
+        GLuint globject;        // GL shader resource
+        int refcount;           // reference count
+
+public: /* ================================================================== */
+
+        friend class shader;   // shader object access facade
 
         /*
-         * Reference counting can be a little more complex to implement corectly
-         * in C++. Read more into the counted body idiom here:
-         *
-         *      http://bit.ly/1TOLp5U
-         *
-         * The implementation used here follows a well known and tested pattern,
-         * all while respecting proper (can this be said?) encapsulation.
+         * CTOR & DTOR
          */
-        struct shader_rep {
-
-                shader_rep(std::string code, GLenum type);
-
-                ~shader_rep();
-
-                friend struct shader; // shader object access facade
-
-        private:
-                GLuint globject;      // GL shader resource
-                int refcount;         // reference count
-        };
-
-        struct shader {
-
-                shader(std::string code, GLenum type);
-
-                ~shader();
-
-                /*
-                 * Shader is ref-counted; can be copy constructed
-                 */
-                shader(const shader& other);
-
-                /*
-                 * Shader is ref-counted; can be copy assigned
-                 */
-                shader& operator=(shader other);
-
-                GLuint get() const;
-
-                friend void swap(shader& a, shader& b);
-
-        private:
-                shader_rep *rep; // pointer to ref-counted shader
-        };
+        shader_rep(std::string code, GLenum type);
+        ~shader_rep();
 
         /*
-         * Compose compiler error message
+         * Methods
          */
         std::string compiler_errmsg(GLuint globject);
+};
+
+class shader {
+
+        shader_rep *rep;        // pointer to ref-counted shader
+
+public: /* ================================================================== */
+
+        shader(std::string code, GLenum type);
+        ~shader();
 
         /*
-         * Instantiate shader from source file.
-         *
-         * The r-value reference is a tiny optimization but imposes the
-         * restriction that it must always be called passing an x-value. In this
-         * situation, this means, exclusively, using it in conjunction with
-         * resource_path(), like this:
-         *
-         *      shader_from_file(resource_path("<resource_name>"), <SHADER_TYPE>);
+         * Shader is ref-counted; can be copy constructed
          */
-        shader shader_from_file(const std::string&& path, GLenum type);
-}
+        shader(const shader& other);
 
-#endif // SCRAMBLE_SHADER_H
+        /*
+         * Shader is ref-counted; can be copy assigned
+         */
+        shader& operator=(shader other);
+
+        /*
+         * Non-throwing swap function, for clean copy
+         */
+        friend void swap(shader& a, shader& b);
+
+        /*
+         * Getters & Setters
+         */
+        const GLuint& get() const;
+};
+
+/*
+ * Instantiate shader from source file.
+ *
+ * The r-value reference is a tiny optimization but imposes the
+ * restriction that it must always be called passing an x-value. In this
+ * situation, this means, exclusively, using it in conjunction with
+ * resource_path(), like this:
+ *
+ *      shader_from_file(resource_path("<resource_name>"), <SHADER_TYPE>);
+ */
+shader shader_from_file(const std::string&& path, GLenum type);
+
+#endif /* ifndef SCRAMBLE_SHADER_H */

@@ -1,16 +1,9 @@
-/*
- * Created by danilo on 3/31/16.
- */
-
-#include <fstream>
-#include <sstream>
-#include "debug.hh"
 #include "shader.hh"
+#include <fstream>
+#include "debug.hh"
+#include <sstream>
 
-/*
- * Non-trivial constructor.
- */
-scramble::shader_rep::shader_rep(std::string code, GLenum type) :
+shader_rep::shader_rep(std::string code, GLenum type) :
         globject(glCreateShader(type)),
         refcount(1)
 {
@@ -37,29 +30,19 @@ scramble::shader_rep::shader_rep(std::string code, GLenum type) :
         }
 }
 
-/*
- * Non-trivial destructor.
- */
-scramble::shader_rep::~shader_rep()
+shader_rep::~shader_rep()
 {
         glDeleteShader(globject);
 }
 
-/*
- * Non-trivial constructor.
- */
-scramble::shader::shader(std::string code, GLenum type) :
+shader::shader(std::string code, GLenum type) :
         rep(new shader_rep(code, type))
 {
 }
 
-/*
- * Non-trivial destructor.
- */
-scramble::shader::~shader()
+shader::~shader()
 {
         if (rep != nullptr && --rep->refcount <= 0) {
-
                 delete rep;
                 rep = nullptr;
         }
@@ -68,7 +51,7 @@ scramble::shader::~shader()
 /*
  * Non-throwing swap function.
  */
-void scramble::swap(scramble::shader& a, scramble::shader& b)
+void swap(shader& a, shader& b)
 {
         std::swap(a.rep, b.rep);
 }
@@ -76,8 +59,7 @@ void scramble::swap(scramble::shader& a, scramble::shader& b)
 /*
  * "Copy-and-swap" copy constructor.
  */
-scramble::shader::shader(const shader& other) :
-        rep(other.rep)
+shader::shader(const shader& other) : rep(other.rep)
 {
         rep->refcount++;
 }
@@ -85,7 +67,7 @@ scramble::shader::shader(const shader& other) :
 /*
  * "Copy-and-swap" copy assignment operator.
  */
-scramble::shader& scramble::shader::operator=(shader other)
+shader& shader::operator=(shader other)
 {
         swap(*this, other);
         return *this;
@@ -94,7 +76,7 @@ scramble::shader& scramble::shader::operator=(shader other)
 /*
  * Retrieve the managed resource.
  */
-GLuint scramble::shader::get() const
+const GLuint& shader::get() const
 {
         return rep->globject;
 }
@@ -102,11 +84,11 @@ GLuint scramble::shader::get() const
 /*
  * Compose error message to throw (helper function).
  */
-std::string scramble::compiler_errmsg(GLuint globject)
+std::string shader_rep::compiler_errmsg(GLuint globject)
 {
-        char *log_str;      // C style log info string
-        GLint log_len;      // Info log total length
-        std::string errmsg; // Composed error msg
+        char *log_str;          // C style log info string
+        GLint log_len;          // Info log total length
+        std::string errmsg;     // Composed error msg
 
         errmsg = std::string("Shader compile failure: ");
         glGetShaderiv(globject, GL_INFO_LOG_LENGTH, &log_len);
@@ -123,7 +105,7 @@ std::string scramble::compiler_errmsg(GLuint globject)
 /*
  * Instantiate shader from source file.
  */
-scramble::shader scramble::shader_from_file(const std::string&& path, GLenum type)
+shader shader_from_file(const std::string&& path, GLenum type)
 {
         std::ifstream handle(path, std::ios::in | std::ios::binary);
         check(handle.is_open());
@@ -132,7 +114,6 @@ scramble::shader scramble::shader_from_file(const std::string&& path, GLenum typ
         buffer << handle.rdbuf();
 
         put("shader path: %s\n", path.c_str());
-        //unsc_logmsg("shader sauce:\n%s\n", buffer.str().c_str());
 
-        return scramble::shader(buffer.str(), type);
+        return shader(buffer.str(), type);
 }

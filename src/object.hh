@@ -1,75 +1,34 @@
-/*
- * Created by danilo on 4/12/16.
- */
+#ifndef SCRAMBLE_OBJECT_H
+#define SCRAMBLE_OBJECT_H
 
-#ifndef SCRAMBLE_OBJECT_HH
-#define SCRAMBLE_OBJECT_HH
-
-#ifdef CLANG_COMPLETE_ONLY
-        #define GL_GLEXT_PROTOTYPES
-        #include <GL/gl.h>
-        #include <GL/glext.h>
-#else
-        #include <GL/glew.h>
-#endif
-
+#include "object_type.hh"
 #include "program.hh"
+#include <GL/glew.h>
 
-namespace scramble {
+class cube : public object_type {
 
-        struct object {
+        const GLfloat vertices[288];    // All coordinates
 
-                object();
+        int texw;                       // Texture width
+        int texh;                       // Texture height
 
-                virtual ~object()
-                {
-                }
+        GLuint texture1;                // Texture object 1
+        GLuint texture2;                // Texture object 2
+        GLuint specular;                // Specular map texture
 
-                /*
-                 * Each instance knows how to bind itself to shader.
-                 */
-                virtual void bind(scramble::program *program) const = 0;
+        unsigned char *texmap;          // Texture resource (reusable)
 
-                /*
-                 * Each instance knows how to draw itself.
-                 */
-                virtual void draw() const = 0;
+public: /* ================================================================== */
 
-                /*
-                 * Each instance knows how to unbind itself.
-                 */
-                virtual void unbind() const = 0;
+        cube();
 
-        protected:
-                GLuint vbo; // Vertices buffer
-                GLuint ebo; // Elements buffer
-                GLuint vao; // Vertex attribute array
-        };
+        ~cube();
 
-        struct cube : object {
+        virtual void bind(program *program) const;
 
-                virtual void bind(scramble::program *program) const override;
+        virtual void unbind() const;
 
-                virtual void draw() const override;
+        virtual void draw() const;
+};
 
-                virtual void unbind() const override;
-
-                cube();
-
-                ~cube();
-
-        private:
-                const GLfloat vertices[288]; // All coordinates
-
-                int texw;                    // Texture width
-                int texh;                    // Texture height
-
-                GLuint texture1;             // Texture object 1
-                GLuint texture2;             // Texture object 2
-                GLuint specular;             // Specular map texture
-
-                unsigned char *texmap;       // Texture resource (reusable)
-        };
-}
-
-#endif // SCRAMBLE_OBJECT_H
+#endif /* ifndef SCRAMBLE_OBJECT_H */

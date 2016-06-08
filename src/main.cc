@@ -1,13 +1,14 @@
 #include <iostream>
-#include "debug.hh"
-#include "engine.hh"
+#include "scene.hh"
+#include "window_manager.hh"
 
 int main(int argc, char *argv[])
 {
         try {
-                scramble::engine engine;
-
-                engine.engage();
+                scene *sample = new scene();
+                window_manager wm(1024, 768, "Scramble", sample);
+                wm.render_scene();
+                delete sample;
 
         } catch (std::runtime_error& e) {
 

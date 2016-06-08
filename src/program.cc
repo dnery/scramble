@@ -1,15 +1,8 @@
-/*
- * Created by danilo on 4/1/16.
- */
-
-#include <stdexcept>
-#include "debug.hh"
 #include "program.hh"
+#include "debug.hh"
+#include <stdexcept>
 
-/*
- * Non-trivial constructor.
- */
-scramble::program::program(const std::vector<scramble::shader>& shaders) :
+program::program(const std::vector<shader>& shaders) :
         globject(glCreateProgram())
 {
         GLint status; // captures program link status
@@ -42,10 +35,7 @@ scramble::program::program(const std::vector<scramble::shader>& shaders) :
         }
 }
 
-/*
- * Non-trivial destructor.
- */
-scramble::program::~program()
+program::~program()
 {
         check(globject != 0);
 
@@ -55,7 +45,7 @@ scramble::program::~program()
 /*
  * Retrieve the managed resource.
  */
-GLuint scramble::program::get() const
+const GLuint& program::get() const
 {
         return globject;
 }
@@ -63,7 +53,7 @@ GLuint scramble::program::get() const
 /*
  * Check if current proram is in use.
  */
-bool scramble::program::in_use() const
+bool program::in_use() const
 {
         GLint current = 0; // current program in use by the API
 
@@ -77,7 +67,7 @@ bool scramble::program::in_use() const
 /*
  * Toggle usage for the current program.
  */
-void scramble::program::toggle() const
+void program::toggle() const
 {
         if (in_use())
                 glUseProgram(0);
@@ -88,7 +78,7 @@ void scramble::program::toggle() const
 /*
  * Get resource attrib location via glGetAttribLocation.
  */
-GLint scramble::program::attrib(const GLchar *name) const
+GLint program::attrib(const GLchar *name) const
 {
         GLint index; // holds attribute index
 
@@ -104,7 +94,7 @@ GLint scramble::program::attrib(const GLchar *name) const
 /*
  * Get resource uniform location via glGetUniformLocation.
  */
-GLint scramble::program::uniform(const GLchar *name) const
+GLint program::uniform(const GLchar *name) const
 {
         GLint index; // holds uniform index
 
@@ -120,7 +110,7 @@ GLint scramble::program::uniform(const GLchar *name) const
 /*
  * Compose error message to throw (helper function).
  */
-std::string scramble::linker_errmsg(GLuint globject)
+std::string program::linker_errmsg(GLuint globject)
 {
         char *log_str;      // C style log info string
         GLint log_len;      // Info log total length
@@ -143,41 +133,41 @@ std::string scramble::linker_errmsg(GLuint globject)
  */
 #define ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE, TYPE_PREFIX, TYPE_SUFFIX) \
 \
-        void scramble::program::setAttrib(const GLchar* name, OGL_TYPE v0) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX (attrib(name), v0); } \
-        void scramble::program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX (attrib(name), v0, v1); } \
-        void scramble::program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX (attrib(name), v0, v1, v2); } \
-        void scramble::program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2, OGL_TYPE v3) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX (attrib(name), v0, v1, v2, v3); } \
+void program::setAttrib(const GLchar* name, OGL_TYPE v0) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX (attrib(name), v0); } \
+void program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX (attrib(name), v0, v1); } \
+void program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX (attrib(name), v0, v1, v2); } \
+void program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2, OGL_TYPE v3) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX (attrib(name), v0, v1, v2, v3); } \
 \
-        void scramble::program::setAttrib1v(const GLchar* name, const OGL_TYPE* v) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX ## v (attrib(name), v); } \
-        void scramble::program::setAttrib2v(const GLchar* name, const OGL_TYPE* v) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX ## v (attrib(name), v); } \
-        void scramble::program::setAttrib3v(const GLchar* name, const OGL_TYPE* v) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX ## v (attrib(name), v); } \
-        void scramble::program::setAttrib4v(const GLchar* name, const OGL_TYPE* v) \
-                { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+void program::setAttrib1v(const GLchar* name, const OGL_TYPE* v) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+void program::setAttrib2v(const GLchar* name, const OGL_TYPE* v) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+void program::setAttrib3v(const GLchar* name, const OGL_TYPE* v) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+void program::setAttrib4v(const GLchar* name, const OGL_TYPE* v) \
+        { assert(in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX ## v (attrib(name), v); } \
 \
-        void scramble::program::setUniform(const GLchar* name, OGL_TYPE v0) \
-                { assert(in_use()); glUniform1 ## TYPE_SUFFIX (uniform(name), v0); } \
-        void scramble::program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1) \
-                { assert(in_use()); glUniform2 ## TYPE_SUFFIX (uniform(name), v0, v1); } \
-        void scramble::program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2) \
-                { assert(in_use()); glUniform3 ## TYPE_SUFFIX (uniform(name), v0, v1, v2); } \
-        void scramble::program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2, OGL_TYPE v3) \
-                { assert(in_use()); glUniform4 ## TYPE_SUFFIX (uniform(name), v0, v1, v2, v3); } \
+void program::setUniform(const GLchar* name, OGL_TYPE v0) \
+        { assert(in_use()); glUniform1 ## TYPE_SUFFIX (uniform(name), v0); } \
+void program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1) \
+        { assert(in_use()); glUniform2 ## TYPE_SUFFIX (uniform(name), v0, v1); } \
+void program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2) \
+        { assert(in_use()); glUniform3 ## TYPE_SUFFIX (uniform(name), v0, v1, v2); } \
+void program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2, OGL_TYPE v3) \
+        { assert(in_use()); glUniform4 ## TYPE_SUFFIX (uniform(name), v0, v1, v2, v3); } \
 \
-        void scramble::program::setUniform1v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-                { assert(in_use()); glUniform1 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
-        void scramble::program::setUniform2v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-                { assert(in_use()); glUniform2 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
-        void scramble::program::setUniform3v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-                { assert(in_use()); glUniform3 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
-        void scramble::program::setUniform4v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-                { assert(in_use()); glUniform4 ## TYPE_SUFFIX ## v (uniform(name), count, v); }
+void program::setUniform1v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
+        { assert(in_use()); glUniform1 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
+void program::setUniform2v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
+        { assert(in_use()); glUniform2 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
+void program::setUniform3v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
+        { assert(in_use()); glUniform3 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
+void program::setUniform4v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
+        { assert(in_use()); glUniform4 ## TYPE_SUFFIX ## v (uniform(name), count, v); }
 
 ATTRIB_N_UNIFORM_SETTERS(GLfloat, , f);
 
@@ -187,56 +177,54 @@ ATTRIB_N_UNIFORM_SETTERS(GLint, I, i);
 
 ATTRIB_N_UNIFORM_SETTERS(GLuint, I, ui);
 
-void scramble::program::setUniformMatrix2(const GLchar *name, const GLfloat *v,
+void program::setUniformMatrix2(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
         check(in_use());
         glUniformMatrix2fv(uniform(name), count, transpose, v);
 }
 
-void scramble::program::setUniformMatrix3(const GLchar *name, const GLfloat *v,
+void program::setUniformMatrix3(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
         check(in_use());
         glUniformMatrix3fv(uniform(name), count, transpose, v);
 }
 
-void scramble::program::setUniformMatrix4(const GLchar *name, const GLfloat *v,
+void program::setUniformMatrix4(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
         check(in_use());
         glUniformMatrix4fv(uniform(name), count, transpose, v);
 }
 
-void scramble::program::setUniform(const GLchar *name, const glm::mat2& m,
+void program::setUniform(const GLchar *name, const glm::mat2& m,
                                    GLboolean transpose)
 {
         check(in_use());
         glUniformMatrix2fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
-void scramble::program::setUniform(const GLchar *name, const glm::mat3& m,
+void program::setUniform(const GLchar *name, const glm::mat3& m,
                                    GLboolean transpose)
 {
         check(in_use());
         glUniformMatrix3fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
-void scramble::program::setUniform(const GLchar *name, const glm::mat4& m,
+void program::setUniform(const GLchar *name, const glm::mat4& m,
                                    GLboolean transpose)
 {
         check(in_use());
         glUniformMatrix4fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
-void scramble::program::setUniform(const GLchar *uniformName,
-                                   const glm::vec3& v)
+void program::setUniform(const GLchar *uniformName, const glm::vec3& v)
 {
         setUniform3v(uniformName, glm::value_ptr(v));
 }
 
-void scramble::program::setUniform(const GLchar *uniformName,
-                                   const glm::vec4& v)
+void program::setUniform(const GLchar *uniformName, const glm::vec4& v)
 {
         setUniform4v(uniformName, glm::value_ptr(v));
 }

@@ -1,39 +1,42 @@
-/*
- * Created by danilo on 4/17/16.
- */
-
-#include <glm/gtc/matrix_transform.hpp>
 #include "camera.hh"
+#include <glm/gtc/matrix_transform.hpp>
 
-const GLfloat scramble::PIT = 0.0f;         // default pitch
-const GLfloat scramble::YAW = -90.0f;       // default yaw
-const GLfloat scramble::ZOOM = 45.0f;       // default zoom
-const GLfloat scramble::SPEED = 5.0f;       // default speed
-const GLfloat scramble::SENSITIVITY = 0.1f; // default sensitivity
+const GLdouble FOV = 45.0f;              // default fov
+const GLdouble YAW = -90.0f;             // default yaw
+const GLdouble PITCH = 0.0f;             // default pitch
+const GLdouble SPEED = 5.0f;             // default movespeed
+const GLdouble SENSITIVITY = 0.1f;       // default sensitivity
 
-scramble::camera::camera() :
+camera::camera() :
         /*
          * Vector member data
          */
-        position(glm::vec3(0.0f, 0.0f, 3.0f)),
-        front(glm::vec3(0.0f, 0.0f, -1.0f)),
-        right(glm::vec3(1.0f, 0.0f, 0.0f)),
-        cam_up(glm::vec3(0.0f, 1.0f, 0.0f)),
-        world_up(glm::vec3(0.0f, 1.0f, 0.0f)),
+        m_vec_position(glm::vec3(0.0f, 0.0f, 3.0f)),
+        m_vec_front(glm::vec3(0.0f, 0.0f, -1.0f)),
+        m_vec_right(glm::vec3(1.0f, 0.0f, 0.0f)),
+        m_vec_cam_up(glm::vec3(0.0f, 1.0f, 0.0f)),
+        m_vec_world_up(glm::vec3(0.0f, 1.0f, 0.0f)),
         /*
          * Scalar member data
          */
-        look_pit(PIT),
-        look_yaw(YAW),
-        look_zoom(ZOOM),
-        move_speed(SPEED),
-        sensitivity(SENSITIVITY)
+        m_scalar_fov(FOV),
+        m_scalar_yaw(YAW),
+        m_scalar_pitch(PITCH),
+        m_scalar_movespeed(SPEED),
+        m_scalar_sensitivity(SENSITIVITY)
 {
 }
 
-void scramble::camera::keypress(GLuint direction, GLfloat delta_time)
+void camera::zoom(GLdouble yoffset)
 {
-        GLfloat final_speed = move_speed * delta_time;
+        m_scalar_fov -= (yoffset * m_scalar_sensitivity);
+        m_scalar_fov = (m_scalar_fov < 1.0f ? 1.0f : m_scalar_fov);
+        m_scalar_fov = (m_scalar_fov > 90.0f ? 90.0f : m_scalar_fov);
+}
+
+void camera::move(GLuint direction, GLdouble delta)
+{
+        GLfloat final_speed = m_scalar_movespeed * delta;
 
         /*
          * Name deduction in nested name specifier is a very particular
@@ -59,65 +62,74 @@ void scramble::camera::keypress(GLuint direction, GLfloat delta_time)
          */
 
         if (direction == movement::LEFT)
-                position -= right * final_speed;
+                m_vec_position -= m_vec_right * final_speed;
 
         if (direction == movement::RIGHT)
-                position += right * final_speed;
+                m_vec_position += m_vec_right * final_speed;
 
         if (direction == movement::FORWARD)
-                position += front * final_speed;
+                m_vec_position += m_vec_front * final_speed;
 
         if (direction == movement::BACKWARD)
-                position -= front * final_speed;
+                m_vec_position -= m_vec_front * final_speed;
 }
 
-void scramble::camera::mouse_look(GLfloat xoffset,
-                                  GLfloat yoffset,
-                                  GLboolean constrain)
+void camera::look(GLdouble xoffset, GLdouble yoffset, GLboolean clamp)
 {
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
+        xoffset *= m_scalar_sensitivity;
+        yoffset *= m_scalar_sensitivity;
 
-        look_yaw += xoffset;
-        look_pit += yoffset;
+        m_scalar_yaw += xoffset;
+        m_scalar_pitch += yoffset;
 
-        if (constrain) {
-                look_pit = (look_pit > 89.0f ? 89.0f : look_pit);
-                look_pit = (look_pit < -89.0f ? -89.0f : look_pit);
+        if (clamp) {
+                m_scalar_pitch = (m_scalar_pitch > 89.0f ? 89.0f : m_scalar_pitch);
+                m_scalar_pitch = (m_scalar_pitch < -89.0f ? -89.0f : m_scalar_pitch);
         }
 
-        update_vectors();
+        update();
 }
 
-void scramble::camera::mouse_scroll(GLfloat yoffset)
-{
-        look_zoom -= (yoffset * sensitivity);
-        look_zoom = (look_zoom < 1.0f ? 1.0f : look_zoom);
-        look_zoom = (look_zoom > 90.0f ? 90.0f : look_zoom);
-}
-
-void scramble::camera::update_vectors()
+void camera::update()
 {
         /*
          * Re-calculate front vector TODO sketch this procedure!
          */
-        front.x = (cos(glm::radians(look_yaw)) * cos(glm::radians(look_pit)));
-        front.y = (sin(glm::radians(look_pit)));
-        front.z = (sin(glm::radians(look_yaw)) * cos(glm::radians(look_pit)));
-        front = glm::normalize(front);
+        m_vec_front.x = (cos(glm::radians(m_scalar_yaw)) *
+                        cos(glm::radians(m_scalar_pitch)));
+
+        m_vec_front.y = (sin(glm::radians(m_scalar_pitch)));
+
+        m_vec_front.z = (sin(glm::radians(m_scalar_yaw)) *
+                        cos(glm::radians(m_scalar_pitch)));
+
+        m_vec_front = glm::normalize(m_vec_front);
 
         /*
          * rightVector = frontVector X globalUpVector
          */
-        right = glm::normalize(glm::cross(front, world_up));
+        m_vec_right = glm::normalize(glm::cross(m_vec_front, m_vec_world_up));
 
         /*
          * camUpVector = frontVector X rightVector
          */
-        cam_up = glm::normalize(glm::cross(right, front));
+        m_vec_cam_up = glm::normalize(glm::cross(m_vec_right, m_vec_front));
 }
 
-glm::mat4 scramble::camera::view_mat()
+glm::mat4 camera::view()
 {
-        return glm::lookAt(position, position + front, cam_up);
+        return glm::lookAt(m_vec_position, m_vec_position + m_vec_front, m_vec_cam_up);
+}
+
+glm::mat4 camera::projection(GLdouble vp_aspect_ratio)
+{
+        GLfloat var = static_cast<GLfloat>(vp_aspect_ratio);
+        GLfloat fov = static_cast<GLfloat>(m_scalar_fov);
+
+        return glm::perspective(fov, var, 0.1f, 1000.0f);
+}
+
+glm::mat4 camera::view_projection(GLdouble vp_aspect_ratio)
+{
+        return projection(vp_aspect_ratio) * view();
 }

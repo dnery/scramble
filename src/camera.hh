@@ -1,62 +1,71 @@
-/*
- * Created by danilo on 4/17/16.
- */
-
 #ifndef SCRAMBLE_CAMERA_H
 #define SCRAMBLE_CAMERA_H
 
-#ifdef CLANG_COMPLETE_ONLY
-        #define GL_GLEXT_PROTOTYPES
-        #include <GL/gl.h>
-        #include <GL/glext.h>
-#else
-        #include <GL/glew.h>
-#endif
-
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 
-namespace scramble {
+extern const GLdouble FOV;                      // Default fov
+extern const GLdouble YAW;                      // Default yaw
+extern const GLdouble PITCH;                    // Default pitch
+extern const GLdouble SPEED;                    // Default movespeed
+extern const GLdouble SENSITIVITY;              // Default sensitivity
 
-        extern const GLfloat PIT;         // default pitch
-        extern const GLfloat YAW;         // default yaw
-        extern const GLfloat ZOOM;        // default zoom
-        extern const GLfloat SPEED;       // default speed
-        extern const GLfloat SENSITIVITY; // default sensitivity
+class camera {
+
+        glm::vec3 m_vec_position;               // Position vector
+        glm::vec3 m_vec_front;                  // Front normal
+        glm::vec3 m_vec_right;                  // Right normal
+        glm::vec3 m_vec_cam_up;                 // Cam up normal
+        glm::vec3 m_vec_world_up;               // World up normal
+
+        GLdouble m_scalar_fov;                  // Look zoom factor
+        GLdouble m_scalar_yaw;                  // Look yaw rotation
+        GLdouble m_scalar_pitch;                // Look pitch rotation
+        GLdouble m_scalar_movespeed;            // Movement speed multiplier
+        GLdouble m_scalar_sensitivity;          // Look sensitivity multiplier
+
+        void update();
+
+public: /* ================================================================== */
 
         enum movement {
-                LEFT = 1,                 // move flag: left
-                RIGHT = 2,                // move flag: right
-                FORWARD = 4,              // move flag: forward
-                BACKWARD = 8              // move flag: backward
+                LEFT = 1,                       // Move type: left
+                RIGHT = 2,                      // Move type: right
+                FORWARD = 4,                    // Move type: forward
+                BACKWARD = 8                    // Move type: backward
         };
 
-        struct camera {
+        /*
+         * CTOR & DTOR
+         */
+        camera();
 
-                glm::vec3 position;       // position vector
-                glm::vec3 front;          // front-pointing vector
-                glm::vec3 right;          // right-pointing vector
-                glm::vec3 cam_up;         // camera up vector
-                glm::vec3 world_up;       // world up vector
+        /*
+         * Getters & Setters
+         */
+        const glm::vec3& position() const
+        {
+                return m_vec_position;
+        }
 
-                GLfloat look_pit;         // look pitch rotation
-                GLfloat look_yaw;         // look yaw rotation
-                GLfloat look_zoom;        // look zoom factor
-                GLfloat move_speed;       // movement speed
-                GLfloat sensitivity;      // look sensitivity
+        const glm::vec3& front() const
+        {
+                return m_vec_front;
+        }
 
-                camera();
+        /*
+         * State manipulators
+         */
+        void zoom(GLdouble yoffset);
+        void move(GLuint direction, GLdouble delta);
+        void look(GLdouble xoffset, GLdouble yoffset, GLboolean clamp = GL_TRUE);
 
-                void keypress(GLuint direction, GLfloat delta_time);
+        /*
+         * Orientation matrix getters
+         */
+        glm::mat4 view();
+        glm::mat4 projection(GLdouble vp_aspect_ratio);
+        glm::mat4 view_projection(GLdouble vp_aspect_ratio);
+};
 
-                void mouse_look(GLfloat xoffset, GLfloat yoffset,
-                                GLboolean constrain = GL_TRUE);
-
-                void mouse_scroll(GLfloat yoffset);
-
-                void update_vectors();
-
-                glm::mat4 view_mat();
-        };
-}
-
-#endif // SCRAMBLE_CAMERA_H
+#endif /* ifndef SCRAMBLE_CAMERA_H */

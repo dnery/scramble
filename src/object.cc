@@ -1,20 +1,8 @@
-/*
- * Created by danilo on 4/12/16.
- */
-
-#include <SOIL/SOIL.h>
-#include "object.hh"
 #include "ext/platform.hh"
+#include "object.hh"
+#include <SOIL/SOIL.h>
 
-scramble::object::object() :
-        vbo(0),
-        ebo(0),
-        vao(0)
-{
-}
-
-scramble::cube::cube() :
-        object(),
+cube::cube() : object_type(),
         vertices{
                 -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
 /*               ^~~~~~~~~~~~~~~~~~^  ^~~~~~~~~~^  ^~~~~~~~~~~~~~~~~~^
@@ -166,7 +154,7 @@ scramble::cube::cube() :
         glBindVertexArray(0);
 }
 
-scramble::cube::~cube()
+cube::~cube()
 {
         glDeleteTextures(1, &texture1);
         glDeleteTextures(1, &texture2);
@@ -175,7 +163,7 @@ scramble::cube::~cube()
         glDeleteBuffers(1, &vbo);
 }
 
-void scramble::cube::bind(scramble::program *program) const
+void cube::bind(program *program) const
 {
         /*
          * Without this check, instantiating a non-textured cube would not be
@@ -206,12 +194,12 @@ void scramble::cube::bind(scramble::program *program) const
         glBindVertexArray(vao);
 }
 
-void scramble::cube::draw() const
+void cube::draw() const
 {
         glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void scramble::cube::unbind() const
+void cube::unbind() const
 {
         glBindVertexArray(0);
 }

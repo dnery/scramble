@@ -1,7 +1,3 @@
-/*
- * Created by danilo on 4/1/16.
- */
-
 #ifndef SCRAMBLE_DEBUG_H
 #define SCRAMBLE_DEBUG_H
 
@@ -35,4 +31,4 @@
 
 #endif
 
-#endif // SCRAMBLE_DEBUG_H
+#endif /* SCRAMBLE_DEBUG_H */
