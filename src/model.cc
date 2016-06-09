@@ -9,7 +9,7 @@ model::model(const std::string&& path)
         Assimp::Importer imp;
 
         // Postprocess: triangulate mesh, flip UV maps
-        const aiScene *aiscene = imp.ReadFile(path, aiProcess_Triangulate);
+        const aiScene *aiscene = imp.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
         // Check for errors
         if (!aiscene || !aiscene->mRootNode ||
@@ -48,21 +48,22 @@ mesh model::process_mesh(aiMesh *aimesh, const aiScene *aiscene)
                 vector.x = aimesh->mVertices[i].x;
                 vector.y = aimesh->mVertices[i].y;
                 vector.z = aimesh->mVertices[i].z;
-                vert.m_vertex = glm::vec3(vector);
+                vert.m_vertex = vector;
 
-                vector.x = aimesh->mNormals[i].x;
-                vector.y = aimesh->mNormals[i].y;
-                vector.z = aimesh->mNormals[i].z;
-                vert.m_normal = glm::vec3(vector);
+                glm::vec3 normal;
+                normal.x = aimesh->mNormals[i].x;
+                normal.y = aimesh->mNormals[i].y;
+                normal.z = aimesh->mNormals[i].z;
+                vert.m_normal = normal;
 
                 if (aimesh->mTextureCoords[0]) {
-                        glm::vec2 tex;
+                      glm::vec2 tex;
 
-                        tex.x = aimesh->mTextureCoords[0][i].x;
-                        tex.y = aimesh->mTextureCoords[0][i].y;
-                        vert.m_texcoord = glm::vec2(tex);
+                      tex.x = aimesh->mTextureCoords[0][i].x;
+                      tex.y = aimesh->mTextureCoords[0][i].y;
+                      vert.m_texcoord = tex;
                 } else {
-                        vert.m_texcoord = glm::vec2(0.0f, 0.0f);
+                      vert.m_texcoord = glm::vec2(0.0f, 0.0f);
                 }
 
                 vertices.push_back(vert);
