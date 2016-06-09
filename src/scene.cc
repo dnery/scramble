@@ -79,7 +79,7 @@ void scene::init(GLFWwindow *window)
         }
 
         // Objects do not depend on shaders for creation
-        m_object = new model(resource_path("models/jeanity/LabComLoop.obj"));
+        m_object = new model(resource_path("models/nanosuit/nanosuit.obj"));
 }
 
 void scene::update(GLdouble millis)
@@ -209,8 +209,10 @@ void scene::display()
         //        m_object->draw();
         //}
 
-        // Done
+        // Draw
         m_object->draw(*m_object_program);
+
+        // Done
         m_object_program->toggle();
 }
 

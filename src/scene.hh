@@ -43,7 +43,7 @@ class scene : public scene_type {
         GLdouble m_vp_aspect_ratio;     // Viewport aspect ratio
 
         /* Elements */
-        model *m_object;          // Sample solid object
+        model *m_object;                // Sample solid object
         program *m_object_program;      // Solid object shader program
 
 public:

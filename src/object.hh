@@ -28,4 +28,28 @@ public:
         virtual void draw() const override;
 };
 
+class plane : public object_type {
+
+        const GLfloat vertices[48];    // All coordinates
+
+        int texw;                       // Texture width
+        int texh;                       // Texture height
+
+        GLuint texture1;                // Texture object 1
+        GLuint specular1;               // Texture object 1
+
+        unsigned char *texmap;          // Texture resource (reusable)
+
+public:
+        plane();
+
+        ~plane();
+
+        virtual void bind(program *program) const override;
+
+        virtual void unbind() const override;
+
+        virtual void draw() const override;
+};
+
 #endif /* ifndef SCRAMBLE_OBJECT_H */
