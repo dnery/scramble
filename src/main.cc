@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
         try {
                 scene *sample = new scene();
-                window_manager wm(1024, 768, "Scramble", sample);
+                window_manager wm(1600, 900, "Scramble", sample);
                 wm.render_scene();
                 delete sample;
 

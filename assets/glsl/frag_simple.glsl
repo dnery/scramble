@@ -3,7 +3,7 @@
 
 // Preprocessor
 #define N_SPOTLIGHTS  1
-#define N_POINTLIGHTS 3
+#define N_POINTLIGHTS 2
 
 // INPUTS
 in vec2 vs_texcoord;
@@ -18,7 +18,6 @@ struct Material {
 
         float shininess;
         sampler2D texture_diffuse1;
-        sampler2D texture_diffuse2;
         sampler2D texture_specular1;
 };
 
@@ -78,9 +77,7 @@ vec3 spotlight_contrib(SpotLight caster, vec3 frag_pos, vec3 frag_normal)
         vec3 reflect_dir = reflect(-caster_dir, frag_normal);
 
         // Lighting maps
-        vec3 diffuse_map = vec3(mix(texture(material.texture_diffuse1, vs_texcoord),
-                                    texture(material.texture_diffuse2, vs_texcoord),
-                                    0.35f));
+        vec3 diffuse_map = vec3(texture(material.texture_diffuse1, vs_texcoord));
         vec3 specular_map = vec3(texture(material.texture_specular1, vs_texcoord));
 
         // Lighting factors
@@ -136,9 +133,7 @@ vec3 pointlight_contrib(PointLight caster, vec3 frag_pos, vec3 frag_normal)
         vec3 reflect_dir = reflect(-caster_dir, frag_normal);
 
         // Lighting maps
-        vec3 diffuse_map = vec3(mix(texture(material.texture_diffuse1, vs_texcoord),
-                                    texture(material.texture_diffuse2, vs_texcoord),
-                                    0.35f));
+        vec3 diffuse_map = vec3(texture(material.texture_diffuse1, vs_texcoord));
         vec3 specular_map = vec3(texture(material.texture_specular1, vs_texcoord));
 
         // Lighting factors

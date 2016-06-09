@@ -44,9 +44,7 @@ class scene : public scene_type {
 
         /* Elements */
         model *m_object;          // Sample solid object
-        object_type *m_caster;          // Sample light caster
         program *m_object_program;      // Solid object shader program
-        program *m_caster_program;      // Light caster shader program
 
 public:
         scene();

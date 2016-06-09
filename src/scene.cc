@@ -22,9 +22,7 @@ scene::scene() :
          * Elements
          */
         m_object(nullptr),
-        m_caster(nullptr),
-        m_object_program(nullptr),
-        m_caster_program(nullptr)
+        m_object_program(nullptr)
 {
 }
 
@@ -41,7 +39,7 @@ void scene::init(GLFWwindow *window)
         m_mouse.m_first_enter_viewport = GL_TRUE;
 
         // Set the clear color
-        glClearColor(0.25f, 0.03f, 0.08f, 1.0f);
+        glClearColor(0.1f, 0.02f, 0.05f, 1.0f);
 
         // Z-buffer depth query
         glEnable(GL_DEPTH_TEST);
@@ -55,6 +53,9 @@ void scene::init(GLFWwindow *window)
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        // On-Screen MSAA
+        glEnable(GL_MULTISAMPLE);
+
         // Create sample shaders
         try {
                 std::vector<shader> object_shaders;
@@ -67,18 +68,7 @@ void scene::init(GLFWwindow *window)
                                         GL_FRAGMENT_SHADER)
                                 );
 
-                std::vector<shader> caster_shaders;
-                caster_shaders.push_back(shader_from_file(
-                                        resource_path("glsl/vert_caster.glsl"),
-                                        GL_VERTEX_SHADER)
-                                );
-                caster_shaders.push_back(shader_from_file(
-                                        resource_path("glsl/frag_caster.glsl"),
-                                        GL_FRAGMENT_SHADER)
-                                );
-
                 m_object_program = new program(object_shaders);
-                m_caster_program = new program(caster_shaders);
 
         } catch (std::runtime_error &e) {
 
@@ -90,7 +80,6 @@ void scene::init(GLFWwindow *window)
 
         // Objects do not depend on shaders for creation
         m_object = new model(resource_path("models/nanosuit/nanosuit.obj"));
-        m_caster = new cube;
 }
 
 void scene::update(GLdouble millis)
@@ -121,36 +110,11 @@ void scene::display()
         glm::mat4 model_matrix;
         glm::mat4 normal_matrix;
 
-        // CASTER SHADER
-        m_caster_program->toggle();
-        m_caster->bind(m_caster_program);
-
-        // Set static properties
-        m_caster_program->setUniform("proj", m_camera.projection(m_vp_aspect_ratio));
-        m_caster_program->setUniform("view", m_camera.view());
-        m_caster_program->setUniform("color", glm::vec3(1.0f, 0.6f, 0.8f));
-
         // Define draw positions
         glm::vec3 caster_positions[] = {
-                glm::vec3(0.0f, 3.3f, 0.0f),
-                glm::vec3(3.0f, 2.0f, -8.5f),
-                glm::vec3(-4.0f, -2.5f, 7.0f)
+                glm::vec3(2.3f, -1.6f, -3.0f),
+                glm::vec3(-1.7f, 0.9f, 1.0f),
         };
-
-        // Draw all instances
-        for (GLuint i = 0; i < 3; i++) {
-
-                // Model matrix
-                model_matrix = glm::translate(glm::mat4(), caster_positions[i]);
-                m_caster_program->setUniform("model", model_matrix);
-
-                // Draw :D
-                m_caster->draw();
-        }
-
-        // Done
-        m_caster->unbind();
-        m_caster_program->toggle();
 
         // OBJECT SHADER
         m_object_program->toggle();
@@ -158,7 +122,7 @@ void scene::display()
         // Set static properties
 
         // Set object material properties
-        m_object_program->setUniform("material.shininess", 64.0f);
+        m_object_program->setUniform("material.shininess", 32.0f);
 
         // Flashlight properties
         m_object_program->setUniform("spotlights[0].position", m_camera.position());
@@ -167,7 +131,7 @@ void scene::display()
         m_object_program->setUniform("spotlights[0].maxcutoff", glm::cos(glm::radians(17.5f)));
 
         if (m_keyboard.m_flashlight_active) {
-                m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.1f));
+                m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.05f));
                 m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
                 m_object_program->setUniform("spotlights[0].specular", glm::vec3(1.0f));
         } else {
@@ -178,36 +142,27 @@ void scene::display()
 
         // Light caster 1 properties
         m_object_program->setUniform("pointlights[0].position", caster_positions[0]);
-        m_object_program->setUniform("pointlights[0].ambient", glm::vec3(0.1f));
-        m_object_program->setUniform("pointlights[0].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+        m_object_program->setUniform("pointlights[0].ambient", glm::vec3(0.05f));
+        m_object_program->setUniform("pointlights[0].diffuse", glm::vec3(0.8f, 0.8f, 1.0f));
         m_object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
         m_object_program->setUniform("pointlights[0].constant", 1.0f);
-        m_object_program->setUniform("pointlights[0].linear", 0.14f);
-        m_object_program->setUniform("pointlights[0].quad", 0.07f);
+        m_object_program->setUniform("pointlights[0].linear", 0.009f);
+        m_object_program->setUniform("pointlights[0].quad", 0.0032f);
 
         // Light caster 2 properties
         m_object_program->setUniform("pointlights[1].position", caster_positions[1]);
-        m_object_program->setUniform("pointlights[1].ambient", glm::vec3(0.1f));
-        m_object_program->setUniform("pointlights[1].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+        m_object_program->setUniform("pointlights[1].ambient", glm::vec3(0.05f));
+        m_object_program->setUniform("pointlights[1].diffuse", glm::vec3(1.0f, 1.0f, 0.8f));
         m_object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
         m_object_program->setUniform("pointlights[1].constant", 1.0f);
-        m_object_program->setUniform("pointlights[1].linear", 0.14f);
-        m_object_program->setUniform("pointlights[1].quad", 0.07f);
-
-        // Light caster 3 properties
-        m_object_program->setUniform("pointlights[2].position", caster_positions[2]);
-        m_object_program->setUniform("pointlights[2].ambient", glm::vec3(0.1f));
-        m_object_program->setUniform("pointlights[2].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
-        m_object_program->setUniform("pointlights[2].specular", glm::vec3(1.0f));
-        m_object_program->setUniform("pointlights[2].constant", 1.0f);
-        m_object_program->setUniform("pointlights[2].linear", 0.14f);
-        m_object_program->setUniform("pointlights[2].quad", 0.07f);
+        m_object_program->setUniform("pointlights[1].linear", 0.009f);
+        m_object_program->setUniform("pointlights[1].quad", 0.0032f);
 
         // Viewer & model properties
         m_object_program->setUniform("view", m_camera.view());
         m_object_program->setUniform("proj", m_camera.projection(m_vp_aspect_ratio));
         m_object_program->setUniform("viewer_pos", m_camera.position());
-        model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -5.0f, 0.0f));
+        model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -1.75f, 0.0f));
         model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
         m_object_program->setUniform("model", model_matrix);
         normal_matrix = glm::transpose(glm::inverse(model_matrix));
@@ -262,9 +217,7 @@ void scene::display()
 void scene::drop()
 {
         delete m_object_program;
-        delete m_caster_program;
         delete m_object;
-        delete m_caster;
 }
 
 void scene::handle_cursor_move(GLFWwindow *window, GLdouble xoffset, GLdouble yoffset)

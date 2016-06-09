@@ -5,7 +5,9 @@ in vec2 TexCoords;
 out vec4 color;
 
 struct Material {
+        float shininess;
         sampler2D texture_diffuse1;
+        sampler2D texture_specular1;
 };
 
 uniform Material material;
