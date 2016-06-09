@@ -5,6 +5,7 @@
 #include "program.hh"
 #include "camera.hh"
 #include "object.hh"
+#include "model.hh"
 #include <array>
 
 /*
@@ -42,7 +43,7 @@ class scene : public scene_type {
         GLdouble m_vp_aspect_ratio;     // Viewport aspect ratio
 
         /* Elements */
-        object_type *m_object;          // Sample solid object
+        model *m_object;          // Sample solid object
         object_type *m_caster;          // Sample light caster
         program *m_object_program;      // Solid object shader program
         program *m_caster_program;      // Light caster shader program

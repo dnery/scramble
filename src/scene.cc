@@ -89,7 +89,7 @@ void scene::init(GLFWwindow *window)
         }
 
         // Objects do not depend on shaders for creation
-        m_object = new cube;
+        m_object = new model(resource_path("models/nanosuit/nanosuit.obj"));
         m_caster = new cube;
 }
 
@@ -154,104 +154,109 @@ void scene::display()
 
         // OBJECT SHADER
         m_object_program->toggle();
-        m_object->bind(m_object_program);
 
         // Set static properties
 
                 // Set object material properties
-        m_object_program->setUniform("material.shininess", 64.0f);
+       m_object_program->setUniform("material.shininess", 64.0f);
 
-                // Flashlight properties
-        m_object_program->setUniform("spotlights[0].position", m_camera.position());
-        m_object_program->setUniform("spotlights[0].direction", m_camera.front());
-        m_object_program->setUniform("spotlights[0].mincutoff", glm::cos(glm::radians(12.5f)));
-        m_object_program->setUniform("spotlights[0].maxcutoff", glm::cos(glm::radians(17.5f)));
+               // Flashlight properties
+       m_object_program->setUniform("spotlights[0].position", m_camera.position());
+       m_object_program->setUniform("spotlights[0].direction", m_camera.front());
+       m_object_program->setUniform("spotlights[0].mincutoff", glm::cos(glm::radians(12.5f)));
+       m_object_program->setUniform("spotlights[0].maxcutoff", glm::cos(glm::radians(17.5f)));
 
-        if (m_keyboard.m_flashlight_active) {
-                m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.1f));
-                m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-                m_object_program->setUniform("spotlights[0].specular", glm::vec3(1.0f));
-        } else {
-                m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.0f));
-                m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(0.0f));
-                m_object_program->setUniform("spotlights[0].specular", glm::vec3(0.0f));
-        }
+       if (m_keyboard.m_flashlight_active) {
+               m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.1f));
+               m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+               m_object_program->setUniform("spotlights[0].specular", glm::vec3(1.0f));
+       } else {
+               m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.0f));
+               m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(0.0f));
+               m_object_program->setUniform("spotlights[0].specular", glm::vec3(0.0f));
+       }
 
-                // Light caster 1 properties
-        m_object_program->setUniform("pointlights[0].position", caster_positions[0]);
-        m_object_program->setUniform("pointlights[0].ambient", glm::vec3(0.1f));
-        m_object_program->setUniform("pointlights[0].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
-        m_object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
-        m_object_program->setUniform("pointlights[0].constant", 1.0f);
-        m_object_program->setUniform("pointlights[0].linear", 0.14f);
-        m_object_program->setUniform("pointlights[0].quad", 0.07f);
+               // Light caster 1 properties
+       m_object_program->setUniform("pointlights[0].position", caster_positions[0]);
+       m_object_program->setUniform("pointlights[0].ambient", glm::vec3(0.1f));
+       m_object_program->setUniform("pointlights[0].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+       m_object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
+       m_object_program->setUniform("pointlights[0].constant", 1.0f);
+       m_object_program->setUniform("pointlights[0].linear", 0.14f);
+       m_object_program->setUniform("pointlights[0].quad", 0.07f);
 
-                // Light caster 2 properties
-        m_object_program->setUniform("pointlights[1].position", caster_positions[1]);
-        m_object_program->setUniform("pointlights[1].ambient", glm::vec3(0.1f));
-        m_object_program->setUniform("pointlights[1].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
-        m_object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
-        m_object_program->setUniform("pointlights[1].constant", 1.0f);
-        m_object_program->setUniform("pointlights[1].linear", 0.14f);
-        m_object_program->setUniform("pointlights[1].quad", 0.07f);
+               // Light caster 2 properties
+       m_object_program->setUniform("pointlights[1].position", caster_positions[1]);
+       m_object_program->setUniform("pointlights[1].ambient", glm::vec3(0.1f));
+       m_object_program->setUniform("pointlights[1].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+       m_object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
+       m_object_program->setUniform("pointlights[1].constant", 1.0f);
+       m_object_program->setUniform("pointlights[1].linear", 0.14f);
+       m_object_program->setUniform("pointlights[1].quad", 0.07f);
 
-                // Light caster 3 properties
-        m_object_program->setUniform("pointlights[2].position", caster_positions[2]);
-        m_object_program->setUniform("pointlights[2].ambient", glm::vec3(0.1f));
-        m_object_program->setUniform("pointlights[2].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
-        m_object_program->setUniform("pointlights[2].specular", glm::vec3(1.0f));
-        m_object_program->setUniform("pointlights[2].constant", 1.0f);
-        m_object_program->setUniform("pointlights[2].linear", 0.14f);
-        m_object_program->setUniform("pointlights[2].quad", 0.07f);
+               // Light caster 3 properties
+       m_object_program->setUniform("pointlights[2].position", caster_positions[2]);
+       m_object_program->setUniform("pointlights[2].ambient", glm::vec3(0.1f));
+       m_object_program->setUniform("pointlights[2].diffuse", glm::vec3(1.0f, 0.6f, 0.8f));
+       m_object_program->setUniform("pointlights[2].specular", glm::vec3(1.0f));
+       m_object_program->setUniform("pointlights[2].constant", 1.0f);
+       m_object_program->setUniform("pointlights[2].linear", 0.14f);
+       m_object_program->setUniform("pointlights[2].quad", 0.07f);
 
-                // Viewer properties
+                // Viewer & model properties
         m_object_program->setUniform("view", m_camera.view());
         m_object_program->setUniform("proj", m_camera.projection(m_vp_aspect_ratio));
         m_object_program->setUniform("viewer_pos", m_camera.position());
+        model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -5.0f, 0.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
+        m_object_program->setUniform("model", model_matrix);
+        normal_matrix = glm::transpose(glm::inverse(model_matrix));
+        m_object_program->setUniform("normat", normal_matrix);
 
-        // Define draw positions
-        glm::vec3 object_positions[] = {
-                glm::vec3(0.0f, 0.0f, 0.0f),
-                glm::vec3(2.0f, 5.0f, -15.0f),
-                glm::vec3(-1.5f, -2.2f, -2.5f),
-                glm::vec3(-3.8f, -2.0f, -12.3f),
-                glm::vec3(2.4f, -0.4f, -3.5f),
-                glm::vec3(-1.7f, 3.0f, -7.5f),
-                glm::vec3(1.3f, -2.0f, -2.5f),
-                glm::vec3(1.5f, 2.0f, -2.5f),
-                glm::vec3(1.5f, 0.2f, -1.5f),
-                glm::vec3(-1.3f, 1.0f, -1.5f),
-                glm::vec3(-2.0f, -5.0f, 15.0f),
-                glm::vec3(1.5f, 2.2f, 2.5f),
-                glm::vec3(3.8f, 2.0f, 12.3f),
-                glm::vec3(-2.4f, 0.4f, 3.5f),
-                glm::vec3(1.7f, -3.0f, 7.5f),
-                glm::vec3(-1.3f, 2.0f, 2.5f),
-                glm::vec3(-1.5f, -2.0f, 2.5f),
-                glm::vec3(-1.5f, -0.2f, 1.5f),
-                glm::vec3(1.3f, -4.0f, 1.5f),
-                glm::vec3(5.3f, -1.0f, -1.5f)
-        };
+        //// Define draw positions
+        //glm::vec3 object_positions[] = {
+        //        glm::vec3(0.0f, 0.0f, 0.0f),
+        //        glm::vec3(2.0f, 5.0f, -15.0f),
+        //        glm::vec3(-1.5f, -2.2f, -2.5f),
+        //        glm::vec3(-3.8f, -2.0f, -12.3f),
+        //        glm::vec3(2.4f, -0.4f, -3.5f),
+        //        glm::vec3(-1.7f, 3.0f, -7.5f),
+        //        glm::vec3(1.3f, -2.0f, -2.5f),
+        //        glm::vec3(1.5f, 2.0f, -2.5f),
+        //        glm::vec3(1.5f, 0.2f, -1.5f),
+        //        glm::vec3(-1.3f, 1.0f, -1.5f),
+        //        glm::vec3(-2.0f, -5.0f, 15.0f),
+        //        glm::vec3(1.5f, 2.2f, 2.5f),
+        //        glm::vec3(3.8f, 2.0f, 12.3f),
+        //        glm::vec3(-2.4f, 0.4f, 3.5f),
+        //        glm::vec3(1.7f, -3.0f, 7.5f),
+        //        glm::vec3(-1.3f, 2.0f, 2.5f),
+        //        glm::vec3(-1.5f, -2.0f, 2.5f),
+        //        glm::vec3(-1.5f, -0.2f, 1.5f),
+        //        glm::vec3(1.3f, -4.0f, 1.5f),
+        //        glm::vec3(5.3f, -1.0f, -1.5f)
+        //};
 
-        // Draw all instances
-        for (GLuint i = 0; i < 20; i++) {
+        //// Draw all instances
+        //for (GLuint i = 0; i < 20; i++) {
 
-                // Model matrix
-                model_matrix = glm::translate(glm::mat4(), object_positions[i]);
-                model_matrix = glm::rotate(model_matrix, (GLfloat) (glfwGetTime() * 0.9f + i),
-                                glm::vec3(1.0f, 1.0f, 0.0f));
-                m_object_program->setUniform("model", model_matrix);
+        //        // Model matrix
+        //        model_matrix = glm::translate(glm::mat4(), object_positions[i]);
+        //        model_matrix = glm::rotate(model_matrix, (GLfloat) (glfwGetTime() * 0.9f + i),
+        //                        glm::vec3(1.0f, 1.0f, 0.0f));
+        //        m_object_program->setUniform("model", model_matrix);
 
-                // Normal matrix
-                normal_matrix = glm::transpose(glm::inverse(model_matrix));
-                m_object_program->setUniform("normat", normal_matrix);
+        //        // Normal matrix
+        //        normal_matrix = glm::transpose(glm::inverse(model_matrix));
+        //        m_object_program->setUniform("normat", normal_matrix);
 
-                // Draw :D
-                m_object->draw();
-        }
+        //        // Draw :D
+        //        m_object->draw();
+        //}
 
         // Done
-        m_object->unbind();
+        //m_object->unbind();
+        m_object->draw(*m_object_program);
         m_object_program->toggle();
 }
 

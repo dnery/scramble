@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 
 project(scramble)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL -lassimp -Wall")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -ftrapv -fsanitize=address")
 
@@ -13,6 +13,8 @@ set(SOURCE_FILES
         src/debug.hh
         src/scene_type.hh
         src/object_type.hh
+        src/mesh.cc src/mesh.hh
+        src/model.cc src/model.hh
         src/scene.cc src/scene.hh
         src/object.cc src/object.hh
         src/camera.cc src/camera.hh

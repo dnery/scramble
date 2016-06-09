@@ -5,6 +5,7 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 Debug/*
+assets/
 /build
 /demo
 .idea/
