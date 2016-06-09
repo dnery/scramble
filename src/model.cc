@@ -50,6 +50,7 @@ mesh model::process_mesh(aiMesh *aimesh, const aiScene *aiscene)
                 vector.z = aimesh->mVertices[i].z;
                 vert.m_vertex = vector;
 
+                // AQUI JEAN!
                 glm::vec3 normal;
                 normal.x = aimesh->mNormals[i].x;
                 normal.y = aimesh->mNormals[i].y;
@@ -58,12 +59,9 @@ mesh model::process_mesh(aiMesh *aimesh, const aiScene *aiscene)
 
                 if (aimesh->mTextureCoords[0]) {
                       glm::vec2 tex;
-
                       tex.x = aimesh->mTextureCoords[0][i].x;
                       tex.y = aimesh->mTextureCoords[0][i].y;
                       vert.m_texcoord = tex;
-                } else {
-                      vert.m_texcoord = glm::vec2(0.0f, 0.0f);
                 }
 
                 vertices.push_back(vert);

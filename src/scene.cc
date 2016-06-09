@@ -54,7 +54,7 @@ void scene::init(GLFWwindow *window)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // On-Screen MSAA
-        glEnable(GL_MULTISAMPLE);
+        //glEnable(GL_MULTISAMPLE);
 
         // Create sample shaders
         try {
@@ -79,7 +79,7 @@ void scene::init(GLFWwindow *window)
         }
 
         // Objects do not depend on shaders for creation
-        m_object = new model(resource_path("models/nanosuit/nanosuit.obj"));
+        m_object = new model(resource_path("models/jeanity/LabComLoop.obj"));
 }
 
 void scene::update(GLdouble millis)
