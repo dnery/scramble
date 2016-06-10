@@ -37,7 +37,7 @@ void camera::zoom(GLdouble yoffset)
 
 void camera::move(GLuint direction, GLdouble delta)
 {
-        GLfloat final_speed = m_scalar_movespeed * delta;
+        GLfloat final_speed = static_cast<GLfloat>(m_scalar_movespeed * delta);
 
         /*
          * Name deduction in nested name specifier is a very particular

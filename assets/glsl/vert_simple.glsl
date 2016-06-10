@@ -9,18 +9,18 @@ out vec2 vs_texcoord;
 out vec3 vs_worldpos;
 out vec3 vs_normal;
 
-uniform mat4 normat;
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
+uniform mat4 normal_matrix;
+uniform mat4 model_matrix;
+uniform mat4 view_matrix;
+uniform mat4 proj_matrix;
 
 void main()
 {
-        gl_Position = proj * view * model * vec4(position, 1.0f);
+        gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0f);
 
         vs_texcoord = vec2(texcoord.x, 1.0f - texcoord.y);
 
-        vs_worldpos = vec3(model * vec4(position, 1.0f));
+        vs_worldpos = vec3(model_matrix * vec4(position, 1.0f));
 
-        vs_normal = normalize(mat3(normat) * normal);
+        vs_normal = normalize(mat3(normal_matrix) * normal);
 }

@@ -4,7 +4,6 @@
 #include "scene_type.hh"
 #include "program.hh"
 #include "camera.hh"
-#include "object.hh"
 #include "model.hh"
 #include <array>
 
@@ -15,7 +14,7 @@ struct mouse {
 
         GLdouble m_prev_xpos;
         GLdouble m_prev_ypos;
-        GLboolean m_first_enter_viewport;
+        GLboolean m_first_enter_viewport = GL_TRUE;
 };
 
 /*

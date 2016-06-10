@@ -33,7 +33,7 @@ void scene::init(GLFWwindow *window)
         int h;
         glfwGetWindowSize(window, &w, &h);
         m_vp_aspect_ratio = static_cast<GLdouble>(w) /
-                static_cast<GLdouble>(h);
+                            static_cast<GLdouble>(h);
 
         // Set up mouse input stuff
         m_mouse.m_first_enter_viewport = GL_TRUE;
@@ -58,6 +58,13 @@ void scene::init(GLFWwindow *window)
 
         // Create sample shaders
         try {
+                put("\n==============\n");
+                put("ASSETS: MODELS\n\n");
+                //m_object = new model(resource_path("models/jeanity/LabComLoop.obj"));
+                m_object = new model(resource_path("models/nanosuit/nanosuit.obj"));
+
+                put("\n===============\n");
+                put("ASSETS: SHADERS\n\n");
                 std::vector<shader> object_shaders;
                 object_shaders.push_back(shader_from_file(
                                         resource_path("glsl/vert_simple.glsl"),
@@ -73,13 +80,10 @@ void scene::init(GLFWwindow *window)
         } catch (std::runtime_error &e) {
 
                 throw std::runtime_error(
-                                std::string("Shader compilation/linkage: ") +
+                                std::string("Model or Shader: ") +
                                 e.what()
                                 );
         }
-
-        // Objects do not depend on shaders for creation
-        m_object = new model(resource_path("models/nanosuit/nanosuit.obj"));
 }
 
 void scene::update(GLdouble millis)
@@ -106,23 +110,41 @@ void scene::display()
         // CLEAR
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // PREAMBLE
+        // Declarations
         glm::mat4 model_matrix;
         glm::mat4 normal_matrix;
-
-        // Define draw positions
         glm::vec3 caster_positions[] = {
                 glm::vec3(2.3f, -1.6f, -3.0f),
+                //glm::vec3(0.0f, 1.0f, 0.0f),
                 glm::vec3(-1.7f, 0.9f, 1.0f),
+                //glm::vec3(10.0f, 1.0f, -10.0f),
         };
 
         // OBJECT SHADER
         m_object_program->toggle();
 
-        // Set static properties
+        /*
+         * VERTEX SHADER UNIFORMS
+         */
+        // view & projection matrix
+        m_object_program->setUniform("view_matrix", m_camera.view());
+        m_object_program->setUniform("proj_matrix", m_camera.projection(m_vp_aspect_ratio));
 
-        // Set object material properties
-        m_object_program->setUniform("material.shininess", 32.0f);
+        // model matrix
+        model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -1.75f, 0.0f));
+        //model_matrix = glm::rotate(model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
+        m_object_program->setUniform("model_matrix", model_matrix);
+
+        // normal matrix
+        normal_matrix = glm::transpose(glm::inverse(model_matrix));
+        m_object_program->setUniform("normal_matrix", normal_matrix);
+
+        /*
+         * FRAGMENT SHADER UNIFORMS
+         */
+        // Set the camera position
+        m_object_program->setUniform("viewer_pos", m_camera.position());
 
         // Flashlight properties
         m_object_program->setUniform("spotlights[0].position", m_camera.position());
@@ -147,7 +169,7 @@ void scene::display()
         m_object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
         m_object_program->setUniform("pointlights[0].constant", 1.0f);
         m_object_program->setUniform("pointlights[0].linear", 0.009f);
-        m_object_program->setUniform("pointlights[0].quad", 0.0032f);
+        m_object_program->setUniform("pointlights[0].quadratic", 0.0032f);
 
         // Light caster 2 properties
         m_object_program->setUniform("pointlights[1].position", caster_positions[1]);
@@ -156,58 +178,7 @@ void scene::display()
         m_object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
         m_object_program->setUniform("pointlights[1].constant", 1.0f);
         m_object_program->setUniform("pointlights[1].linear", 0.009f);
-        m_object_program->setUniform("pointlights[1].quad", 0.0032f);
-
-        // Viewer & model properties
-        m_object_program->setUniform("view", m_camera.view());
-        m_object_program->setUniform("proj", m_camera.projection(m_vp_aspect_ratio));
-        m_object_program->setUniform("viewer_pos", m_camera.position());
-        model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -1.75f, 0.0f));
-        model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
-        m_object_program->setUniform("model", model_matrix);
-        normal_matrix = glm::transpose(glm::inverse(model_matrix));
-        m_object_program->setUniform("normat", normal_matrix);
-
-        //// Define draw positions
-        //glm::vec3 object_positions[] = {
-        //        glm::vec3(0.0f, 0.0f, 0.0f),
-        //        glm::vec3(2.0f, 5.0f, -15.0f),
-        //        glm::vec3(-1.5f, -2.2f, -2.5f),
-        //        glm::vec3(-3.8f, -2.0f, -12.3f),
-        //        glm::vec3(2.4f, -0.4f, -3.5f),
-        //        glm::vec3(-1.7f, 3.0f, -7.5f),
-        //        glm::vec3(1.3f, -2.0f, -2.5f),
-        //        glm::vec3(1.5f, 2.0f, -2.5f),
-        //        glm::vec3(1.5f, 0.2f, -1.5f),
-        //        glm::vec3(-1.3f, 1.0f, -1.5f),
-        //        glm::vec3(-2.0f, -5.0f, 15.0f),
-        //        glm::vec3(1.5f, 2.2f, 2.5f),
-        //        glm::vec3(3.8f, 2.0f, 12.3f),
-        //        glm::vec3(-2.4f, 0.4f, 3.5f),
-        //        glm::vec3(1.7f, -3.0f, 7.5f),
-        //        glm::vec3(-1.3f, 2.0f, 2.5f),
-        //        glm::vec3(-1.5f, -2.0f, 2.5f),
-        //        glm::vec3(-1.5f, -0.2f, 1.5f),
-        //        glm::vec3(1.3f, -4.0f, 1.5f),
-        //        glm::vec3(5.3f, -1.0f, -1.5f)
-        //};
-
-        //// Draw all instances
-        //for (GLuint i = 0; i < 20; i++) {
-
-        //        // Model matrix
-        //        model_matrix = glm::translate(glm::mat4(), object_positions[i]);
-        //        model_matrix = glm::rotate(model_matrix, (GLfloat) (glfwGetTime() * 0.9f + i),
-        //                        glm::vec3(1.0f, 1.0f, 0.0f));
-        //        m_object_program->setUniform("model", model_matrix);
-
-        //        // Normal matrix
-        //        normal_matrix = glm::transpose(glm::inverse(model_matrix));
-        //        m_object_program->setUniform("normat", normal_matrix);
-
-        //        // Draw :D
-        //        m_object->draw();
-        //}
+        m_object_program->setUniform("pointlights[1].quadratic", 0.0032f);
 
         // Draw
         m_object->draw(*m_object_program);

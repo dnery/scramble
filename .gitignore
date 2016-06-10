@@ -6,8 +6,6 @@ cmake_install.cmake
 install_manifest.txt
 Debug/*
 /build
-/demo
-assets/models/archive/
 .idea/
 .kdev4/
 scramble.kdev4

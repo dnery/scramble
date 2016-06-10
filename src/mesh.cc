@@ -3,11 +3,10 @@
 #include <sstream>
 #include "debug.hh"
 
-mesh::mesh(std::vector<vertex>& vertices, std::vector<GLuint>& indices,
+mesh::mesh(std::vector<vertex>& vertices,
+                std::vector<GLuint>& indices,
                 std::vector<texture>& textures) :
-        m_textures(textures),
-        m_vertices(vertices),
-        m_indices(indices)
+        m_vertices(vertices), m_indices(indices), m_textures(textures)
 {
         // Generate
         glGenVertexArrays(1, &m_vao);
@@ -44,20 +43,6 @@ mesh::mesh(std::vector<vertex>& vertices, std::vector<GLuint>& indices,
         glBindVertexArray(0);
 }
 
-/*
- * Material implementations in the shader MUST follow this naming convention:
- *
- *      ...
- *      struct _material {
- *              double shininess;               // Required, discrete power of 2
- *              sampler2D texture_diffuse<n>;   // Required, n is a discrete number
- *              sampler2D texture_specular<n>;  // Required, n is a discrete number
- *              ...
- *      };
- *
- *      unform _material material;              // Has to be declared as "material"
- *      ...
- */
 void mesh::draw(program& program) const
 {
         GLuint n_diff = 1;                              // "Which diffuse map?" counter
@@ -84,6 +69,9 @@ void mesh::draw(program& program) const
                 // Bind
                 glBindTexture(GL_TEXTURE_2D, tex.m_id);
         }
+
+        // Specular shininess default
+        program.setUniform("material.shininess", 32.0f);
 
         // Draw the mesh
         glBindVertexArray(m_vao);

@@ -1,7 +1,6 @@
 #include "shader.hh"
 
-#include <fstream>
-#include <sstream>
+#include <stdexcept>
 #include "debug.hh"
 
 /*
@@ -96,20 +95,4 @@ shader& shader::operator=(shader other)
 {
         swap(*this, other);
         return *this;
-}
-
-/*
- * Instantiate shader from source file.
- */
-shader shader_from_file(const std::string&& path, GLenum type)
-{
-        std::ifstream handle(path, std::ios::in | std::ios::binary);
-        check(handle.is_open());
-
-        std::stringstream buffer;
-        buffer << handle.rdbuf();
-
-        put("shader path: %s\n", path.c_str());
-
-        return shader(buffer.str(), type);
 }

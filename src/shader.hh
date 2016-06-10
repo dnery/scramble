@@ -65,16 +65,4 @@ public:
         }
 };
 
-/*
- * Instantiate shader from source file.
- *
- * The r-value reference is a tiny optimization but imposes the
- * restriction that it must always be called passing an x-value. In this
- * situation, this means, exclusively, using it in conjunction with
- * resource_path(), like this:
- *
- *      shader_from_file(resource_path("<resource_name>"), <SHADER_TYPE>);
- */
-shader shader_from_file(const std::string&& path, GLenum type);
-
 #endif /* ifndef SCRAMBLE_SHADER_H */

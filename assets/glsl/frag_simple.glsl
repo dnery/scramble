@@ -37,7 +37,7 @@ struct SpotLight {
          */
         float constant;
         float linear;
-        float quad;
+        float quadratic;
 
         vec3 ambient;
         vec3 diffuse;
@@ -50,7 +50,7 @@ struct PointLight {
 
         float constant;
         float linear;
-        float quad;
+        float quadratic;
 
         vec3 ambient;
         vec3 diffuse;
@@ -163,7 +163,7 @@ vec3 pointlight_contrib(PointLight caster, vec3 frag_pos, vec3 frag_normal)
         float caster_dist = length(caster.position - frag_pos);
         float attenuation = 1.0f / (caster.constant +
                                     caster.linear * caster_dist +
-                                    caster.quad * (caster_dist * caster_dist));
+                                    caster.quadratic * (caster_dist * caster_dist));
 
         // Apply attenuation
         ambient *= attenuation;

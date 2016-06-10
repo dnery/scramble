@@ -2,13 +2,15 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
+#include <fstream>
+#include <sstream>
 #include "debug.hh"
 
 program::program(const std::vector<shader>& shaders) :
         globject(glCreateProgram())
 {
-        GLint status; // captures program link status
-        std::string errmsg; // holds possible link errmsg
+        GLint status;           // captures program link status
+        std::string errmsg;     // holds possible link errmsg
 
         // check objects
         check(globject != 0);
@@ -224,4 +226,21 @@ void program::setUniform(const GLchar *uniformName, const glm::vec3& v)
 void program::setUniform(const GLchar *uniformName, const glm::vec4& v)
 {
         setUniform4v(uniformName, glm::value_ptr(v));
+}
+
+/*
+ * Instantiate shader from source file.
+ */
+shader shader_from_file(const std::string&& path, GLenum type)
+{
+        std::ifstream handle(path, std::ios::in | std::ios::binary);
+        check(handle.is_open());
+
+        // Assert the filepath
+        info("shader path is: %s\n", path.c_str());
+
+        std::stringstream buffer;
+        buffer << handle.rdbuf();
+
+        return shader(buffer.str(), type);
 }

@@ -49,6 +49,8 @@ window_manager::window_manager(int width, int height,
         glViewport(0, 0, m_width, m_height);
 
         // Output debug info
+        put("\n=======\n");
+        put("CONTEXT\n\n");
         info("OpenGL version: %s\n", glGetString(GL_VERSION));
         info("GLSL version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
         info("Renderere: %s\n", glGetString(GL_RENDERER));

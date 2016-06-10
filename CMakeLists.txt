@@ -16,7 +16,6 @@ set(SOURCE_FILES
         src/mesh.cc src/mesh.hh
         src/model.cc src/model.hh
         src/scene.cc src/scene.hh
-        src/object.cc src/object.hh
         src/camera.cc src/camera.hh
         src/shader.cc src/shader.hh
         src/program.cc src/program.hh
