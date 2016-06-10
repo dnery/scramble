@@ -3,18 +3,20 @@ An attempt at a real-time rendering engine in C++ using the OpenGL API.
 Hopefully a very ironic title.
 
 ## What it does so far
-Basically, it sets up for you a navigable environment with some hard-coded
-rotating objects, scattered all around. the following sections are also
-pertinent to the current state of things, meaning they will change (expand)
-as the first milestone is complete.
+It sets up for you a navigable environment with a sample nanosuit object (RIP
+Crytek) and a couple of light sources to observe specular highlights. the
+following sections are also pertinent to the current state of things, meaning
+they will change (expand) as the milestones are achieved.
 
 ## Feature checklist
 - [x] Fully free navigation (euler angles rotation, clamped)
 - [x] Basic shader load+link modular framework
 - [x] Basic texture mapping
-- [ ] Proper 3D environment
+- [x] Modular texture mapping
+- [x] Fully de-coupled mesh loading
+- [ ] Complex 3D environment scene
 - [x] Basic lighting (Phong model)
-- [ ] Fully de-coupled mesh loading
+- [ ] Optimized lighting (Blinn-Phong, normal mapping)
 
 ## General Design
 ![General Design](http://i.imgur.com/Zq7KT2G.png "General Design")
