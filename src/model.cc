@@ -10,6 +10,9 @@ model::model(const std::string&& path)
 
         // Postprocess: triangulate mesh, flip UV maps
         const aiScene *aiscene = imp.ReadFile(path,
+                        aiProcess_CalcTangentSpace |
+                        aiProcess_SplitLargeMeshes |
+                        aiProcess_OptimizeMeshes |
                         aiProcess_Triangulate |
                         aiProcess_GenNormals |
                         aiProcess_FlipUVs);
@@ -32,7 +35,7 @@ void model::process_node(aiNode *ainode, const aiScene *aiscene)
                 process_node(ainode->mChildren[i], aiscene);
 
         // Process each mesh linearly
-        for (GLuint i = 0; i < ainode->mNumMeshes; i++){
+        for (GLuint i = 0; i < ainode->mNumMeshes; i++) {
                 aiMesh *mesh = aiscene->mMeshes[ainode->mMeshes[i]];
                 m_meshes.push_back(process_mesh(mesh, aiscene));
         }
@@ -71,6 +74,20 @@ mesh model::process_mesh(aiMesh *aimesh, const aiScene *aiscene)
                       vertex.m_texcoord = texcoord;
                 }
 
+                // TBN: retrieve tangent
+                glm::vec3 tangent;
+                tangent.x = aimesh->mTangents[i].x;
+                tangent.y = aimesh->mTangents[i].y;
+                tangent.z = aimesh->mTangents[i].z;
+                vertex.m_tangent = tangent;
+
+                // TBN: retrieve bitangent
+                glm::vec3 bitangent;
+                bitangent.x = aimesh->mBitangents[i].x;
+                bitangent.y = aimesh->mBitangents[i].y;
+                bitangent.z = aimesh->mBitangents[i].z;
+                vertex.m_bitangent = bitangent;
+
                 vertices.push_back(vertex);
         }
 
@@ -93,6 +110,10 @@ mesh model::process_mesh(aiMesh *aimesh, const aiScene *aiscene)
                 std::vector<mesh::texture> specs = load_mat_textures(mat,
                                 aiTextureType_SPECULAR, "texture_specular");
                 textures.insert(textures.end(), specs.begin(), specs.end());
+
+                std::vector<mesh::texture> norms = load_mat_textures(mat,
+                                aiTextureType_HEIGHT, "texture_normal");
+                textures.insert(textures.end(), norms.begin(), norms.end());
         }
 
         return mesh(vertices, indices, textures);

@@ -8,4 +8,5 @@ Debug/*
 /build
 .idea/
 .kdev4/
+assets/models/
 scramble.kdev4

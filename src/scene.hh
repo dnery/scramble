@@ -22,6 +22,7 @@ struct mouse {
  */
 struct keyboard {
 
+        GLboolean m_blinn_active;
         GLboolean m_flashlight_active;
         std::array<GLboolean, 1024> m_keymap;
 };

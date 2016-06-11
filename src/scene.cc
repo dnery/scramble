@@ -39,7 +39,7 @@ void scene::init(GLFWwindow *window)
         m_mouse.m_first_enter_viewport = GL_TRUE;
 
         // Set the clear color
-        glClearColor(0.1f, 0.02f, 0.05f, 1.0f);
+        glClearColor(0.03f, 0.01f, 0.01f, 1.0f);
 
         // Z-buffer depth query
         glEnable(GL_DEPTH_TEST);
@@ -60,18 +60,17 @@ void scene::init(GLFWwindow *window)
         try {
                 put("\n==============\n");
                 put("ASSETS: MODELS\n\n");
-                //m_object = new model(resource_path("models/jeanity/LabComLoop.obj"));
-                m_object = new model(resource_path("models/nanosuit/nanosuit.obj"));
+                m_object = new model(resource_path("models/cyborg/cyborg.obj"));
 
                 put("\n===============\n");
                 put("ASSETS: SHADERS\n\n");
                 std::vector<shader> object_shaders;
                 object_shaders.push_back(shader_from_file(
-                                        resource_path("glsl/vert_simple.glsl"),
+                                        resource_path("glsl/nmap.vert"),
                                         GL_VERTEX_SHADER)
                                 );
                 object_shaders.push_back(shader_from_file(
-                                        resource_path("glsl/frag_simple.glsl"),
+                                        resource_path("glsl/nmap.frag"),
                                         GL_FRAGMENT_SHADER)
                                 );
 
@@ -115,10 +114,12 @@ void scene::display()
         glm::mat4 normal_matrix;
         glm::vec3 caster_positions[] = {
                 glm::vec3(2.3f, -1.6f, -3.0f),
-                //glm::vec3(0.0f, 1.0f, 0.0f),
-                glm::vec3(-1.7f, 0.9f, 1.0f),
-                //glm::vec3(10.0f, 1.0f, -10.0f),
+                glm::vec3(-1.7f, 0.90f, 1.0f)
         };
+        //glm::vec3 caster_colors[] = {
+        //        glm::vec3(0.86f, 0.86f, 1.0f),
+        //        glm::vec3(0.86f, 1.0f, 0.86f)
+        //};
 
         // OBJECT SHADER
         m_object_program->toggle();
@@ -127,58 +128,68 @@ void scene::display()
          * VERTEX SHADER UNIFORMS
          */
         // view & projection matrix
-        m_object_program->setUniform("view_matrix", m_camera.view());
         m_object_program->setUniform("proj_matrix", m_camera.projection(m_vp_aspect_ratio));
+        m_object_program->setUniform("view_matrix", m_camera.view());
 
         // model matrix
         model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -1.75f, 0.0f));
-        //model_matrix = glm::rotate(model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
+        //model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
         m_object_program->setUniform("model_matrix", model_matrix);
 
         // normal matrix
         normal_matrix = glm::transpose(glm::inverse(model_matrix));
         m_object_program->setUniform("normal_matrix", normal_matrix);
 
-        /*
-         * FRAGMENT SHADER UNIFORMS
-         */
         // Set the camera position
-        m_object_program->setUniform("viewer_pos", m_camera.position());
+        m_object_program->setUniform("cam_position", m_camera.position());
+
+        // Set the light source
+        m_object_program->setUniform("light_position", caster_positions[1]);
 
         // Flashlight properties
-        m_object_program->setUniform("spotlights[0].position", m_camera.position());
-        m_object_program->setUniform("spotlights[0].direction", m_camera.front());
-        m_object_program->setUniform("spotlights[0].mincutoff", glm::cos(glm::radians(12.5f)));
-        m_object_program->setUniform("spotlights[0].maxcutoff", glm::cos(glm::radians(17.5f)));
+        //m_object_program->setUniform("spotlights[0].position", m_camera.position());
+        //m_object_program->setUniform("spotlights[0].direction", m_camera.front());
+        //m_object_program->setUniform("spotlights[0].mincutoff", glm::cos(glm::radians(12.5f)));
+        //m_object_program->setUniform("spotlights[0].maxcutoff", glm::cos(glm::radians(17.5f)));
+        //m_object_program->setUniform("spotlights[0].constant", 1.0f);
+        //m_object_program->setUniform("spotlights[0].linear", 0.009f);
+        //m_object_program->setUniform("spotlights[0].quadratic", 0.0032f);
 
-        if (m_keyboard.m_flashlight_active) {
-                m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.05f));
-                m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-                m_object_program->setUniform("spotlights[0].specular", glm::vec3(1.0f));
-        } else {
-                m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.0f));
-                m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(0.0f));
-                m_object_program->setUniform("spotlights[0].specular", glm::vec3(0.0f));
-        }
+        //// Flashlight or not?
+        //if (m_keyboard.m_flashlight_active) {
+        //        m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.05f));
+        //        m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+        //        m_object_program->setUniform("spotlights[0].specular", glm::vec3(1.0f));
+        //} else {
+        //        m_object_program->setUniform("spotlights[0].ambient", glm::vec3(0.0f));
+        //        m_object_program->setUniform("spotlights[0].diffuse", glm::vec3(0.0f));
+        //        m_object_program->setUniform("spotlights[0].specular", glm::vec3(0.0f));
+        //}
 
-        // Light caster 1 properties
-        m_object_program->setUniform("pointlights[0].position", caster_positions[0]);
-        m_object_program->setUniform("pointlights[0].ambient", glm::vec3(0.05f));
-        m_object_program->setUniform("pointlights[0].diffuse", glm::vec3(0.8f, 0.8f, 1.0f));
-        m_object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
-        m_object_program->setUniform("pointlights[0].constant", 1.0f);
-        m_object_program->setUniform("pointlights[0].linear", 0.009f);
-        m_object_program->setUniform("pointlights[0].quadratic", 0.0032f);
+        //// Blinn-Phong model?
+        //if (m_keyboard.m_blinn_active) {
+        //        m_object_program->setUniform("blinn", true);
+        //} else {
+        //        m_object_program->setUniform("blinn", false);
+        //}
 
-        // Light caster 2 properties
-        m_object_program->setUniform("pointlights[1].position", caster_positions[1]);
-        m_object_program->setUniform("pointlights[1].ambient", glm::vec3(0.05f));
-        m_object_program->setUniform("pointlights[1].diffuse", glm::vec3(1.0f, 1.0f, 0.8f));
-        m_object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
-        m_object_program->setUniform("pointlights[1].constant", 1.0f);
-        m_object_program->setUniform("pointlights[1].linear", 0.009f);
-        m_object_program->setUniform("pointlights[1].quadratic", 0.0032f);
+        //// Light caster 1 properties
+        //m_object_program->setUniform("pointlights[0].position", caster_positions[0]);
+        //m_object_program->setUniform("pointlights[0].ambient", glm::vec3(0.05f));
+        //m_object_program->setUniform("pointlights[0].diffuse", caster_colors[0]);
+        //m_object_program->setUniform("pointlights[0].specular", glm::vec3(1.0f));
+        //m_object_program->setUniform("pointlights[0].constant", 1.0f);
+        //m_object_program->setUniform("pointlights[0].linear", 0.009f);
+        //m_object_program->setUniform("pointlights[0].quadratic", 0.0032f);
+
+        //// Light caster 2 properties
+        //m_object_program->setUniform("pointlights[1].position", caster_positions[1]);
+        //m_object_program->setUniform("pointlights[1].ambient", glm::vec3(0.05f));
+        //m_object_program->setUniform("pointlights[1].diffuse", caster_colors[1]);
+        //m_object_program->setUniform("pointlights[1].specular", glm::vec3(1.0f));
+        //m_object_program->setUniform("pointlights[1].constant", 1.0f);
+        //m_object_program->setUniform("pointlights[1].linear", 0.009f);
+        //m_object_program->setUniform("pointlights[1].quadratic", 0.0032f);
 
         // Draw
         m_object->draw(*m_object_program);
@@ -189,8 +200,8 @@ void scene::display()
 
 void scene::drop()
 {
-        delete m_object_program;
         delete m_object;
+        delete m_object_program;
 }
 
 void scene::handle_cursor_move(GLFWwindow *window, GLdouble xoffset, GLdouble yoffset)
@@ -221,6 +232,14 @@ void scene::handle_keypress(GLFWwindow *window, GLint key, GLint action, GLint m
                         m_keyboard.m_flashlight_active = GL_TRUE;
                 else
                         m_keyboard.m_flashlight_active = GL_FALSE;
+        }
+
+        // Blinn-Phong toggle also sluggish
+        if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+                if (!m_keyboard.m_blinn_active)
+                        m_keyboard.m_blinn_active = GL_TRUE;
+                else
+                        m_keyboard.m_blinn_active = GL_FALSE;
         }
 
         // Smooth input triggers

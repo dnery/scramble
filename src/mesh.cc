@@ -18,7 +18,7 @@ mesh::mesh(std::vector<vertex>& vertices,
 
         // Bind & config VertBuffer
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(vertex),
+        glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(mesh::vertex),
                         &m_vertices[0], GL_STATIC_DRAW);
 
         // Bind && config ElementBuffer
@@ -28,16 +28,24 @@ mesh::mesh(std::vector<vertex>& vertices,
 
         // VertPosition
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),
-                        (GLvoid *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
+                        (GLvoid *)offsetof(mesh::vertex, m_position));
         // VertNormal
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),
-                        (GLvoid *)offsetof(vertex, m_normal));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
+                        (GLvoid *)offsetof(mesh::vertex, m_normal));
         // VertTex
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex),
-                        (GLvoid *)offsetof(vertex, m_texcoord));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
+                        (GLvoid *)offsetof(mesh::vertex, m_texcoord));
+
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
+                        (GLvoid *)offsetof(mesh::vertex, m_tangent));
+
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
+                        (GLvoid *)offsetof(vertex, m_bitangent));
 
         // Reset
         glBindVertexArray(0);
@@ -47,6 +55,7 @@ void mesh::draw(program& program) const
 {
         GLuint n_diff = 1;                              // "Which diffuse map?" counter
         GLuint n_spec = 1;                              // "Which specular map?" counter
+        GLuint n_norm = 1;                              // "Which normal map?" counter
 
         for (GLuint i = 0; i < m_textures.size(); i++) {
 
@@ -59,6 +68,8 @@ void mesh::draw(program& program) const
                         ss << n_diff++;
                 else if (tex.m_type == "texture_specular")
                         ss << n_spec++;
+                else if (tex.m_type == "texture_normal")
+                        ss << n_norm++;
 
                 // Get uniform name
                 std::string which = "material." + tex.m_type + ss.str();
@@ -69,9 +80,6 @@ void mesh::draw(program& program) const
                 // Bind
                 glBindTexture(GL_TEXTURE_2D, tex.m_id);
         }
-
-        // Specular shininess default
-        program.setUniform("material.shininess", 32.0f);
 
         // Draw the mesh
         glBindVertexArray(m_vao);

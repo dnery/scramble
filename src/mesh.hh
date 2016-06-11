@@ -16,6 +16,8 @@ class mesh {
                 glm::vec3 m_position;           //      a position vector
                 glm::vec3 m_normal;             //      a normal unit vector
                 glm::vec2 m_texcoord;           //      a texture coordinate
+                glm::vec3 m_tangent;            //      a tangent space vector
+                glm::vec3 m_bitangent;
         };
 
         struct texture {                        // A texture is composed of:
