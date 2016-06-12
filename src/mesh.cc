@@ -21,31 +21,33 @@ mesh::mesh(std::vector<vertex>& vertices,
         glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(mesh::vertex),
                         &m_vertices[0], GL_STATIC_DRAW);
 
-        // Bind && config ElementBuffer
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint),
-                        &m_indices[0], GL_STATIC_DRAW);
-
-        // VertPosition
+        // Position
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
                         (GLvoid *)offsetof(mesh::vertex, m_position));
-        // VertNormal
+        // Normal
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
                         (GLvoid *)offsetof(mesh::vertex, m_normal));
-        // VertTex
+        // UVMap
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
                         (GLvoid *)offsetof(mesh::vertex, m_texcoord));
 
+        // Tangent vector
         glEnableVertexAttribArray(3);
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
                         (GLvoid *)offsetof(mesh::vertex, m_tangent));
 
+        // Bitangent vector
         glEnableVertexAttribArray(4);
         glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::vertex),
-                        (GLvoid *)offsetof(vertex, m_bitangent));
+                        (GLvoid *)offsetof(mesh::vertex, m_bitangent));
+
+        // Bind && config ElementBuffer
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint),
+                        &m_indices[0], GL_STATIC_DRAW);
 
         // Reset
         glBindVertexArray(0);
@@ -59,8 +61,6 @@ void mesh::draw(program& program) const
 
         for (GLuint i = 0; i < m_textures.size(); i++) {
 
-                glActiveTexture(GL_TEXTURE0 + i);
-
                 const texture& tex = m_textures[i];     // Texture reference
                 std::stringstream ss;                   // Holds the number
 
@@ -70,15 +70,19 @@ void mesh::draw(program& program) const
                         ss << n_spec++;
                 else if (tex.m_type == "texture_normal")
                         ss << n_norm++;
+                else    // Texture type is unknown
+                        continue;
 
                 // Get uniform name
                 std::string which = "material." + tex.m_type + ss.str();
 
-                // Set uniform
-                program.setUniform(which.c_str(), i);
+                // Set the uniform, if it exists
+                if (glGetUniformLocation(program.get(), which.c_str()) != -1) {
 
-                // Bind
-                glBindTexture(GL_TEXTURE_2D, tex.m_id);
+                        glActiveTexture(GL_TEXTURE0 + i);
+                        glBindTexture(GL_TEXTURE_2D, tex.m_id);
+                        glUniform1i(program.uniform(which.c_str()), i);
+                }
         }
 
         // Draw the mesh

@@ -4,9 +4,7 @@ CMakeScripts
 Makefile
 cmake_install.cmake
 install_manifest.txt
-Debug/*
 /build
-.idea/
-.kdev4/
-assets/models/
-scramble.kdev4
+*.7z
+*.zip
+*.rar

@@ -164,8 +164,8 @@ void model::draw(program& program) const
 
 GLint texture_from_file(const char *path, std::string workpath)
 {
-        int w;                  // Texture image width
-        int h;                  // Texture image height
+        int w = 0;              // Texture image width
+        int h = 0;              // Texture image height
         GLuint texID;           // Texture OpenGL ID
         unsigned char *image;   // The actual image
         std::string filepath;   // Path to image
@@ -178,6 +178,8 @@ GLint texture_from_file(const char *path, std::string workpath)
 
         // Assert the filepath
         info("texpath is: %s\n", filepath.c_str());
+        put("          W (pixels): %d\n", w);
+        put("          H (pixels): %d\n", h);
 
         // Gen ID & Bind
         glGenTextures(1, &texID);

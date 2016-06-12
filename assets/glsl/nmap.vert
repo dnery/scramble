@@ -1,19 +1,18 @@
 #version 330 core
+// profile: gp5vp
 
 // Input
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 uv;
+layout (location = 2) in vec2 uvcoord;
 layout (location = 3) in vec3 tangent;
 layout (location = 4) in vec3 bitangent;
 
 // Output
 out VS_OUT {
-        vec2 uv;
-        vec3 position;
-        vec3 tg_position;
-        vec3 tg_cam_position;
-        vec3 tg_light_position;
+        vec2 uvcoord;
+        vec3 light_dir;
+        vec3 viewer_dir;
 } vs_out;
 
 // Transform matrices
@@ -22,22 +21,27 @@ uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform mat4 proj_matrix;
 
-// Scenario aspects
-uniform vec3 cam_position;
-uniform vec3 light_position;
+// Viewer & caster
+uniform vec3 light_pos;
+uniform vec3 viewer_pos;
 
 void main()
 {
-        gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);
-        vs_out.position = vec3(model_matrix) * position;
-        vs_out.uv = uv;
+        vec3 N = normalize(vec3(normal_matrix * vec4(normal, 0.0)));
+        vec3 T = normalize(vec3(normal_matrix * vec4(tangent, 0.0)));
+        vec3 B = normalize(vec3(normal_matrix * vec4(bitangent, 0.0)));
 
-        vec3 T = normalize(vec3(normal_matrix) * tangent);
-        vec3 B = normalize(vec3(normal_matrix) * bitangent);
-        vec3 N = normalize(vec3(normal_matrix) * normal);
+        if (dot(cross(N, T), B) < 0.0) {
+                T = T * -1.0;
+        }
+
         mat3 TBN = transpose(mat3(T, B, N));
 
-        vs_out.tg_position = TBN * (vec3(model_matrix) * position);
-        vs_out.tg_cam_position = TBN * cam_position;
-        vs_out.tg_light_position = TBN * light_position;
+        vec3 l_position = vec3(model_matrix * vec4(position, 1.0));
+
+        vs_out.uvcoord = uvcoord;
+        vs_out.light_dir = TBN * normalize(light_pos - l_position);
+        vs_out.viewer_dir = TBN * normalize(viewer_pos - l_position);
+
+        gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);
 }
