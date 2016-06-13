@@ -1,0 +1,28 @@
+# Blender MTL File: 'room.blend'
+# Material Count: 2
+
+newmtl MajesticMetal
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd mjst_metal_base_diffuse.png
+map_Bump  mjst_metal_base_normalbump.png
+map_Ks  mjst_metal_base_specular.png
+
+newmtl MetalFloor
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd mtl_floor_diffuse.png
+map_Bump  mtl_floor_normal.png
+map_Ks  mtl_floor_specular.png

@@ -60,7 +60,7 @@ void scene::init(GLFWwindow *window)
         try {
                 put("\n==============\n");
                 put("ASSETS: MODELS\n\n");
-                m_object = new model(resource_path("models/cyborg/cyborg.obj"));
+                m_object = new model(resource_path("models/room/room.obj"));
 
                 put("\n===============\n");
                 put("ASSETS: SHADERS\n\n");
@@ -111,14 +111,6 @@ void scene::display()
 
         // Declarations
         glm::mat4 model_matrix;
-        //glm::vec3 light_pos[] = {
-        //        glm::vec3(2.3f, -1.6f, -3.0f),
-        //        glm::vec3(-1.7f, 0.90f, 1.0f)
-        //};
-        //glm::vec3 light_col[] = {
-        //        glm::vec3(0.86f, 0.86f, 1.0f),
-        //        glm::vec3(0.86f, 1.0f, 0.86f)
-        //};
 
         // OBJECT SHADER
         m_object_program->toggle();
@@ -126,23 +118,34 @@ void scene::display()
         /*
          * VERTEX SHADER UNIFORMS
          */
-        // Matrix transforms
+        // Matrix transformations
         m_object_program->setUniform("proj_matrix", m_camera.projection(m_vp_aspect_ratio));
         m_object_program->setUniform("view_matrix", m_camera.view());
         model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -1.75f, 0.0f));
-        //model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
-        //model_matrix = glm::scale(model_matrix, glm::vec3(0.1f, 0.1f, 0.1f));
-        model_matrix = glm::rotate(model_matrix, (GLfloat)glfwGetTime() * 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+        //model_matrix = glm::rotate(model_matrix, (GLfloat)glfwGetTime() * 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
         m_object_program->setUniform("model_matrix", model_matrix);
-
-        // Comment these for debugging
         m_object_program->setUniform("normal_matrix", glm::transpose(glm::inverse(model_matrix)));
-        m_object_program->setUniform("light_pos", glm::vec3(-3.0, 3.0, 3.0));
-        //m_object_program->setUniform("light_pos[0]", light_pos[0]);
-        //m_object_program->setUniform("light_pos[1]", light_pos[1]);
-        //m_object_program->setUniform("light_col[0]", light_col[0]);
-        //m_object_program->setUniform("light_col[1]", light_col[1]);
+
+        /*
+         * FRAGMENT SHADER UNIFORMS
+         */
+        // Unique viewer position
         m_object_program->setUniform("viewer_pos", m_camera.position());
+        // Light attributes
+        m_object_program->setUniform("omnilight[0].position", glm::vec3(6.0f, 1.0f, -6.0f));
+        m_object_program->setUniform("omnilight[0].Ia", glm::vec3(0.1f));
+        m_object_program->setUniform("omnilight[0].Id", glm::vec3(0.86f, 0.86f, 1.0f));
+        m_object_program->setUniform("omnilight[0].Is", glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("omnilight[0].Kc", 1.0f);
+        m_object_program->setUniform("omnilight[0].Kl", 0.14f);
+        m_object_program->setUniform("omnilight[0].Kq", 0.07f);
+        m_object_program->setUniform("omnilight[1].position", glm::vec3(-6.0f, 1.0f, 6.0f));
+        m_object_program->setUniform("omnilight[1].Ia", glm::vec3(0.1f));
+        m_object_program->setUniform("omnilight[1].Id", glm::vec3(0.86f, 1.0f, 0.86f));
+        m_object_program->setUniform("omnilight[1].Is", glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("omnilight[1].Kc", 1.0f);
+        m_object_program->setUniform("omnilight[1].Kl", 0.14f);
+        m_object_program->setUniform("omnilight[1].Kq", 0.07f);
 
         // Draw
         m_object->draw(*m_object_program);
