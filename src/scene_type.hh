@@ -1,7 +1,6 @@
 #ifndef SCRAMBLE_SCENE_TYPE_H
 #define SCRAMBLE_SCENE_TYPE_H
 
-#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 

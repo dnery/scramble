@@ -13,18 +13,34 @@ in VS_OUT {
 // Output
 out vec4 frag_color;
 
-// Material
+// Material Structure
 uniform struct material_t {
         sampler2D texture_normal1;
         sampler2D texture_diffuse1;
         sampler2D texture_specular1;
 };
+
+// Omnilight Structure
+uniform struct omnilight_t {
+        vec3 position;
+
+        vec3 Ia;
+        vec3 Id;
+        vec3 Is;
+
+        float Kc;
+        float Kl;
+        float Kq;
+};
+
+// Object
 uniform material_t material;
 
-// Uniform positions
+// Viewer
 uniform vec3 viewer_pos;
-uniform vec3 light_pos[N_LIGHTS];
-uniform vec3 light_col[N_LIGHTS];
+
+// Lights
+uniform omnilight_t omnilight[N_LIGHTS];
 
 void main()
 {
@@ -43,21 +59,19 @@ void main()
         const float k_energy_conservation = (8.0 + k_shininess) / (8.0 * k_pi);
 
         for (int i = 0; i < N_LIGHTS; i++) {
-
-                vec3 light_dir = normalize(light_pos[i] - fs_in.position);
-                vec3 viewer_dir = normalize(viewer_pos - fs_in.position);
-
                 // Ambient
-                ambient += light_col[i] * 0.05 * diff_map;
+                ambient += omnilight[i].Ia * diff_map;
 
                 // Diffuse
+                vec3 light_dir = normalize(omnilight[i].position - fs_in.position);
                 float lamb_factor = max(dot(fs_in.normal, light_dir), 0.0);
-                diffuse += light_col[i] * lamb_factor * diff_map;
+                diffuse += omnilight[i].Id * lamb_factor * diff_map;
 
                 // Specular
+                vec3 viewer_dir = normalize(viewer_pos - fs_in.position);
                 vec3 halfway_dir = normalize(light_dir + viewer_dir);
                 float spec_factor = pow(max(dot(halfway_dir, fs_in.normal), 0.0), k_shininess);
-                specular += light_col[i] * k_energy_conservation * spec_factor * spec_map;
+                specular += omnilight[i].Is * k_energy_conservation * spec_factor * spec_map;
         }
 
         // Final Color

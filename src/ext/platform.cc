@@ -80,9 +80,13 @@ static std::string process_path() {
         TCHAR szExt[_MAX_DIR];
         GetModuleFileName(0, szDllName, _MAX_PATH);
 
-        _splitpath(szDllName, szDrive, szDir, szFilename, szExt);
+        _splitpath(static_cast<const char *>(szDllName),
+                        static_cast<char *>(zDrive),
+                        static_cast<char *>(szDir),
+                        static_cast<char *>(szFilename),
+                        static_cast<char *>(szExt);
 
-        return std::string(szDrive) + std::string(szDir);
+        return std::string(static_cast<char *>(zDrive) + std::string(static_cast<char *>(zDir));
 #elif defined( PLATFORM_BSD )
         int mib[4];
         mib[0] = CTL_KERN;

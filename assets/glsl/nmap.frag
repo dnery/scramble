@@ -1,7 +1,7 @@
 #version 330 core
 // profile: gp5fp
 
-#define N_OMNIS 2
+#define N_OMNIS 4
 #define N_SPOTS 1
 
 // Input
@@ -34,6 +34,23 @@ uniform struct omnilight_t {
         float Kq;
 };
 
+// Spotlight Structure
+uniform struct spotlight_t {
+        vec3 position;
+        vec3 front;
+
+        vec3 Ia;
+        vec3 Id;
+        vec3 Is;
+
+        float Kc;
+        float Kl;
+        float Kq;
+
+        float mincutoff;
+        float maxcutoff;
+};
+
 // Object
 uniform material_t material;
 
@@ -42,15 +59,20 @@ uniform vec3 viewer_pos;
 
 // Lights
 uniform omnilight_t omnilight[N_OMNIS];
+uniform spotlight_t spotlight[N_SPOTS];
 
-float radatten(omnilight_t light, float f_v_dist)
+float radatten(float Kc, float Kl, float Kq, float f_l_dist)
 {
-        return ((1.0) / (light.Kc + light.Kl * f_v_dist + light.Kq * (f_v_dist * f_v_dist)));
+        return ((1.0) / (Kc + Kl * f_l_dist + Kq * (f_l_dist * f_l_dist)));
+}
+
+float angatten(float mincutoff, float maxcutoff, float f_l_angle)
+{
+        return clamp((f_l_angle - maxcutoff) / (mincutoff - maxcutoff), 0.0, 1.0);
 }
 
 void main()
 {
-
         // Textures
         vec3 diff_map = texture(material.texture_diffuse1, fs_in.uvcoord).rgb;
         vec3 spec_map = texture(material.texture_specular1, fs_in.uvcoord).rgb;
@@ -66,28 +88,51 @@ void main()
         const float k_shininess = 16.0;
         const float k_energy_conservation = (8.0 + k_shininess) / (8.0 * k_pi);
 
+        // Omnilights
         for (int i = 0; i < N_OMNIS; i++) {
-                // Directions
-                vec3 light_dir = fs_in.TBN * normalize(omnilight[i].position - fs_in.position);
-                vec3 viewer_dir = fs_in.TBN * normalize(viewer_pos - fs_in.position);
-
                 // Ambient
                 vec3 a_c = omnilight[i].Ia * diff_map;
 
                 // Diffuse
+                vec3 light_dir = fs_in.TBN * normalize(omnilight[i].position - fs_in.position);
                 float lamb_factor = max(dot(norm_map, light_dir), 0.0);
                 vec3 d_c = omnilight[i].Id * lamb_factor * diff_map;
 
                 // Specular
+                vec3 viewer_dir = fs_in.TBN * normalize(viewer_pos - fs_in.position);
                 vec3 halfway_dir = normalize(light_dir + viewer_dir);
                 float spec_factor = pow(max(dot(halfway_dir, norm_map), 0.0), k_shininess);
                 vec3 s_c = omnilight[i].Is * k_energy_conservation * spec_factor * spec_map;
 
                 // Attenuation
-                float radial = radatten(omnilight[i], length(omnilight[i].position - fs_in.position));
+                float radial = radatten(omnilight[i].Kc, omnilight[i].Kl, omnilight[i].Kq, length(omnilight[i].position - fs_in.position));
                 ambient += (a_c * radial);
                 diffuse += (d_c * radial);
                 specular += (s_c * radial);
+        }
+
+        // Spotlights
+        for (int i = 0; i < N_SPOTS; i++) {
+                // Ambient
+                vec3 a_c = spotlight[i].Ia * diff_map;
+
+                // Diffuse
+                vec3 light_dir = fs_in.TBN * normalize(spotlight[i].position - fs_in.position);
+                float lamb_factor = max(dot(norm_map, light_dir), 0.0);
+                vec3 d_c = spotlight[i].Id * lamb_factor * diff_map;
+
+                // Specular
+                vec3 viewer_dir = fs_in.TBN * normalize(viewer_pos - fs_in.position);
+                vec3 halfway_dir = normalize(light_dir + viewer_dir);
+                float spec_factor = pow(max(dot(halfway_dir, norm_map), 0.0), k_shininess);
+                vec3 s_c = spotlight[i].Is * k_energy_conservation * spec_factor * spec_map;
+
+                // Attenuation
+                float radial = radatten(spotlight[i].Kc, spotlight[i].Kl, spotlight[i].Kq, length(spotlight[i].position - fs_in.position));
+                float angular = angatten(spotlight[i].mincutoff, spotlight[i].maxcutoff, dot(light_dir, fs_in.TBN * normalize(-spotlight[i].front)));
+                ambient += (a_c * angular * radial);
+                diffuse += (d_c * angular * radial);
+                specular += (s_c * angular * radial);
         }
 
         // Final Color

@@ -3,6 +3,7 @@
 #include "ext/platform.hh"
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
+#include <random>
 #include "debug.hh"
 
 scene::scene() :
@@ -115,37 +116,76 @@ void scene::display()
         // OBJECT SHADER
         m_object_program->toggle();
 
-        /*
-         * VERTEX SHADER UNIFORMS
-         */
         // Matrix transformations
         m_object_program->setUniform("proj_matrix", m_camera.projection(m_vp_aspect_ratio));
         m_object_program->setUniform("view_matrix", m_camera.view());
         model_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, -1.75f, 0.0f));
-        //model_matrix = glm::rotate(model_matrix, (GLfloat)glfwGetTime() * 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+        //model_matrix = glm::scale(model_matrix, glm::vec3(0.2f, 0.2f, 0.2f));
+        //model_matrix = glm::rotate(model_matrix, (GLfloat)glfwGetTime() * 1.1f, glm::vec3(0.0f, 1.0f, 0.0f));
         m_object_program->setUniform("model_matrix", model_matrix);
         m_object_program->setUniform("normal_matrix", glm::transpose(glm::inverse(model_matrix)));
 
-        /*
-         * FRAGMENT SHADER UNIFORMS
-         */
         // Unique viewer position
         m_object_program->setUniform("viewer_pos", m_camera.position());
-        // Light attributes
-        m_object_program->setUniform("omnilight[0].position", glm::vec3(6.0f, 1.0f, -6.0f));
-        m_object_program->setUniform("omnilight[0].Ia", glm::vec3(0.1f));
-        m_object_program->setUniform("omnilight[0].Id", glm::vec3(0.86f, 0.86f, 1.0f));
-        m_object_program->setUniform("omnilight[0].Is", glm::vec3(1.0f, 1.0f, 1.0f));
+
+        // Retrieve active states
+        GLfloat rotating_omnis = static_cast<GLfloat>(m_keyboard.m_rotating_omnis);
+        GLfloat global_omni = static_cast<GLfloat>(m_keyboard.m_global_omni);
+        GLfloat center_omni = static_cast<GLfloat>(m_keyboard.m_center_omni);
+        GLfloat flashlight = static_cast<GLfloat>(m_keyboard.m_flashlight);
+
+        // Rotating Omnilight 1
+        model_matrix = glm::rotate(glm::mat4(), (GLfloat)glfwGetTime() * 1.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, -7.0f));
+        m_object_program->setUniform("omnilight[0].position", glm::vec3(model_matrix * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)));
+        m_object_program->setUniform("omnilight[0].Ia", rotating_omnis * glm::vec3(0.05f));
+        m_object_program->setUniform("omnilight[0].Id", rotating_omnis * glm::vec3(0.75f, 0.75f, 1.0f));
+        m_object_program->setUniform("omnilight[0].Is", rotating_omnis * glm::vec3(1.0f, 1.0f, 1.0f));
         m_object_program->setUniform("omnilight[0].Kc", 1.0f);
-        m_object_program->setUniform("omnilight[0].Kl", 0.14f);
-        m_object_program->setUniform("omnilight[0].Kq", 0.07f);
-        m_object_program->setUniform("omnilight[1].position", glm::vec3(-6.0f, 1.0f, 6.0f));
-        m_object_program->setUniform("omnilight[1].Ia", glm::vec3(0.1f));
-        m_object_program->setUniform("omnilight[1].Id", glm::vec3(0.86f, 1.0f, 0.86f));
-        m_object_program->setUniform("omnilight[1].Is", glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("omnilight[0].Kl", 0.22f);
+        m_object_program->setUniform("omnilight[0].Kq", 0.20f);
+
+        // Rotating Omnilight 2
+        model_matrix = glm::rotate(glm::mat4(), (GLfloat)glfwGetTime() * 1.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f,  7.0f));
+        m_object_program->setUniform("omnilight[1].position", glm::vec3(model_matrix * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)));
+        m_object_program->setUniform("omnilight[1].Ia", rotating_omnis * glm::vec3(0.05f));
+        m_object_program->setUniform("omnilight[1].Id", rotating_omnis * glm::vec3(0.75f, 1.0f, 0.75f));
+        m_object_program->setUniform("omnilight[1].Is", rotating_omnis * glm::vec3(1.0f, 1.0f, 1.0f));
         m_object_program->setUniform("omnilight[1].Kc", 1.0f);
-        m_object_program->setUniform("omnilight[1].Kl", 0.14f);
-        m_object_program->setUniform("omnilight[1].Kq", 0.07f);
+        m_object_program->setUniform("omnilight[1].Kl", 0.22f);
+        m_object_program->setUniform("omnilight[1].Kq", 0.20f);
+
+        // Global Omnilight
+        m_object_program->setUniform("omnilight[2].position", glm::vec3(0.0f, 3.0f, 0.0f));
+        m_object_program->setUniform("omnilight[2].Ia", global_omni * glm::vec3(0.05f));
+        m_object_program->setUniform("omnilight[2].Id", global_omni * glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("omnilight[2].Is", global_omni * glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("omnilight[2].Kc", 1.0f);
+        m_object_program->setUniform("omnilight[2].Kl", 0.07f);
+        m_object_program->setUniform("omnilight[2].Kq", 0.017f);
+
+        // Center Omnilight
+        GLfloat pulse = glm::cos(glfwGetTime() * 1.5f) / 2.0f + 0.5f;
+        m_object_program->setUniform("omnilight[3].position", glm::vec3(0.0f, 2.0f, 0.0f));
+        m_object_program->setUniform("omnilight[3].Ia", pulse * center_omni * glm::vec3(0.05f));
+        m_object_program->setUniform("omnilight[3].Id", pulse * center_omni * glm::vec3(1.0f, 0.65f, 0.65f));
+        m_object_program->setUniform("omnilight[3].Is", pulse * center_omni * glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("omnilight[3].Kc", 1.0f);
+        m_object_program->setUniform("omnilight[3].Kl", 0.14f);
+        m_object_program->setUniform("omnilight[3].Kq", 0.07f);
+
+        // Flashlight
+        m_object_program->setUniform("spotlight[0].position", m_camera.position());
+        m_object_program->setUniform("spotlight[0].front", m_camera.front());
+        m_object_program->setUniform("spotlight[0].Ia", flashlight * glm::vec3(0.0f));
+        m_object_program->setUniform("spotlight[0].Id", flashlight * glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("spotlight[0].Is", flashlight * glm::vec3(1.0f, 1.0f, 1.0f));
+        m_object_program->setUniform("spotlight[0].Kc", 1.0f);
+        m_object_program->setUniform("spotlight[0].Kl", 0.14f);
+        m_object_program->setUniform("spotlight[0].Kq", 0.07f);
+        m_object_program->setUniform("spotlight[0].mincutoff", glm::cos(glm::radians(1.5f)));
+        m_object_program->setUniform("spotlight[0].maxcutoff", glm::cos(glm::radians(19.5f)));
 
         // Draw
         m_object->draw(*m_object_program);
@@ -182,20 +222,36 @@ void scene::handle_keypress(GLFWwindow *window, GLint key, GLint action, GLint m
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
                 glfwSetWindowShouldClose(window, GL_TRUE);
 
-        // Flashlight toggle has to be sluggish
+        // Sluggish toggle flashlight
         if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-                if (!m_keyboard.m_flashlight_active)
-                        m_keyboard.m_flashlight_active = GL_TRUE;
+                if (!m_keyboard.m_flashlight)
+                        m_keyboard.m_flashlight = GL_TRUE;
                 else
-                        m_keyboard.m_flashlight_active = GL_FALSE;
+                        m_keyboard.m_flashlight = GL_FALSE;
         }
 
-        // Blinn-Phong toggle also sluggish
-        if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-                if (!m_keyboard.m_blinn_active)
-                        m_keyboard.m_blinn_active = GL_TRUE;
+        // Sluggish toggle center omnilight
+        if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+                if (!m_keyboard.m_center_omni)
+                        m_keyboard.m_center_omni = GL_TRUE;
                 else
-                        m_keyboard.m_blinn_active = GL_FALSE;
+                        m_keyboard.m_center_omni = GL_FALSE;
+        }
+
+        // Sluggish toggle global omnilight
+        if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+                if (!m_keyboard.m_global_omni)
+                        m_keyboard.m_global_omni = GL_TRUE;
+                else
+                        m_keyboard.m_global_omni = GL_FALSE;
+        }
+
+        // Sluggish toggle rotating omnilights
+        if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+                if (!m_keyboard.m_rotating_omnis)
+                        m_keyboard.m_rotating_omnis = GL_TRUE;
+                else
+                        m_keyboard.m_rotating_omnis = GL_FALSE;
         }
 
         // Smooth input triggers
