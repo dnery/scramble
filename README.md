@@ -11,15 +11,15 @@ they will change (expand) as the milestones are achieved.
 ## Feature checklist
 - [x] Fully free navigation (euler angles rotation, clamped)
 - [x] Basic shader load+link modular framework
-- [x] Basic texture mapping
-- [x] Modular texture mapping
 - [x] Fully de-coupled mesh loading
+- [x] Modular texture mapping
 - [ ] Complex 3D environment scene
-- [x] Basic lighting (Phong model)
-- [ ] Optimized lighting (Blinn-Phong, normal mapping)
+- [x] Optimized lighting & reflections
+- [x] Normal mapping
+- [ ] Framebuffers
 
 ## General Design
-![General Design](http://i.imgur.com/Zq7KT2G.png "General Design")
+![General Design](http://i.imgur.com/7wDU86u.png "General Design")
 - Greens are fully functional and belong to the framework
 - Blues are fully functional and belong to the user
 - Yellows are yet incomplete
