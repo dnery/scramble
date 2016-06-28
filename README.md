@@ -15,15 +15,14 @@ they will change (expand) as the milestones are achieved.
 - [x] Modular texture mapping
 - [ ] Complex 3D environment scene
 - [x] Optimized lighting & reflections
+- [ ] Custom framebuffers
 - [x] Normal mapping
-- [ ] Framebuffers
 
 ## General Design
 ![General Design](http://i.imgur.com/7wDU86u.png "General Design")
 - Greens are fully functional and belong to the framework
 - Blues are fully functional and belong to the user
-- Yellows are yet incomplete
-- Reds are unimplemented
+- Yellows are yet under heavy redesigning
 
 ## Dependencies
 * clang/LLVM compiler suite, Cmake for building
