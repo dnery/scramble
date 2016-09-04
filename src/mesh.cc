@@ -1,7 +1,6 @@
 #include "mesh.hh"
 
 #include <sstream>
-#include "debug.hh"
 
 mesh::mesh(std::vector<vertex>& vertices,
                 std::vector<GLuint>& indices,
@@ -87,7 +86,7 @@ void mesh::draw(program& program) const
 
         // Draw the mesh
         glBindVertexArray(m_vao);
-        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         // Unbind all

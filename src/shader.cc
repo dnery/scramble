@@ -1,6 +1,5 @@
 #include "shader.hh"
 
-#include <stdexcept>
 #include "debug.hh"
 
 /*
@@ -15,7 +14,7 @@ shared_shader::shared_shader(std::string code, GLenum type) :
         std::string errmsg;                // holds possible compile errmsg
 
         // check objects
-        check(globject != 0);
+        check(globject == 0);
 
         // source and compile shader code
         glShaderSource(globject, 1, &c_code, nullptr);
@@ -29,7 +28,7 @@ shared_shader::shared_shader(std::string code, GLenum type) :
 
                 errmsg = error(globject);
                 glDeleteShader(globject);
-                throw std::runtime_error(errmsg);
+                mcheck(1, "%s\n", errmsg.c_str());
         }
 }
 

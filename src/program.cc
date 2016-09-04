@@ -1,7 +1,6 @@
 #include "program.hh"
 
 #include <glm/gtc/type_ptr.hpp>
-#include <stdexcept>
 #include <fstream>
 #include <sstream>
 #include "debug.hh"
@@ -13,8 +12,8 @@ program::program(const std::vector<shader>& shaders) :
         std::string errmsg;     // holds possible link errmsg
 
         // check objects
-        check(globject != 0);
-        check(shaders.size() > 0);
+        check(globject == 0);
+        check(shaders.size() == 0);
 
         // attach shaders
         for (unsigned i = 0; i < shaders.size(); i++)
@@ -35,13 +34,13 @@ program::program(const std::vector<shader>& shaders) :
 
                 errmsg = error(globject);
                 glDeleteProgram(globject);
-                throw std::runtime_error(errmsg);
+                mcheck(1, "%s\n", errmsg.c_str());
         }
 }
 
 program::~program()
 {
-        check(globject != 0);
+        check(globject == 0);
 
         glDeleteProgram(globject);
 }
@@ -53,7 +52,7 @@ bool program::in_use() const
 {
         GLint current = 0; // current program in use by the API
 
-        check(globject != 0);
+        check(globject == 0);
 
         glGetIntegerv(GL_CURRENT_PROGRAM, &current);
 
@@ -78,11 +77,11 @@ GLint program::attrib(const GLchar *name) const
 {
         GLint index; // holds attribute index
 
-        check(name != nullptr);
+        check(name == nullptr);
 
         index = glGetAttribLocation(globject, name);
 
-        check(index != -1);
+        check(index == -1);
 
         return index;
 }
@@ -94,11 +93,11 @@ GLint program::uniform(const GLchar *name) const
 {
         GLint index; // holds uniform index
 
-        check(name != nullptr);
+        check(name == nullptr);
 
         index = glGetUniformLocation(globject, name);
 
-        check(index != -1);
+        check(index == -1);
 
         return index;
 }
@@ -179,42 +178,42 @@ ATTRIB_N_UNIFORM_SETTERS(GLuint, I, ui);
 void program::setUniformMatrix2(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
-        check(in_use());
+        check(!in_use());
         glUniformMatrix2fv(uniform(name), count, transpose, v);
 }
 
 void program::setUniformMatrix3(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
-        check(in_use());
+        check(!in_use());
         glUniformMatrix3fv(uniform(name), count, transpose, v);
 }
 
 void program::setUniformMatrix4(const GLchar *name, const GLfloat *v,
                                           GLsizei count, GLboolean transpose)
 {
-        check(in_use());
+        check(!in_use());
         glUniformMatrix4fv(uniform(name), count, transpose, v);
 }
 
 void program::setUniform(const GLchar *name, const glm::mat2& m,
                                    GLboolean transpose)
 {
-        check(in_use());
+        check(!in_use());
         glUniformMatrix2fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
 void program::setUniform(const GLchar *name, const glm::mat3& m,
                                    GLboolean transpose)
 {
-        check(in_use());
+        check(!in_use());
         glUniformMatrix3fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
 void program::setUniform(const GLchar *name, const glm::mat4& m,
                                    GLboolean transpose)
 {
-        check(in_use());
+        check(!in_use());
         glUniformMatrix4fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
@@ -234,7 +233,7 @@ void program::setUniform(const GLchar *uniformName, const glm::vec4& v)
 shader shader_from_file(const std::string&& path, GLenum type)
 {
         std::ifstream handle(path, std::ios::in | std::ios::binary);
-        check(handle.is_open());
+        check(!handle.is_open());
 
         // Assert the filepath
         info("shader path is: %s\n", path.c_str());

@@ -18,8 +18,7 @@ model::model(const std::string&& path)
                         aiProcess_FlipUVs);
 
         // Check for errors
-        if (!aiscene || !aiscene->mRootNode || aiscene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
-                throw std::runtime_error(imp.GetErrorString());
+        mcheck(!aiscene || !aiscene->mRootNode || aiscene->mFlags == AI_SCENE_FLAGS_INCOMPLETE, "%s\n", imp.GetErrorString());
 
         // Get workdir
         m_workpath = path.substr(0, path.find_last_of('/'));
@@ -145,7 +144,7 @@ std::vector<mesh::texture> model::load_mat_textures(aiMaterial *aimat,
                 // Otherwise, actually load the texture
                 if (!loaded) {
                         mesh::texture texture;
-                        texture.m_id = texture_from_file(texpath.C_Str(), m_workpath);
+                        texture.m_id = static_cast<GLuint>(texture_from_file(texpath.C_Str(), m_workpath));
                         texture.m_type = textype;
                         texture.m_path = texpath;
                         textures.push_back(texture);
@@ -197,5 +196,5 @@ GLint texture_from_file(const char *path, std::string workpath)
         glBindTexture(GL_TEXTURE_2D, 0);
         SOIL_free_image_data(image);
 
-        return texID;
+        return static_cast<GLint>(texID);
 }

@@ -40,7 +40,7 @@ void scene::init(GLFWwindow *window)
         m_mouse.m_first_enter_viewport = GL_TRUE;
 
         // Set the clear color
-        glClearColor(0.1, 0.09, 0.08, 1.0f);
+        glClearColor(0.1f, 0.09f, 0.08f, 1.0f);
 
         // Z-buffer depth query
         glEnable(GL_DEPTH_TEST);
@@ -57,33 +57,25 @@ void scene::init(GLFWwindow *window)
         // On-Screen MSAA
         //glEnable(GL_MULTISAMPLE);
 
+        // Create sample objects
+        put("\n==============\n");
+        put("ASSETS: MODELS\n\n");
+        m_object = new model(resource_path("models/room/room.obj"));
+
         // Create sample shaders
-        try {
-                put("\n==============\n");
-                put("ASSETS: MODELS\n\n");
-                m_object = new model(resource_path("models/room/room.obj"));
+        put("\n===============\n");
+        put("ASSETS: SHADERS\n\n");
+        std::vector<shader> object_shaders;
+        object_shaders.push_back(shader_from_file(
+                                resource_path("glsl/nmap.vert"),
+                                GL_VERTEX_SHADER)
+                        );
+        object_shaders.push_back(shader_from_file(
+                                resource_path("glsl/nmap.frag"),
+                                GL_FRAGMENT_SHADER)
+                        );
 
-                put("\n===============\n");
-                put("ASSETS: SHADERS\n\n");
-                std::vector<shader> object_shaders;
-                object_shaders.push_back(shader_from_file(
-                                        resource_path("glsl/nmap.vert"),
-                                        GL_VERTEX_SHADER)
-                                );
-                object_shaders.push_back(shader_from_file(
-                                        resource_path("glsl/nmap.frag"),
-                                        GL_FRAGMENT_SHADER)
-                                );
-
-                m_object_program = new program(object_shaders);
-
-        } catch (std::runtime_error &e) {
-
-                throw std::runtime_error(
-                                std::string("Model or Shader: ") +
-                                e.what()
-                                );
-        }
+        m_object_program = new program(object_shaders);
 }
 
 void scene::update(GLdouble millis)
@@ -254,13 +246,16 @@ void scene::handle_keypress(GLFWwindow *window, GLint key, GLint action, GLint m
                         m_keyboard.m_rotating_omnis = GL_FALSE;
         }
 
+        // this makes (key < 0) impossible
+        size_t idx = static_cast<size_t>(key);
+
         // Smooth input triggers
-        if (key < 0 || key > 1023)
+        if (idx > 1023)
                 return;
         else if (action == GLFW_PRESS)
-                m_keyboard.m_keymap[key] = GL_TRUE;
+                m_keyboard.m_keymap[idx] = GL_TRUE;
         else if (action == GLFW_RELEASE)
-                m_keyboard.m_keymap[key] = GL_FALSE;
+                m_keyboard.m_keymap[idx] = GL_FALSE;
 }
 
 void scene::handle_scroll(GLFWwindow *window, GLdouble xoffset, GLdouble yoffset)

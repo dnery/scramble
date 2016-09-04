@@ -77,12 +77,12 @@ public:
         /*
          * Getters & Setters
          */
-        const GLuint width() const
+        GLuint width() const
         {
                 return static_cast<GLuint>(m_width);
         }
 
-        const GLuint height() const
+        GLuint height() const
         {
                 return static_cast<GLuint>(m_height);
         }

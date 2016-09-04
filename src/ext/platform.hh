@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  *
- *   The aforementioned file is being modified and redistributed.
+ *   This file has been modified.
  */
 
 #ifndef SCRAMBLE_PLATFORM_HH

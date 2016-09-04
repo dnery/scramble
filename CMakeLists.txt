@@ -4,9 +4,9 @@ project(scramble)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lGL -lGLEW -lglfw -lSOIL -lassimp -Wall -Weffc++")
 
-set(CMAKE_CXX_FLAGS_DEBUG "-O -g -pedantic -Wextra -Wconversion -Wconversion -Wcast-align -Wunreachable-code -ftrapv -fsanitize=address")
+set(CMAKE_CXX_FLAGS_DEBUG "-O1 -g -pedantic -Wextra -Wconversion -Wconversion -Wcast-align -Wunreachable-code -ftrapv")
 
-set(CMAKE_CXX_FLAGS_RELEASE "-02 -march=native")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native")
 
 set(SOURCE_FILES
         src/main.cc

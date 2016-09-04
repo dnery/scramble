@@ -21,7 +21,7 @@ window_manager::window_manager(int width, int height,
         m_window = glfwCreateWindow(m_width, m_height, m_title, nullptr, nullptr);
 
         // Check, set context
-        check(m_window != nullptr);
+        check(m_window == nullptr);
         glfwMakeContextCurrent(m_window);
 
         // Set cursor input mode
@@ -42,8 +42,8 @@ window_manager::window_manager(int width, int height,
 
         // Initialize GLEW
         glewExperimental = GL_TRUE;
-        check(glewInit() == GLEW_OK);
-        check(GLEW_VERSION_3_3 != 0);
+        check(glewInit() != GLEW_OK);
+        check(GLEW_VERSION_3_3 == 0);
 
         // Define viewport dimensions
         glViewport(0, 0, m_width, m_height);
