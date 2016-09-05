@@ -2,7 +2,7 @@
 
 #include <SOIL/SOIL.h>
 #include <stdexcept>
-#include "debug.hh"
+#include "debug.hh" // order matters, read debug.hh
 
 model::model(const std::string&& path)
 {

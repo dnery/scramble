@@ -12,10 +12,7 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- *
- *   This file has been modified.
  */
-
 #include "platform.hh"
 
 #include <cmath>
@@ -119,3 +116,10 @@ static std::string process_path() {
 std::string resource_path(std::string file_name) {
         return process_path() + "../assets/" + file_name;
 }
+
+/*
+ * Tampering notice:
+ *
+ * Originally maintained by Thomas Dalling (http://www.tomdalling.com/),
+ * this file has been modified and redistributed by me (dznery@gmail.com).
+ */

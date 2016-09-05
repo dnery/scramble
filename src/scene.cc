@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
 #include <random>
-#include "debug.hh"
+#include "debug.hh" // order matters, read debug.hh
 
 scene::scene() :
         /*

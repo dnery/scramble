@@ -3,7 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 #include <sstream>
-#include "debug.hh"
+#include "debug.hh" // order matters, read debug.hh
 
 program::program(const std::vector<shader>& shaders) :
         globject(glCreateProgram())

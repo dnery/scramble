@@ -1,15 +1,13 @@
 #ifndef SCRAMBLE_SCENE_H
 #define SCRAMBLE_SCENE_H
 
-#include "scene_type.hh"
+#include "abs/scene_type.hh"
 #include "program.hh"
 #include "camera.hh"
 #include "model.hh"
 #include <array>
 
-/*
- * Mouse POD-type
- */
+/* Mouse POD */
 struct mouse {
 
         GLdouble m_prev_xpos;
@@ -17,9 +15,7 @@ struct mouse {
         GLboolean m_first_enter_viewport = GL_TRUE;
 };
 
-/*
- * Keyboard POD-type
- */
+/* Keyboard POD */
 struct keyboard {
 
         GLboolean m_flashlight;
@@ -29,9 +25,7 @@ struct keyboard {
         std::array<GLboolean, 1024> m_keymap;
 };
 
-/*
- * Actual scene element
- */
+/* Actual scene element */
 class scene : public scene_type {
 
         /* Input */
@@ -45,8 +39,8 @@ class scene : public scene_type {
         GLdouble m_vp_aspect_ratio;     // Viewport aspect ratio
 
         /* Elements */
-        model *m_object;                // Sample solid object
-        program *m_object_program;      // Solid object shader program
+        model *m_object;                // Sample static object
+        program *m_object_program;      // Sample shader program
 
 public:
         scene();

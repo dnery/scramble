@@ -34,14 +34,8 @@ public:
                 BACKWARD = 8                    // Move type: backward
         };
 
-        /*
-         * CTOR & DTOR
-         */
         camera();
 
-        /*
-         * Getters & Setters
-         */
         const glm::vec3& position() const
         {
                 return m_vec_position;
@@ -52,16 +46,12 @@ public:
                 return m_vec_front;
         }
 
-        /*
-         * State manipulators
-         */
+        /* Orientation manipulators */
         void zoom(GLdouble yoffset);
         void move(GLuint direction, GLdouble delta);
         void look(GLdouble xoffset, GLdouble yoffset, GLboolean clamp = GL_TRUE);
 
-        /*
-         * Orientation matrix getters
-         */
+        /* Orientation matrix getters */
         glm::mat4 view();
         glm::mat4 projection(GLdouble vp_aspect_ratio);
         glm::mat4 view_projection(GLdouble vp_aspect_ratio);

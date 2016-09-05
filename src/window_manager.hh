@@ -1,7 +1,7 @@
 #ifndef SCRAMBLE_WINDOW_MANAGER_H
 #define SCRAMBLE_WINDOW_MANAGER_H
 
-#include "scene_type.hh"
+#include "abs/scene_type.hh"
 
 class window_manager {
 
@@ -11,9 +11,7 @@ class window_manager {
         GLFWwindow *m_window;           // Wrapped window object
         scene_type *m_scene;            // Render target Scene
 
-        /*
-         * GLFW callback upon window being resized
-         */
+        /* GLFW callback upon window being resized */
         inline static void callback_window_resize(GLFWwindow *window, int w, int h)
         {
                 window_manager *wm = static_cast<window_manager *>
@@ -22,9 +20,7 @@ class window_manager {
                 wm->viewport_did_resize(w, h);
         }
 
-        /*
-         * GLFW callback upon window needing to be re-drawn
-         */
+        /* GLFW callback upon window needing to be re-drawn */
         inline static void callback_window_refresh(GLFWwindow *window)
         {
                 window_manager *wm = static_cast<window_manager *>
@@ -33,9 +29,7 @@ class window_manager {
                 wm->m_scene->display();
         }
 
-        /*
-         * GLFW input callback redirection functions: cursor move
-         */
+        /* GLFW input callback redirection functions: cursor move */
         inline static void callback_cursor_move(GLFWwindow *window, double x, double y)
         {
                 window_manager *wm = static_cast<window_manager *>
@@ -44,9 +38,7 @@ class window_manager {
                 wm->m_scene->handle_cursor_move(window, x, y);
         }
 
-        /*
-         * GLFW input callback redirection functions: keypress
-         */
+        /* GLFW input callback redirection functions: keypress */
         inline static void callback_keypress(GLFWwindow *window, int k, int s, int a, int m)
         {
                 window_manager *wm = static_cast<window_manager *>
@@ -55,9 +47,7 @@ class window_manager {
                 wm->m_scene->handle_keypress(window, k, a, m);
         }
 
-        /*
-         * GLFW input callback redirection functions: scroll
-         */
+        /* GLFW input callback redirection functions: scroll */
         inline static void callback_scroll(GLFWwindow *window, double x, double y)
         {
                 window_manager *wm = static_cast<window_manager *>
@@ -67,16 +57,10 @@ class window_manager {
         }
 
 public:
-        /*
-         * CTOR & DTOR
-         */
         window_manager(int width, int height, const char * title, scene_type *scene);
 
         ~window_manager();
 
-        /*
-         * Getters & Setters
-         */
         GLuint width() const
         {
                 return static_cast<GLuint>(m_width);
@@ -87,14 +71,10 @@ public:
                 return static_cast<GLuint>(m_height);
         }
 
-        /*
-         * GLFW conformance resize function
-         */
+        /* GLFW conformance resize function */
         void viewport_did_resize(int weight, int height);
 
-        /*
-         * Render loop: makes scene calls and polls
-         */
+        /* Render loop */
         void render_scene();
 };
 

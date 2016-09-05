@@ -1,11 +1,14 @@
+/*
+ * -- DEPRECATED --
+ *
+ * This is being kept for reasons of (???).
+ * The project uses very little global state.
+ *
+ */
 #ifndef SCRAMBLE_LOCATOR_HH
 #define SCRAMBLE_LOCATOR_HH
 
 #include <memory>
-
-/*
- * This is being kept for safety only. The project has ditched gobal objects.
- */
 namespace scramble {
 
         template<typename T>

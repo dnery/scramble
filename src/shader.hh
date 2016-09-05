@@ -5,13 +5,11 @@
 #include <string>
 
 /*
- * Reference counting can be a little more complex to implement corectly
- * in C++. Read more into the counted body idiom here:
+ * -- NOTE TO SELF --
+ *
+ * read into refcounting again:
  *
  *      http://bit.ly/1TOLp5U
- *
- * The implementation used here follows a well known and tested pattern,
- * all while respecting proper (can this be said?) encapsulation.
  */
 class shared_shader {
 
@@ -19,17 +17,12 @@ class shared_shader {
         GLuint refcount;        // reference count
 
 public:
-        friend class shader;    // shader object access facade
+        friend class shader;    // object facade
 
-        /*
-         * CTOR & DTOR
-         */
         shared_shader(std::string code, GLenum type);
         ~shared_shader();
 
-        /*
-         * Error check
-         */
+        /* Error check */
         std::string error(GLuint globject);
 };
 
@@ -41,24 +34,15 @@ public:
         shader(std::string code, GLenum type);
         ~shader();
 
-        /*
-         * Shader is ref-counted; can be copy constructed
-         */
+        /* Shader is ref-counted; can be copy constructed */
         shader(const shader& other);
 
-        /*
-         * Shader is ref-counted; can be copy assigned
-         */
+        /* Shader is ref-counted; can be copy assigned */
         shader& operator=(shader other);
 
-        /*
-         * Non-throwing swap function, for clean copy
-         */
+        /* Non-throwing swap function */
         friend void swap(shader& a, shader& b);
 
-        /*
-         * Single Getter
-         */
         const GLuint& get() const
         {
                 return rep->globject;

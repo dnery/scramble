@@ -1,6 +1,6 @@
 #include "window_manager.hh"
 
-#include "debug.hh"
+#include "debug.hh" // order matters, read debug.hh
 
 window_manager::window_manager(int width, int height,
                 const char *title, scene_type *scene) :
@@ -53,7 +53,7 @@ window_manager::window_manager(int width, int height,
         put("CONTEXT\n\n");
         info("OpenGL version: %s\n", glGetString(GL_VERSION));
         info("GLSL version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-        info("Renderere: %s\n", glGetString(GL_RENDERER));
+        info("Renderer: %s\n", glGetString(GL_RENDERER));
         info("Vendor: %s\n", glGetString(GL_VENDOR));
 }
 

@@ -1,6 +1,6 @@
 #include "shader.hh"
 
-#include "debug.hh"
+#include "debug.hh" // order matters, read debug.hh
 
 /*
  * Shared shader object

@@ -40,11 +40,13 @@ void camera::move(GLuint direction, GLdouble delta)
         GLfloat final_speed = static_cast<GLfloat>(m_scalar_movespeed * delta);
 
         /*
-         * Name deduction in nested name specifier is a very particular
+         * -- NOTE TO SELF --
+         *
+         * name deduction in nested name specifier is a very particular
          * C++11 extension, and clang_check might flag the following
          * conditional statements even with -std=c++11 switch set.
          *
-         * Surrounding the code with the following clang pragmas will
+         * surrounding the code with the following clang pragmas will
          * silence static analyzer:
          *
          *      #pragma clang diagnostic push
@@ -52,16 +54,15 @@ void camera::move(GLuint direction, GLdouble delta)
          *      ...
          *      #pragma clang diagnostic pop
          *
-         * The correct thing to do, if the need arises, though, is to
+         * the correct thing to do, if the need arises, though, is to
          * swap the standard, wherever necessary (including, possibly,
          * the .syntastic_clang_check_config file), from -std=c++11
          * to -std=c++1y (what in c++11 is an extension, in c++1y
          * is provided as standard, and so forth).
          *
-         * This will almost certainly be necessary if decltype(auto) or
+         * this will almost certainly be necessary if decltype(auto) or
          * default initializers for aggregates are used, for example.
          */
-
         if (direction == movement::LEFT)
                 m_vec_position -= m_vec_right * final_speed;
 
@@ -94,7 +95,7 @@ void camera::look(GLdouble xoffset, GLdouble yoffset, GLboolean clamp)
 void camera::update()
 {
         /*
-         * Re-calculate front vector TODO sketch this procedure!
+         * re-calculate front vector TODO sketch this procedure!
          */
         m_vec_front.x = (cos(glm::radians(m_scalar_yaw)) *
                         cos(glm::radians(m_scalar_pitch)));

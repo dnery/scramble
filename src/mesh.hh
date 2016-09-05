@@ -38,17 +38,19 @@ public:
                         std::vector<texture>& textures);
 
         /*
-         * Material implementations in the shader MUST follow this naming convention:
+         * -- NOTE TO SELF --
+         *
+         * material implementations in the shader MUST follow this naming convention:
          *
          *      ...
          *      struct _material {
-         *              double shininess;               // Required, discrete power of 2
-         *              sampler2D texture_diffuse<n>;   // Required, n is a discrete number
-         *              sampler2D texture_specular<n>;  // Required, n is a discrete number
+         *              double shininess;               // required, discrete power of 2
+         *              sampler2D texture_diffuse<n>;   // required, n is a discrete number
+         *              sampler2D texture_specular<n>;  // required, n is a discrete number
          *              ...
          *      };
          *
-         *      unform _material material;              // Has to be declared as "material"
+         *      uniform _material material;             // has to be declared as "material"
          *      ...
          */
         void draw(program& program) const;

@@ -1,16 +1,17 @@
-#ifndef SCRAMBLE_DEBUG_H
-#define SCRAMBLE_DEBUG_H
-
 /*
- * This is a shitty debug functionality header for my C++ projects.
+ * this is a shitty debug functionality header for my C++ projects.
  *
- * This little fucker right here has to be included after everything else,
+ * this little fucker right here has to be included after everything else,
  * anywhere you wish to use it (Meaning LAST and ONLY ON IMPLEMENTATION FILES).
  *
- * I might fix this sometime.
+ * the reason for this is obscure ('cuz I didn't look into it very much) but
+ * it's likely to be legacy code in the c* libraries conflicting with
+ * C++ STL or something in the external libraries used.
  *
- * ...Or not.
+ * I might fix this sometime.
  */
+#ifndef SCRAMBLE_DEBUG_H
+#define SCRAMBLE_DEBUG_H
 
 #include <cstdio>
 #include <cerrno>
@@ -19,6 +20,7 @@
 
 #ifndef RELEASE
 
+/* compiler will probably complaing about using GNU extensions. */
 #define put(vargs, ...) do { \
         std::fprintf(stdout, vargs, ##__VA_ARGS__); \
 } while (0) \

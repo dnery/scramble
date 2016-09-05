@@ -12,10 +12,7 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- *
- *   This file has been modified.
  */
-
 #ifndef SCRAMBLE_PLATFORM_HH
 #define SCRAMBLE_PLATFORM_HH
 
@@ -24,3 +21,10 @@
 std::string resource_path(std::string file_name);
 
 #endif /* ifndef SCRAMBLE_PLATFORM_H */
+
+/*
+ * Tampering notice:
+ *
+ * Originally maintained by Thomas Dalling (http://www.tomdalling.com/),
+ * this file has been modified and redistributed by me (dznery@gmail.com).
+ */

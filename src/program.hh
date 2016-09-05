@@ -12,36 +12,23 @@ class program {
         GLuint globject; // GL program resource
 
 public:
-        /*
-         * CTOR & DTOR
-         */
         explicit program(const std::vector<shader>& shaders);
         ~program();
 
-        /*
-         * Getters & Setters
-         */
         const GLuint& get() const
         {
                 return globject;
         }
 
-        /*
-         * Methods
-         */
         bool in_use() const;
         void toggle() const;
         GLint attrib(const GLchar *name) const;
         GLint uniform(const GLchar *name) const;
 
-        /*
-         * Error check
-         */
+        /* Error check */
         std::string error(GLuint globject);
 
-        /*
-         * Write signatures as macros
-         */
+        /* Write signatures as macros */
 #define _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE) \
         void setAttrib(const GLchar* attribName, OGL_TYPE v0); \
         void setAttrib(const GLchar* attribName, OGL_TYPE v0, OGL_TYPE v1); \
@@ -63,17 +50,13 @@ public:
         void setUniform3v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
         void setUniform4v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
 
-        /*
-         * Generate previously proposed declarations
-         */
+        /* Generate previously proposed declarations */
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLfloat)
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLdouble)
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLint)
         _TDOGL_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLuint)
 
-        /*
-         * Uniforms & Attribs should be set through these
-         */
+        /* Uniforms & Attribs should be set through these */
         void setUniformMatrix2(const GLchar *uniformName,
                         const GLfloat *v, GLsizei count = 1,
                         GLboolean transpose = GL_FALSE);
@@ -96,10 +79,12 @@ public:
 /*
  * Instantiate shader from source file.
  *
- * The r-value reference is a tiny optimization but imposes the
- * restriction that it must always be called passing an x-value. In this
- * situation, this means, exclusively, using it in conjunction with
- * resource_path(), like this:
+ * -- NOTE TO SELF --
+ *
+ * the r-value reference is a tiny optimization but imposes the
+ * restriction that it must always be called passing an x-value.
+ * in this situation, this means, exclusively, using it in
+ * conjunction with resource_path(), like this:
  *
  *      shader_from_file(resource_path("<resource_name>"), <SHADER_TYPE>);
  */
