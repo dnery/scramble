@@ -1,11 +1,11 @@
 CMakeCache.txt
+Makefile
 CMakeFiles
 CMakeScripts
-Makefile
 cmake_install.cmake
 install_manifest.txt
-/presentation
-/build
+presentation/
+build/
 *.7z
 *.zip
 *.rar

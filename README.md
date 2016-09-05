@@ -3,7 +3,7 @@ An attempt at a real-time rendering engine in C++ using the OpenGL API.
 Hopefully a very ironic title.
 
 ## What it does
-It sets up for you a navigable environment with a simple room scene
+By default, it sets up for you a navigable environment with a simple room scene
 (brilliantly modeled by me) equipped with toggleable light sources.
 **THE ROOM WILL BE COMPLETELY DARK AT FIRST**, don't fret. Use `c`,`r`,
 `g` and `f` keys to toggle light sources, `w`,`a`,`s` and `d` to
@@ -14,7 +14,6 @@ assets, etc... My only hope is that this project makes your life
 easier somehow. There's licensing info all around but all you
 really gotta do is minimally state your changes. Following are
 sections containing features, dependencies and build instructions.
-a
 
 ## Features so far
 - [x] Smooth, free navigation (euler angles, clamped)
@@ -27,11 +26,25 @@ a
 - [ ] Complex 3D environment scene
 - [ ] Custom framebuffers (allows for effects like off-screen AA, color blending, etc)
 
-## General design
-![General Design](http://i.imgur.com/7wDU86u.png "General Design")
-- Green modules are functional and belong to the framework
-- Blue modules are functional and belong to the user
-- Yellow modules are yet under heavy redesigning
+## How's it looking?
+Here are a couple of shots demo'ing a complex mesh composition loaded in the
+engine (RIP Crytek). Shaders without normal mapping here because the Nanosuit
+model ([taken from TF3DM.com](http://tf3dm.com/3d-model/crysis-2-nanosuit-2-97837.html))
+came with screwed up normal textures, so to avoid an overly specific solution I
+simply removed them from the equation. The model is amazing, though, and it
+still looks very good with only Blinn-Phong reflections.
+[![Scramble_013.png](https://s22.postimg.org/o2l1og0g1/Scramble_013.png)](https://postimg.org/image/6cjd3emv1/)
+[![Scramble_012.png](https://s13.postimg.org/8myrrfbd3/Scramble_012.png)](https://postimg.org/image/53cu1m8n7/)
+
+And here is a simple room scene I put up in blender ([textures taken from OpenGameArt.org](http://opengameart.org/content/majestical-metal-sci-fi-station<Paste>))
+rendered under different lighting schemes and colors, featuring normal mapping.
+It was quick work but the textures are very well made and I think the scene
+looks good (it's prettier when you can navigate through it real-time, trust
+me). Not showing the flashlight here because it's mainly for debugging the
+reflection attenuation and not particularly interesting either.
+[![Scramble_009.png](https://s17.postimg.org/mpo5dzej3/Scramble_009.png)](https://postimg.org/image/uiet5yki3/)
+[![Scramble_008.png](https://s17.postimg.org/cs3pdx7of/Scramble_008.png)](https://postimg.org/image/kkud5wdnf/)
+[![Scramble_010.png](https://s11.postimg.org/jx1qfe9zn/Scramble_010.png)](https://postimg.org/image/brjoh8lqn/)
 
 ## Dependencies
 * CMake >= 2.8
@@ -127,17 +140,24 @@ When using `Debug` warnings will ensue because of implicit floating point conver
 Look, I'm sorry. This project was originally to be presented and I was kinda desperate so things happened. Now I don't wanna remove them because it's actually practical in case one just wants to clone the repo and test a default buid.
 
 ## License information
-
-   Copyright 2016 Danilo Nery 
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this code except in compliance with the License.
-   You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+  MIT License
+  
+  Copyright (c) 2016 Danilo Nery
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+  
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
