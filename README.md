@@ -33,6 +33,7 @@ model ([taken from TF3DM.com](http://tf3dm.com/3d-model/crysis-2-nanosuit-2-9783
 came with screwed up normal textures, so to avoid an overly specific solution I
 simply removed them from the equation. The model is amazing, though, and it
 still looks very good with only Blinn-Phong reflections.
+* * *
 [![Scramble_013.png](https://s22.postimg.org/o2l1og0g1/Scramble_013.png)](https://postimg.org/image/6cjd3emv1/)
 [![Scramble_012.png](https://s13.postimg.org/8myrrfbd3/Scramble_012.png)](https://postimg.org/image/53cu1m8n7/)
 
@@ -42,6 +43,7 @@ It was quick work but the textures are very well made and I think the scene
 looks good (it's prettier when you can navigate through it real-time, trust
 me). Not showing the flashlight here because it's mainly for debugging the
 reflection attenuation and not particularly interesting either.
+* * *
 [![Scramble_009.png](https://s17.postimg.org/mpo5dzej3/Scramble_009.png)](https://postimg.org/image/uiet5yki3/)
 [![Scramble_008.png](https://s17.postimg.org/cs3pdx7of/Scramble_008.png)](https://postimg.org/image/kkud5wdnf/)
 [![Scramble_010.png](https://s11.postimg.org/jx1qfe9zn/Scramble_010.png)](https://postimg.org/image/brjoh8lqn/)
