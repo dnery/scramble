@@ -1,8 +1,6 @@
 /*
- * -- DEPRECATED --
- *
- * This is being kept for reasons of (???).
- * The project uses very little global state.
+ * I don't actually use this in the project, but
+ * I'm keeping the code for future reference.
  *
  */
 #ifndef SCRAMBLE_LOCATOR_HH

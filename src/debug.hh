@@ -1,12 +1,8 @@
 /*
- * this is a shitty debug functionality header for my C++ projects.
+ * Simple debug functionality header for C++ projects.
  *
- * this little fucker right here has to be included after everything else,
- * anywhere you wish to use it (Meaning LAST and ONLY ON IMPLEMENTATION FILES).
- *
- * the reason for this is obscure ('cuz I didn't look into it very much) but
- * it's likely to be legacy code in the c* libraries conflicting with
- * C++ STL or something in the external libraries used.
+ * Has to be included after everything else, anywhere you wish to use it
+ * (Meaning LAST and ONLY ON IMPLEMENTATION FILES).
  *
  * I might fix this sometime.
  */
@@ -30,9 +26,9 @@
 } while (0) \
 
 /*
- * this isn't accurate, actually.
+ * This isn't accurate, actually.
  *
- * call to fprintf might change errno, so the error code
+ * Call to fprintf might change errno, so the error code
  * outputted may be imprecise. favor the message instead.
  */
 #define check(exp) do { if ((exp)) { \

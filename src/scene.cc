@@ -3,6 +3,7 @@
 #include "ext/platform.hh"
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
+#include <iostream>
 #include <random>
 #include "debug.hh" // order matters, read debug.hh
 
@@ -216,10 +217,12 @@ void scene::handle_keypress(GLFWwindow *window, GLint key, GLint action, GLint m
 
         // Sluggish toggle flashlight
         if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-                if (!m_keyboard.m_flashlight)
+                if (!m_keyboard.m_flashlight) {
                         m_keyboard.m_flashlight = GL_TRUE;
-                else
+                        std::cout << "F key pressed" << std::endl;
+                } else {
                         m_keyboard.m_flashlight = GL_FALSE;
+                }
         }
 
         // Sluggish toggle center omnilight
